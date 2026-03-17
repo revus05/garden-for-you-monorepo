@@ -13,4 +13,24 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     }
   },
+  modules: [
+    {
+      resolve: "@medusajs/medusa/file",
+      options: {
+        providers: [
+          {
+            resolve: "./src/providers/file-cloudinary",
+            id: "cloudinary",
+            options: {
+              apiKey: process.env.CLOUDINARY_API_KEY,
+              apiSecret: process.env.CLOUDINARY_API_SECRET,
+              cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+              folderName: process.env.CLOUDINARY_FOLDER_NAME || "medusa",
+              secure: true,
+            },
+          },
+        ],
+      },
+    },
+  ],
 })
