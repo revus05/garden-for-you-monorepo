@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { EB_Garamond, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "app/providers";
+import { getServerCart } from "entities/cart/server/get-server-cart";
 import { getServerUser } from "entities/user/server/get-server-user";
 import type { ReactNode } from "react";
 
@@ -21,12 +22,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const preloadedCart = await getServerCart();
   const preloadedUser = await getServerUser();
 
   return (
     <html lang="ru" className={notoSans.variable}>
       <body className={`${ebGaramond.variable} antialiased`}>
-        <Providers preloadedUser={preloadedUser}>{children}</Providers>
+        <Providers preloadedCart={preloadedCart} preloadedUser={preloadedUser}>
+          {children}
+        </Providers>
       </body>
     </html>
   );

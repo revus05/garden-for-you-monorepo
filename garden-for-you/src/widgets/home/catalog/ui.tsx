@@ -2,12 +2,14 @@
 
 import type { CheckedState } from "@radix-ui/react-checkbox";
 import type { ProductCategoryOrder } from "entities/product/model/types";
+import { addCartItem } from "features/cart";
 import {
   useCatalogCategoriesQuery,
   useCatalogProductsInfiniteQuery,
 } from "features/catalog";
 import Image from "next/image";
 import { useDeferredValue, useState } from "react";
+import { useAppDispatch } from "shared/lib/hooks";
 import { Badge } from "shared/ui/badge";
 import { Button } from "shared/ui/button";
 import { Checkbox } from "shared/ui/checkbox";
@@ -30,6 +32,8 @@ import {
 } from "shared/ui/select";
 
 export const Catalog = () => {
+  const dispatch = useAppDispatch();
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [orderBy, setOrderBy] = useState<ProductCategoryOrder>("-created_at");
@@ -61,6 +65,11 @@ export const Catalog = () => {
           : [...current, categoryId]
         : current.filter((id) => id !== categoryId),
     );
+  };
+
+  const handleAddToCartClick = async (variantId: string) => {
+    const response = await addCartItem(dispatch, variantId, 1);
+    console.log("addToCart", response);
   };
 
   return (
@@ -155,6 +164,15 @@ export const Catalog = () => {
                     {product.variants[0].calculated_price.currency_code?.toUpperCase()}
                   </p>
                 )}
+
+                <Button
+                  onClick={() =>
+                    product.variants?.[0]?.id &&
+                    handleAddToCartClick(product.variants[0].id)
+                  }
+                >
+                  В корзину
+                </Button>
               </div>
             ))}
           </div>

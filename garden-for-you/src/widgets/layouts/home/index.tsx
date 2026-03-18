@@ -8,7 +8,7 @@ type HomeLayoutProps = {
 
 async function HomeLayout({ children }: HomeLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col gap-8">
       <Header />
       <main className="flex flex-col grow">{children}</main>
       <Footer />

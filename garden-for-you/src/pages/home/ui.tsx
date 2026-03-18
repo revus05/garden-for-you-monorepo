@@ -32,7 +32,7 @@ const HomePage = () => {
           </span>
           <Button className="w-fit">Перейти в каталог</Button>
         </div>
-        <div className="relative w-1/2">
+        <div className="relative w-1/2 -z-1">
           <Image
             src={heroImage.src}
             width={600}
