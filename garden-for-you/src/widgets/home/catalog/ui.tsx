@@ -1,28 +1,24 @@
 "use client";
 
-import { Button } from "shared/ui/button";
-
-function requiredEnv(name: string, value: string | undefined): string {
-  if (!value) throw new Error(`Missing ${name}`);
-  return value;
-}
-
-const NEXT_PUBLIC_REGION_ID = requiredEnv(
-  "NEXT_PUBLIC_REGION_ID",
-  process.env.NEXT_PUBLIC_REGION_ID,
-);
-
-import type { HttpTypes } from "@medusajs/types";
+import type { CheckedState } from "@radix-ui/react-checkbox";
+import type { ProductCategoryOrder } from "entities/product/model/types";
+import {
+  useCatalogCategoriesQuery,
+  useCatalogProductsInfiniteQuery,
+} from "features/catalog";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { createSdk } from "shared/lib/sdk";
+import { useDeferredValue, useState } from "react";
 import { Badge } from "shared/ui/badge";
+import { Button } from "shared/ui/button";
+import { Checkbox } from "shared/ui/checkbox";
+import { Field } from "shared/ui/field";
 import { Icons } from "shared/ui/icons";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "shared/ui/input-group";
+import { Label } from "shared/ui/label";
 import {
   Select,
   SelectContent,
@@ -34,108 +30,109 @@ import {
 } from "shared/ui/select";
 
 export const Catalog = () => {
-  const [products, setProducts] = useState<HttpTypes.StoreProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(false);
-  const [page, setPage] = useState(1);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [orderBy, setOrderBy] = useState<ProductCategoryOrder>("-created_at");
+  const deferredSearchQuery = useDeferredValue(searchQuery.trim());
+  const categoryIds = [...selectedCategories].sort();
 
-  const limit = 20;
+  const categoriesQuery = useCatalogCategoriesQuery();
+  const productsQuery = useCatalogProductsInfiniteQuery({
+    categoryIds,
+    searchQuery: deferredSearchQuery,
+    orderBy,
+  });
 
-  useEffect(() => {
-    if (!loading) return;
+  const products =
+    productsQuery.data?.pages.flatMap((page) => page.products) ?? [];
+  const totalProductsCount = productsQuery.data?.pages[0]?.count ?? 0;
+  const isInitialLoading = productsQuery.isPending;
+  const isLoadingMore = productsQuery.isFetchingNextPage;
+  const hasProducts = products.length > 0;
 
-    const offset = (page - 1) * limit;
-
-    const sdk = createSdk();
-
-    sdk.store.product
-      .list({
-        limit,
-        offset,
-        region_id: NEXT_PUBLIC_REGION_ID,
-      })
-      .then(({ products: newProducts, count }) => {
-        setProducts((prev) => {
-          if (prev.length > offset) return prev;
-          return [...prev, ...newProducts];
-        });
-        setHasMore(count > limit * page);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, [loading, page]);
-
-  const loadMore = () => {
-    setPage((p) => p + 1);
-    setLoading(true);
+  const handleCategoryCheckedChange = (
+    categoryId: string,
+    state: CheckedState,
+  ) => {
+    setSelectedCategories((current) =>
+      state
+        ? current.includes(categoryId)
+          ? current
+          : [...current, categoryId]
+        : current.filter((id) => id !== categoryId),
+    );
   };
 
-  const [categories, setCategories] = useState<
-    HttpTypes.StoreProductCategory[]
-  >([]);
-
-  useEffect(() => {
-    const getCategories = async () => {
-      const sdk = createSdk();
-
-      const { product_categories } = await sdk.store.category.list({
-        limit: 100,
-      });
-
-      setCategories(product_categories);
-    };
-
-    void getCategories();
-  }, []);
-
   return (
-    <section>
+    <section className="flex flex-col gap-4">
       <div className="flex justify-between">
         <div className="flex gap-2 items-center">
           <h2 className="text-2xl font-bold">Каталог</h2>
-          {products.length > 0 && (
-            <Badge>{products.length} товара найдено</Badge>
-          )}
+          {hasProducts && <Badge>{totalProductsCount} товара найдено</Badge>}
         </div>
-        <Select>
+        <Select
+          value={orderBy}
+          onValueChange={(orderBy) =>
+            setOrderBy(orderBy as ProductCategoryOrder)
+          }
+        >
           <SelectTrigger className="w-full max-w-48">
             <SelectValue placeholder="Сортировка" />
           </SelectTrigger>
           <SelectContent position="popper">
             <SelectGroup>
               <SelectLabel>Сортировать по</SelectLabel>
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
+              <SelectItem value="-created_at">Сначала новые</SelectItem>
+              <SelectItem value="created_at">Сначала старые</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
       </div>
 
       <div className="flex gap-4">
-        <div className="flex flex-col gap-4 min-w-72">
+        <div className="flex flex-col gap-4 min-w-72 bg-background-secondary p-4 rounded-lg">
           <InputGroup>
             <InputGroupAddon align="inline-start">
               <Icons.search />
             </InputGroupAddon>
-            <InputGroupInput id="products-search" placeholder="Поиск" />
+            <InputGroupInput
+              id="products-search"
+              placeholder="Поиск"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </InputGroup>
 
-          <div className="flex flex-col">
-            {categories.map((item) => (
-              <span key={item.id}>{item.name}</span>
+          <div className="flex flex-col gap-2">
+            {categoriesQuery.data?.map((category) => (
+              <Field orientation="horizontal" key={category.id}>
+                <Checkbox
+                  id={`product-category-${category.id}`}
+                  name="product-category"
+                  checked={selectedCategories.includes(category.id)}
+                  onCheckedChange={(state) =>
+                    handleCategoryCheckedChange(category.id, state)
+                  }
+                />
+                <Label htmlFor={`product-category-${category.id}`}>
+                  {category.name}
+                </Label>
+              </Field>
             ))}
+
+            {categoriesQuery.isPending && <p>Загрузка категорий...</p>}
+            {categoriesQuery.isError && <p>Не удалось загрузить категории.</p>}
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto p-6">
-          {loading && products.length === 0 && <p>Загрузка...</p>}
-          {products.length === 0 && !loading && <p>Товаров не найдено</p>}
+        <div className="w-full">
+          {isInitialLoading && <p>Загрузка...</p>}
+          {productsQuery.isError && <p>Не удалось загрузить каталог.</p>}
+          {!isInitialLoading && !productsQuery.isError && !hasProducts && (
+            <p>Товаров не найдено</p>
+          )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map((product) => (
               <div key={product.id} className="border rounded-lg p-4">
                 {product.thumbnail && (
@@ -162,13 +159,13 @@ export const Catalog = () => {
             ))}
           </div>
 
-          {hasMore && (
+          {productsQuery.hasNextPage && (
             <Button
-              onClick={loadMore}
-              disabled={loading}
+              onClick={() => void productsQuery.fetchNextPage()}
+              disabled={isLoadingMore}
               className="mt-8 block mx-auto bg-black text-white px-6 py-3 rounded"
             >
-              {loading ? "Загрузка..." : "Загрузить ещё"}
+              {isLoadingMore ? "Загрузка..." : "Загрузить ещё"}
             </Button>
           )}
         </div>
