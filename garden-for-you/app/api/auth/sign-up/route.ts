@@ -2,7 +2,7 @@ import type { User } from "entities/user";
 import { signUpSchema } from "features/sign-up/model/schema";
 import { NextResponse } from "next/server";
 import { setAuthTokenCookie } from "shared/lib/auth-cookie.server";
-import { createSdk } from "shared/lib/sdk";
+import { createSdk, sdk } from "shared/lib/sdk";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -18,8 +18,6 @@ export async function POST(request: Request) {
   const { first_name, last_name, email, phone, password } = parsed.data;
 
   try {
-    const sdk = createSdk();
-
     const registrationToken = await sdk.auth.register("customer", "emailpass", {
       email,
       password,

@@ -1,5 +1,5 @@
 import { CATALOG_PRODUCTS_PAGE_SIZE } from "entities/product/model";
-import { createSdk } from "shared/lib/sdk";
+import { sdk } from "shared/lib/sdk";
 import type {
   CatalogFilters,
   CatalogProductsPage,
@@ -10,8 +10,6 @@ function requiredEnv(name: string, value: string | undefined): string {
   if (!value) throw new Error(`Missing ${name}`);
   return value;
 }
-
-const sdk = createSdk();
 
 const NEXT_PUBLIC_REGION_ID = requiredEnv(
   "NEXT_PUBLIC_REGION_ID",

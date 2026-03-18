@@ -28,3 +28,5 @@ export function createSdk({ token }: { token?: string } = {}) {
     },
   });
 }
+
+export const sdk = createSdk();
