@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: garden-postgres
+    environment:
+      POSTGRES_DB: medusa
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d medusa"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: garden-redis
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./garden-for-you-backend
+      dockerfile: Dockerfile
+    container_name: garden-backend
+    env_file:
+      - ./garden-for-you-backend/.env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: sh -c "npx medusa db:migrate && npm run start"
+    ports:
+      - "9000:9000"
+    volumes:
+      - backend_uploads:/app/static
+
+  storefront:
+    build:
+      context: ./garden-for-you
+      dockerfile: Dockerfile
+    container_name: garden-storefront
+    env_file:
+      - ./garden-for-you/.env.docker
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
+  redis_data:
+  backend_uploads:
