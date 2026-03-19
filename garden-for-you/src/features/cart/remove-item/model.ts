@@ -6,9 +6,13 @@ export async function removeCartItem(
   dispatch: AppDispatch,
   lineItemId: string,
 ) {
-  const updatedCart = await removeCartItemRequest(lineItemId);
+  try {
+    const updatedCart = await removeCartItemRequest(lineItemId);
 
-  dispatch(updateCart(updatedCart));
+    dispatch(updateCart(updatedCart));
 
-  return updatedCart;
+    return updatedCart;
+  } catch {
+    return null;
+  }
 }

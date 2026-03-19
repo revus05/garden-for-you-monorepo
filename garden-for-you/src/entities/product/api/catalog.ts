@@ -47,6 +47,8 @@ export async function fetchCatalogProductsPage({
 export async function fetchCatalogCategories(): Promise<ProductCategory[]> {
   const { product_categories } = await sdk.store.category.list({
     limit: 100,
+    include_descendants_tree: true,
+    fields: "id,category_children,handle,name",
   });
 
   return product_categories;

@@ -1,16 +1,38 @@
 import type { Cart } from "entities/cart";
+import { toast } from "sonner";
 
 type CartResponse = {
   cart: Cart | null;
 };
 
-async function parseCartResponse(response: Response, fallbackMessage: string) {
-  if (!response.ok) {
-    const data = (await response.json().catch(() => null)) as {
-      message?: string;
-    } | null;
+type CartApiErrorPayload = {
+  message?: string;
+};
 
-    throw new Error(data?.message ?? fallbackMessage);
+export class CartRequestError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "CartRequestError";
+  }
+}
+
+async function parseErrorPayload(response: Response) {
+  return (await response
+    .json()
+    .catch(() => null)) as CartApiErrorPayload | null;
+}
+
+async function parseCartResponse(
+  response: Response,
+  fallbackMessage: string,
+): Promise<CartResponse> {
+  if (!response.ok) {
+    const data = await parseErrorPayload(response);
+    const message = data?.message ?? fallbackMessage;
+
+    toast.error(message);
+
+    throw new CartRequestError(message);
   }
 
   return (await response.json()) as CartResponse;
@@ -28,13 +50,13 @@ export async function syncCartRequest(): Promise<Cart> {
   );
 
   if (!data.cart) {
-    throw new Error("Корзина не была получена.");
+    throw new CartRequestError("Корзина не была получена.");
   }
 
   return data.cart;
 }
 
-export async function resetCartRequest() {
+export async function resetCartRequest(): Promise<void> {
   const response = await fetch("/api/cart", {
     method: "DELETE",
     credentials: "include",
@@ -42,15 +64,19 @@ export async function resetCartRequest() {
   });
 
   if (!response.ok) {
-    const data = (await response.json().catch(() => null)) as {
-      message?: string;
-    } | null;
+    const data = await parseErrorPayload(response);
+    const message = data?.message ?? "Не удалось очистить корзину.";
 
-    throw new Error(data?.message ?? "Не удалось очистить корзину.");
+    toast.error(message);
+
+    throw new CartRequestError(message);
   }
 }
 
-export async function addCartItemRequest(variantId: string, quantity = 1) {
+export async function addCartItemRequest(
+  variantId: string,
+  quantity = 1,
+): Promise<Cart> {
   const response = await fetch("/api/cart/items", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -65,7 +91,7 @@ export async function addCartItemRequest(variantId: string, quantity = 1) {
   );
 
   if (!data.cart) {
-    throw new Error("Корзина не была получена.");
+    throw new CartRequestError("Корзина не была получена.");
   }
 
   return data.cart;
@@ -74,7 +100,7 @@ export async function addCartItemRequest(variantId: string, quantity = 1) {
 export async function updateCartItemQuantityRequest(
   lineItemId: string,
   quantity: number,
-) {
+): Promise<Cart> {
   const response = await fetch(`/api/cart/items/${lineItemId}`, {
     method: "PATCH",
     headers: { "content-type": "application/json" },
@@ -89,13 +115,15 @@ export async function updateCartItemQuantityRequest(
   );
 
   if (!data.cart) {
-    throw new Error("Корзина не была получена.");
+    throw new CartRequestError("Корзина не была получена.");
   }
 
   return data.cart;
 }
 
-export async function removeCartItemRequest(lineItemId: string) {
+export async function removeCartItemRequest(
+  lineItemId: string,
+): Promise<Cart | null> {
   const response = await fetch(`/api/cart/items/${lineItemId}`, {
     method: "DELETE",
     credentials: "include",
@@ -106,6 +134,10 @@ export async function removeCartItemRequest(lineItemId: string) {
     response,
     "Не удалось удалить товар из корзины.",
   );
+
+  if (!data.cart) {
+    return null;
+  }
 
   return data.cart;
 }

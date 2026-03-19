@@ -7,9 +7,13 @@ export async function addCartItem(
   variantId: string,
   quantity = 1,
 ) {
-  const updatedCart = await addCartItemRequest(variantId, quantity);
+  try {
+    const updatedCart = await addCartItemRequest(variantId, quantity);
 
-  dispatch(updateCart(updatedCart));
+    dispatch(updateCart(updatedCart));
 
-  return updatedCart;
+    return updatedCart;
+  } catch {
+    return null;
+  }
 }

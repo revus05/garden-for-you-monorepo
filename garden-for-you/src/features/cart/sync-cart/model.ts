@@ -9,8 +9,9 @@ export async function syncCart(dispatch: AppDispatch) {
     dispatch(updateCart(cart));
 
     return cart;
-  } catch (error) {
+  } catch {
     dispatch(setCartInitialized(true));
-    throw error;
+
+    return null;
   }
 }

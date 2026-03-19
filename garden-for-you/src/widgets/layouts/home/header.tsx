@@ -5,6 +5,7 @@ import { useAppSelector } from "shared/lib/hooks";
 import { paths } from "shared/navigation";
 import { Button } from "shared/ui/button";
 import { Icons } from "shared/ui/icons";
+import { NavItems } from "./nav-items";
 
 export const Header = () => {
   const user = useAppSelector((state) => state.userSlice.user);
@@ -19,21 +20,7 @@ export const Header = () => {
           </Link>
           <nav>
             <ul className="flex gap-8">
-              <li>
-                <Link href={paths.home}>Главная</Link>
-              </li>
-              <li>
-                <Link href={paths.home}>О нас</Link>
-              </li>
-              <li>
-                <Link href={paths.home}>Оплата и доставка</Link>
-              </li>
-              <li>
-                <Link href={paths.home}>Отзывы</Link>
-              </li>
-              <li>
-                <Link href={paths.home}>Блог</Link>
-              </li>
+              <NavItems />
             </ul>
           </nav>
           <div className="flex gap-1 items-center">

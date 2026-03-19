@@ -20,7 +20,7 @@ export const CartTotal = () => {
   const grandTotal = itemsTotal + deliveryPrice;
 
   return (
-    <Card className="min-w-80 bg-card/95 lg:sticky lg:top-24">
+    <Card className="min-w-96 bg-card/95 lg:sticky lg:top-24">
       <CardHeader className="gap-2 border-b border-border/60">
         <CardTitle className="text-xl font-semibold">Итого</CardTitle>
         <CardDescription>

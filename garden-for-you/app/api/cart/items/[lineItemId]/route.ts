@@ -46,7 +46,17 @@ export async function PATCH(
     setCartIdCookie(response, updatedCart.id);
 
     return response;
-  } catch {
+  } catch (e) {
+    const message = e instanceof Error ? e.message : null;
+
+    console.error(message);
+
+    if (message === "Some variant does not have the required inventory") {
+      return NextResponse.json(
+        { message: "На складе нет достаточно этого товара" },
+        { status: 400 },
+      );
+    }
     return NextResponse.json(
       { message: "Не удалось обновить товар в корзине." },
       { status: 500 },

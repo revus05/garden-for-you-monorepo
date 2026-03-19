@@ -7,6 +7,7 @@ import {
   useCatalogCategoriesQuery,
   useCatalogProductsInfiniteQuery,
 } from "features/catalog";
+import { getFilteredCategories } from "features/catalog/lib/category-utils";
 import Image from "next/image";
 import { useDeferredValue, useState } from "react";
 import { useAppDispatch } from "shared/lib/hooks";
@@ -30,9 +31,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "shared/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "shared/ui/tabs";
 
 export const Catalog = () => {
   const dispatch = useAppDispatch();
+
+  const [activeTab, setActiveTab] = useState<"seedlings" | "fertilizer">(
+    "seedlings",
+  );
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,8 +47,15 @@ export const Catalog = () => {
   const categoryIds = [...selectedCategories].sort();
 
   const categoriesQuery = useCatalogCategoriesQuery();
-  const productsQuery = useCatalogProductsInfiniteQuery({
+
+  const filteredCategories = getFilteredCategories(
+    activeTab,
     categoryIds,
+    categoriesQuery.data || [],
+  );
+
+  const productsQuery = useCatalogProductsInfiniteQuery({
+    categoryIds: filteredCategories,
     searchQuery: deferredSearchQuery,
     orderBy,
   });
@@ -72,20 +85,39 @@ export const Catalog = () => {
     console.log("addToCart", response);
   };
 
+  const activeCategories =
+    categoriesQuery.data?.find((category) => category.handle === activeTab)
+      ?.category_children || [];
+
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex justify-between">
+      <div className="grid grid-cols-3 gap-8">
         <div className="flex gap-2 items-center">
           <h2 className="text-2xl font-bold">Каталог</h2>
           {hasProducts && <Badge>{totalProductsCount} товара найдено</Badge>}
         </div>
+
+        <Tabs
+          defaultValue="seedlings"
+          value={activeTab}
+          onValueChange={(tab) =>
+            setActiveTab(tab as "seedlings" | "fertilizer")
+          }
+          className="justify-self-center"
+        >
+          <TabsList>
+            <TabsTrigger value="seedlings">Саженцы</TabsTrigger>
+            <TabsTrigger value="fertilizer">Удобрения</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         <Select
           value={orderBy}
           onValueChange={(orderBy) =>
             setOrderBy(orderBy as ProductCategoryOrder)
           }
         >
-          <SelectTrigger className="w-full max-w-48">
+          <SelectTrigger className="w-full max-w-48 justify-self-end">
             <SelectValue placeholder="Сортировка" />
           </SelectTrigger>
           <SelectContent position="popper">
@@ -113,7 +145,7 @@ export const Catalog = () => {
           </InputGroup>
 
           <div className="flex flex-col gap-2">
-            {categoriesQuery.data?.map((category) => (
+            {activeCategories?.map((category) => (
               <Field orientation="horizontal" key={category.id}>
                 <Checkbox
                   id={`product-category-${category.id}`}
@@ -141,38 +173,46 @@ export const Catalog = () => {
             <p>Товаров не найдено</p>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {products.map((product) => (
-              <div key={product.id} className="border rounded-lg p-4">
+              <div
+                key={product.id}
+                className="flex flex-col rounded-lg hover:shadow-product-cart transition-shadow"
+              >
                 {product.thumbnail && (
-                  <Image
-                    src={product.thumbnail}
-                    alt={product.title}
-                    width={300}
-                    height={300}
-                    className="w-full h-48 object-cover rounded"
-                  />
+                  <div>
+                    <Image
+                      src={product.thumbnail}
+                      alt={product.title}
+                      width={300}
+                      height={300}
+                      className="w-full object-cover rounded-t-lg"
+                    />
+                  </div>
                 )}
-                <h3 className="font-semibold mt-3">{product.title}</h3>
-                <p className="text-sm text-gray-600">
-                  {product.description?.slice(0, 100)}...
-                </p>
-
-                {product.variants?.[0]?.calculated_price && (
-                  <p className="text-lg font-bold mt-2">
-                    {product.variants[0].calculated_price.calculated_amount}{" "}
-                    {product.variants[0].calculated_price.currency_code?.toUpperCase()}
-                  </p>
-                )}
-
-                <Button
-                  onClick={() =>
-                    product.variants?.[0]?.id &&
-                    handleAddToCartClick(product.variants[0].id)
-                  }
-                >
-                  В корзину
-                </Button>
+                <div className="flex flex-col gap-1 p-2 grow">
+                  <h3 className="font-semibold">{product.title}</h3>
+                  <div className="flex justify-between items-center mt-auto">
+                    {product.variants?.[0]?.calculated_price && (
+                      <p className="text-lg font-bold">
+                        {product.variants[0].calculated_price.calculated_amount?.toFixed(
+                          2,
+                        )}{" "}
+                        {product.variants[0].calculated_price.currency_code?.toUpperCase()}
+                      </p>
+                    )}
+                    <Button
+                      size="icon"
+                      onClick={() =>
+                        product.variants?.[0]?.id &&
+                        handleAddToCartClick(product.variants[0].id)
+                      }
+                      className="size-10"
+                    >
+                      <Icons.cart className="[&_path]:stroke-primary-foreground" />
+                    </Button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>

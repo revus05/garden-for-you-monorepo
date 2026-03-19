@@ -7,8 +7,15 @@ export async function updateCartItemQuantity(
   lineItemId: string,
   quantity: number,
 ) {
-  const updatedCart = await updateCartItemQuantityRequest(lineItemId, quantity);
-  dispatch(updateCart(updatedCart));
+  try {
+    const updatedCart = await updateCartItemQuantityRequest(
+      lineItemId,
+      quantity,
+    );
+    dispatch(updateCart(updatedCart));
 
-  return updatedCart;
+    return updatedCart;
+  } catch {
+    return null;
+  }
 }
