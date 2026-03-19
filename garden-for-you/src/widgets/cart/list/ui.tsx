@@ -3,8 +3,10 @@
 import { removeCartItem, updateCartItemQuantity } from "features/cart";
 import { X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { formatPrice } from "shared/lib/format-price";
 import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
+import { paths } from "shared/navigation";
 import { Button } from "shared/ui/button";
 import {
   Card,
@@ -25,6 +27,17 @@ import {
 export const CartList = () => {
   const cart = useAppSelector((state) => state.cartSlice.cart);
   const dispatch = useAppDispatch();
+
+  if (!cart || !cart?.items?.length) {
+    return (
+      <div className="flex flex-col gap-4 items-center">
+        <p className="text-secondary-foreground/70">Нет товаров в корзине</p>
+        <Button className="w-fit" asChild>
+          <Link href={paths.home}>В каталог</Link>
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <Card className="bg-card/95 gap-0">

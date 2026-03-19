@@ -30,7 +30,7 @@ export const Header = () => {
             <Button variant="ghost" size="icon" asChild>
               <Link href={paths.cart} className="relative">
                 <Icons.cart />
-                {cart?.items?.length && cart?.items?.length > 0 && (
+                {cart?.items && cart?.items?.length > 0 && (
                   <div className="absolute size-4 top-0 right-0 translate-x-1 -translate-y-1 rounded-full bg-red-500 flex justify-center items-center">
                     <span className="text-xs font-medium text-primary-foreground">
                       {cart.items.length}

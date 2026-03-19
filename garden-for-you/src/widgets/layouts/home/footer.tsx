@@ -16,13 +16,13 @@ export const Footer = () => {
         <h2 className="font-black text-4xl">Сад Для Вас</h2>
         <div className="grid grid-cols-3 gap-8">
           <div className="flex flex-col gap-4">
-            <Link href="#" className="hover:underline">
+            <Link href="#" className="underline">
               Политика конфиденциальности
             </Link>
-            <Link href="#" className="hover:underline">
+            <Link href="#" className="underline">
               Соглашение на обработку персональных данных
             </Link>
-            <Link href="#" className="hover:underline">
+            <Link href="#" className="underline">
               Договор оферты
             </Link>
             <span>
@@ -50,6 +50,12 @@ export const Footer = () => {
               ,{" "}
               <Link href="tel:+375447321771" className="hover:underline">
                 +375 (44) 732-17-71
+              </Link>
+            </span>
+            <span>
+              Telegram:
+              <Link href="https://t.me/alex_key1" className="hover:underline">
+                @alex_key1
               </Link>
             </span>
           </div>

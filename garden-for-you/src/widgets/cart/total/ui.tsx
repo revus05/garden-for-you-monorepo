@@ -19,6 +19,10 @@ export const CartTotal = () => {
   const itemsTotal = cart?.total ?? 0;
   const grandTotal = itemsTotal + deliveryPrice;
 
+  if (!cart || !cart?.items?.length) {
+    return null;
+  }
+
   return (
     <Card className="min-w-96 bg-card/95 lg:sticky lg:top-24">
       <CardHeader className="gap-2 border-b border-border/60">
