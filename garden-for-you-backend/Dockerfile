@@ -20,7 +20,10 @@ ENV NODE_ENV=production
 COPY package*.json ./
 COPY --from=build /app/tsconfig.json ./tsconfig.json
 COPY --from=deps /app/node_modules ./node_modules
+
 COPY --from=build /app/.medusa ./.medusa
+COPY --from=build /app/build ./build
+
 COPY --from=build /app/medusa-config.ts ./medusa-config.ts
 COPY --from=build /app/src ./src
 COPY --from=build /app/static ./static
