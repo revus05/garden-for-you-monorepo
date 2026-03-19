@@ -37,11 +37,10 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    command: sh -c "npx medusa db:migrate && npm run start"
     ports:
       - "9000:9000"
     volumes:
-      - backend_uploads:/app/static
+      - backend_uploads:/app/.medusa/server/static
 
   storefront:
     build:
