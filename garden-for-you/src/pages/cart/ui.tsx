@@ -4,7 +4,7 @@ import { withHomeLayout } from "widgets/layouts/home";
 
 const CartPage = () => {
   return (
-    <div className="wrapper flex flex-col gap-8 lg:flex-row lg:items-start">
+    <div className="wrapper flex flex-col gap-8 md:flex-row lg:items-start">
       <div className="min-w-0 flex-1">
         <CartList />
       </div>

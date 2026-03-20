@@ -17,6 +17,14 @@ import { paths } from "shared/navigation";
 import { Badge } from "shared/ui/badge";
 import { Button } from "shared/ui/button";
 import { Checkbox } from "shared/ui/checkbox";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "shared/ui/drawer";
 import { Field } from "shared/ui/field";
 import { Icons } from "shared/ui/icons";
 import {
@@ -35,6 +43,7 @@ import {
   SelectValue,
 } from "shared/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "shared/ui/tabs";
+import plantPlaceholder from "../../../../public/image/plant-placholder.svg";
 
 export const Catalog = () => {
   const dispatch = useAppDispatch();
@@ -42,7 +51,7 @@ export const Catalog = () => {
   const [activeTab, setActiveTab] = useState<"seedlings" | "fertilizer">(
     "seedlings",
   );
-
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [orderBy, setOrderBy] = useState<ProductCategoryOrder>("-created_at");
@@ -84,8 +93,7 @@ export const Catalog = () => {
   };
 
   const handleAddToCartClick = async (variantId: string) => {
-    const response = await addCartItem(dispatch, variantId, 1);
-    console.log("addToCart", response);
+    await addCartItem(dispatch, variantId, 1);
   };
 
   const activeCategories =
@@ -94,84 +102,126 @@ export const Catalog = () => {
 
   const cart = useAppSelector((state) => state.cartSlice.cart);
 
-  console.log(cart);
+  const tabs = (
+    <Tabs
+      defaultValue="seedlings"
+      value={activeTab}
+      onValueChange={(tab) => setActiveTab(tab as "seedlings" | "fertilizer")}
+      className="md:justify-self-center"
+    >
+      <TabsList className="w-full md:w-auto">
+        <TabsTrigger value="seedlings" className="flex-1 md:flex-none">
+          Саженцы
+        </TabsTrigger>
+        <TabsTrigger value="fertilizer" className="flex-1 md:flex-none">
+          Удобрения
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
+  );
+
+  const sorting = (
+    <Select
+      value={orderBy}
+      onValueChange={(orderBy) => setOrderBy(orderBy as ProductCategoryOrder)}
+    >
+      <SelectTrigger className="w-full md:max-w-48 md:justify-self-end">
+        <SelectValue placeholder="Сортировка" />
+      </SelectTrigger>
+      <SelectContent position="popper">
+        <SelectGroup>
+          <SelectLabel>Сортировать по</SelectLabel>
+          <SelectItem value="-created_at">Сначала новые</SelectItem>
+          <SelectItem value="created_at">Сначала старые</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+
+  const search = (
+    <InputGroup>
+      <InputGroupAddon align="inline-start">
+        <Icons.search />
+      </InputGroupAddon>
+      <InputGroupInput
+        id="products-search"
+        placeholder="Поиск"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+    </InputGroup>
+  );
+
+  const categoryFilters = (
+    <div className="flex flex-col gap-4 w-full bg-background-secondary p-4 rounded-lg h-fit md:w-64 lg:w-72">
+      <div className="flex flex-col gap-2">
+        <div className="hidden md:block">{search}</div>
+        {activeCategories?.map((category) => (
+          <Field
+            orientation="horizontal"
+            key={category.id}
+            className="max-w-full"
+          >
+            <Checkbox
+              id={`product-category-${category.id}`}
+              name="product-category"
+              checked={selectedCategories.includes(category.id)}
+              onCheckedChange={(state) =>
+                handleCategoryCheckedChange(category.id, state)
+              }
+            />
+            <Label
+              htmlFor={`product-category-${category.id}`}
+              className="block truncate w-full"
+            >
+              {category.name}
+            </Label>
+          </Field>
+        ))}
+
+        {categoriesQuery.isPending && <p>Загрузка категорий...</p>}
+        {categoriesQuery.isError && <p>Не удалось загрузить категории.</p>}
+      </div>
+    </div>
+  );
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="grid grid-cols-3 gap-8">
-        <div className="flex gap-2 items-center">
+      <div className="grid md:grid-cols-3 grid-cols-2 gap-8">
+        <div className="flex gap-2 items-center col-span-2 md:col-span-1">
           <h2 className="text-2xl font-bold">Каталог</h2>
           {hasProducts && <Badge>{totalProductsCount} товара найдено</Badge>}
+          <Drawer open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+            <DrawerTrigger asChild>
+              <Button variant="outline" className="ml-auto md:hidden">
+                Фильтры
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent className="md:hidden max-h-[90vh]">
+              <DrawerHeader>
+                <DrawerTitle>Фильтры</DrawerTitle>
+                <DrawerDescription>
+                  Выберите категорию, сортировку и параметры поиска.
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className="flex flex-col gap-4 overflow-y-auto px-4 pb-4">
+                {tabs}
+                {sorting}
+                {categoryFilters}
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
 
-        <Tabs
-          defaultValue="seedlings"
-          value={activeTab}
-          onValueChange={(tab) =>
-            setActiveTab(tab as "seedlings" | "fertilizer")
-          }
-          className="justify-self-center"
-        >
-          <TabsList>
-            <TabsTrigger value="seedlings">Саженцы</TabsTrigger>
-            <TabsTrigger value="fertilizer">Удобрения</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="block md:hidden col-span-2">{search}</div>
 
-        <Select
-          value={orderBy}
-          onValueChange={(orderBy) =>
-            setOrderBy(orderBy as ProductCategoryOrder)
-          }
-        >
-          <SelectTrigger className="w-full max-w-48 justify-self-end">
-            <SelectValue placeholder="Сортировка" />
-          </SelectTrigger>
-          <SelectContent position="popper">
-            <SelectGroup>
-              <SelectLabel>Сортировать по</SelectLabel>
-              <SelectItem value="-created_at">Сначала новые</SelectItem>
-              <SelectItem value="created_at">Сначала старые</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <div className="hidden md:block">{tabs}</div>
+
+        <div className="hidden md:block">{sorting}</div>
       </div>
 
-      <div className="flex gap-4">
-        <div className="flex flex-col gap-4 min-w-72 bg-background-secondary p-4 rounded-lg">
-          <InputGroup>
-            <InputGroupAddon align="inline-start">
-              <Icons.search />
-            </InputGroupAddon>
-            <InputGroupInput
-              id="products-search"
-              placeholder="Поиск"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </InputGroup>
-
-          <div className="flex flex-col gap-2">
-            {activeCategories?.map((category) => (
-              <Field orientation="horizontal" key={category.id}>
-                <Checkbox
-                  id={`product-category-${category.id}`}
-                  name="product-category"
-                  checked={selectedCategories.includes(category.id)}
-                  onCheckedChange={(state) =>
-                    handleCategoryCheckedChange(category.id, state)
-                  }
-                />
-                <Label htmlFor={`product-category-${category.id}`}>
-                  {category.name}
-                </Label>
-              </Field>
-            ))}
-
-            {categoriesQuery.isPending && <p>Загрузка категорий...</p>}
-            {categoriesQuery.isError && <p>Не удалось загрузить категории.</p>}
-          </div>
-        </div>
+      <div className="flex gap-4 sm:flex-row flex-col">
+        <div className="hidden md:flex md:flex-col">{categoryFilters}</div>
 
         <div className="w-full">
           {isInitialLoading && <p>Загрузка...</p>}
@@ -180,7 +230,7 @@ export const Catalog = () => {
             <p>Товаров не найдено</p>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map((product) => {
               const cartItem = cart?.items?.find(
                 (item) => item.product?.id === product.id,
@@ -201,23 +251,36 @@ export const Catalog = () => {
               return (
                 <div
                   key={product.id}
-                  className="flex flex-col rounded-lg hover:shadow-product-cart transition-shadow relative"
+                  className="flex flex-col rounded-lg hover:shadow-product-cart transition-shadow relative border hover:border-primary"
                 >
                   {isInCart && (
-                    <Badge className="absolute top-2 left-2">В корзине</Badge>
+                    <Badge className="absolute top-2 left-2 shadow-md">
+                      В корзине
+                    </Badge>
                   )}
 
-                  {product.thumbnail && (
-                    <Link href={`${paths.productPage}/${product.handle}`}>
+                  <Link
+                    href={`${paths.productPage}/${product.handle}`}
+                    className="w-full aspect-square flex justify-center items-center"
+                  >
+                    {product.thumbnail ? (
                       <Image
                         src={product.thumbnail}
                         alt={product.title}
                         width={300}
                         height={300}
-                        className="w-full object-cover rounded-t-lg"
+                        className="w-full aspect-square object-cover rounded-t-lg"
                       />
-                    </Link>
-                  )}
+                    ) : (
+                      <Image
+                        src={plantPlaceholder.src}
+                        alt={product.title}
+                        width={300}
+                        height={300}
+                        className="w-[70%] aspect-square object-cover rounded-t-lg translate-x-2 fill-primary-foreground/70"
+                      />
+                    )}
+                  </Link>
                   <div className="flex flex-col gap-1 p-2 grow">
                     <Link
                       href={`${paths.productPage}/${product.handle}`}
@@ -259,7 +322,7 @@ export const Catalog = () => {
             <Button
               onClick={() => void productsQuery.fetchNextPage()}
               disabled={isLoadingMore}
-              className="mt-8 block mx-auto bg-black text-white px-6 py-3 rounded"
+              className="mt-8 mx-auto "
             >
               {isLoadingMore ? "Загрузка..." : "Загрузить ещё"}
             </Button>

@@ -1,23 +1,37 @@
 import Link from "next/link";
 import { paths } from "shared/navigation";
 
-export const NavItems = () => {
+type NavItemsProps = {
+  onItemClick?: () => void;
+};
+
+export const NavItems = ({ onItemClick }: NavItemsProps) => {
   return (
     <>
       <li>
-        <Link href={paths.home}>Главная</Link>
+        <Link href={paths.home} onClick={onItemClick}>
+          Главная
+        </Link>
       </li>
       <li>
-        <Link href={paths.home}>О нас</Link>
+        <Link href={paths.home} onClick={onItemClick}>
+          О нас
+        </Link>
       </li>
       <li>
-        <Link href={paths.home}>Оплата и доставка</Link>
+        <Link href={paths.home} onClick={onItemClick}>
+          Оплата и доставка
+        </Link>
       </li>
       <li>
-        <Link href={paths.home}>Отзывы</Link>
+        <Link href={paths.home} onClick={onItemClick}>
+          Отзывы
+        </Link>
       </li>
       <li>
-        <Link href={paths.home}>Блог</Link>
+        <Link href={paths.home} onClick={onItemClick}>
+          Блог
+        </Link>
       </li>
     </>
   );

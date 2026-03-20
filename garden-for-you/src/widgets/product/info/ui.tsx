@@ -16,13 +16,10 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
   const dispatch = useAppDispatch();
 
   const handleAddToCartClick = async (variantId: string) => {
-    const response = await addCartItem(dispatch, variantId, 1);
-    console.log("addToCart", response);
+    await addCartItem(dispatch, variantId, 1);
   };
 
   const cart = useAppSelector((state) => state.cartSlice.cart);
-
-  console.log(cart);
 
   const cartItem = cart?.items?.find((item) => item.product?.id === product.id);
 
@@ -62,7 +59,7 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
           )}
         />
       </Button>
-      <span className="whitespace-pre">{product.description}</span>
+      <span className="whitespace-pre-line">{product.description}</span>
     </div>
   );
 };

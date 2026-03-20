@@ -11,7 +11,7 @@ type ProductPageViewProps = {
 const ProductPageView = ({ product }: ProductPageViewProps) => {
   return (
     <div className="wrapper">
-      <div className="flex gap-8">
+      <div className="grid sm:grid-cols-2 grid-cols-1 gap-8">
         <ProductImage product={product} />
         <ProductInfo product={product} />
       </div>

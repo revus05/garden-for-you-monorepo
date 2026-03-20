@@ -18,8 +18,8 @@ export const ProductImage: FC<ProductImageProps> = ({ product }) => {
     <div className="flex flex-col gap-4">
       <Image
         src={currentThumbnail}
-        width={500}
-        height={500}
+        width={620}
+        height={620}
         alt={`${product.title} thumbnail`}
         className="aspect-square rounded-xl border"
       />

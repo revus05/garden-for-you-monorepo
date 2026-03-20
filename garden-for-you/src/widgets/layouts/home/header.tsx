@@ -5,6 +5,7 @@ import { useAppSelector } from "shared/lib/hooks";
 import { paths } from "shared/navigation";
 import { Button } from "shared/ui/button";
 import { Icons } from "shared/ui/icons";
+import { MobileMenu } from "./mobile-menu";
 import { NavItems } from "./nav-items";
 
 export const Header = () => {
@@ -12,13 +13,15 @@ export const Header = () => {
   const cart = useAppSelector((state) => state.cartSlice.cart);
 
   return (
-    <header className="relative h-17">
-      <div className="fixed w-full bg-background-secondary/80 py-4 backdrop-blur-2xl">
-        <div className="wrapper flex items-center justify-between">
+    <header className="relative sm:h-17 h-23">
+      <div className="fixed z-30 w-full bg-background-secondary/80 py-2 sm:py-4 backdrop-blur-2xl">
+        <div className="wrapper flex sm:flex-row flex-col gap-2 items-center justify-between">
           <Link href={paths.home}>
-            <h1 className="text-primary font-black text-3xl">Сад Для Вас</h1>
+            <h1 className="text-primary font-black text-3xl whitespace-nowrap">
+              Сад Для Вас
+            </h1>
           </Link>
-          <nav>
+          <nav className="lg:block hidden">
             <ul className="flex gap-8">
               <NavItems />
             </ul>
@@ -44,10 +47,17 @@ export const Header = () => {
                 href={user ? paths.profile : paths.signIn}
                 aria-label={user ? "Профиль" : "Войти"}
               >
-                {user && <span>{user.first_name}</span>}
+                {user?.first_name && (
+                  <span>
+                    {user.first_name.length > 20
+                      ? `${user.first_name.substring(0, 19)}...`
+                      : user.first_name}
+                  </span>
+                )}
                 <Icons.user />
               </Link>
             </Button>
+            <MobileMenu />
           </div>
         </div>
       </div>

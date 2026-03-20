@@ -10,11 +10,11 @@ export const Footer = () => {
         backgroundImage: `url(${plantsPattern.src})`,
         backgroundPosition: "center",
       }}
-      className="py-32"
+      className="md:py-32 py-12"
     >
       <div className="wrapper text-primary-foreground flex flex-col gap-8">
         <h2 className="font-black text-4xl">Сад Для Вас</h2>
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
           <div className="flex flex-col gap-4">
             <Link href="#" className="underline">
               Политика конфиденциальности
@@ -30,7 +30,7 @@ export const Footer = () => {
               для Вас", УНП 691532502
             </span>
           </div>
-          <nav className="flex justify-center">
+          <nav className="flex md:justify-center">
             <ul className="flex flex-col gap-2">
               <NavItems />
             </ul>
