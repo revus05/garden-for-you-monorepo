@@ -5,4 +5,6 @@ export const paths = {
   profile: "/profile",
   cart: "/cart",
   productPage: "/product",
+  aboutUs: "/about-us",
+  blog: "/blog",
 };

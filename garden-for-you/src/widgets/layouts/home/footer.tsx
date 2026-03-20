@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Icons } from "shared/ui/icons";
 import { NavItems } from "widgets/layouts/home/nav-items";
 import plantsPattern from "../../../../public/image/plants-pattern.png";
 
@@ -52,12 +53,19 @@ export const Footer = () => {
                 +375 (44) 732-17-71
               </Link>
             </span>
-            <span>
-              Telegram:
+            <div className="flex gap-2 items-center">
+              <Icons.telegram className="size-8 fill-white stroke-white" />
               <Link href="https://t.me/alex_key1" className="hover:underline">
                 @alex_key1
               </Link>
-            </span>
+            </div>
+            <iframe
+              title="Яндекс карта"
+              src="https://yandex.ru/map-widget/v1/?um=constructor%3Ae5089923a4e2685886697236ae92f5e0eb12726f30c58d73cb59846fe2a82f8e&amp;source=constructor"
+              width="500"
+              height="400"
+              className="w-full"
+            />
           </div>
         </div>
       </div>

@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "shared/lib/utils";
 import { paths } from "shared/navigation";
 
 type NavItemsProps = {
@@ -6,15 +10,27 @@ type NavItemsProps = {
 };
 
 export const NavItems = ({ onItemClick }: NavItemsProps) => {
+  const pathname = usePathname();
+
   return (
     <>
       <li>
-        <Link href={paths.home} onClick={onItemClick}>
+        <Link
+          href={paths.home}
+          onClick={onItemClick}
+          className={cn(pathname === paths.home && "font-bold text-primary")}
+        >
           Главная
         </Link>
       </li>
       <li>
-        <Link href={paths.home} onClick={onItemClick}>
+        <Link
+          href={paths.aboutUs}
+          onClick={onItemClick}
+          className={cn(
+            pathname?.includes(paths.aboutUs) && "font-bold text-primary",
+          )}
+        >
           О нас
         </Link>
       </li>
@@ -29,7 +45,13 @@ export const NavItems = ({ onItemClick }: NavItemsProps) => {
         </Link>
       </li>
       <li>
-        <Link href={paths.home} onClick={onItemClick}>
+        <Link
+          href={paths.blog}
+          onClick={onItemClick}
+          className={cn(
+            pathname?.includes(paths.blog) && "font-bold text-primary",
+          )}
+        >
           Блог
         </Link>
       </li>
