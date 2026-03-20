@@ -2,15 +2,6 @@ import Image from "next/image";
 import { Badge } from "shared/ui/badge";
 import { Button } from "shared/ui/button";
 import { Icons } from "shared/ui/icons";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "shared/ui/select";
 import { Catalog } from "widgets/home/catalog";
 import { withHomeLayout } from "widgets/layouts/home";
 import heroImage from "../../../public/image/hero.png";

@@ -2,15 +2,18 @@
 
 import type { CheckedState } from "@radix-ui/react-checkbox";
 import type { ProductCategoryOrder } from "entities/product/model/types";
-import { addCartItem } from "features/cart";
+import { addCartItem, removeCartItem } from "features/cart";
 import {
   useCatalogCategoriesQuery,
   useCatalogProductsInfiniteQuery,
 } from "features/catalog";
 import { getFilteredCategories } from "features/catalog/lib/category-utils";
 import Image from "next/image";
+import Link from "next/link";
 import { useDeferredValue, useState } from "react";
-import { useAppDispatch } from "shared/lib/hooks";
+import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
+import { cn } from "shared/lib/utils";
+import { paths } from "shared/navigation";
 import { Badge } from "shared/ui/badge";
 import { Button } from "shared/ui/button";
 import { Checkbox } from "shared/ui/checkbox";
@@ -88,6 +91,10 @@ export const Catalog = () => {
   const activeCategories =
     categoriesQuery.data?.find((category) => category.handle === activeTab)
       ?.category_children || [];
+
+  const cart = useAppSelector((state) => state.cartSlice.cart);
+
+  console.log(cart);
 
   return (
     <section className="flex flex-col gap-4">
@@ -174,47 +181,78 @@ export const Catalog = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="flex flex-col rounded-lg hover:shadow-product-cart transition-shadow"
-              >
-                {product.thumbnail && (
-                  <div>
-                    <Image
-                      src={product.thumbnail}
-                      alt={product.title}
-                      width={300}
-                      height={300}
-                      className="w-full object-cover rounded-t-lg"
-                    />
-                  </div>
-                )}
-                <div className="flex flex-col gap-1 p-2 grow">
-                  <h3 className="font-semibold">{product.title}</h3>
-                  <div className="flex justify-between items-center mt-auto">
-                    {product.variants?.[0]?.calculated_price && (
-                      <p className="text-lg font-bold">
-                        {product.variants[0].calculated_price.calculated_amount?.toFixed(
-                          2,
-                        )}{" "}
-                        {product.variants[0].calculated_price.currency_code?.toUpperCase()}
-                      </p>
-                    )}
-                    <Button
-                      size="icon"
-                      onClick={() =>
-                        product.variants?.[0]?.id &&
-                        handleAddToCartClick(product.variants[0].id)
-                      }
-                      className="size-10"
+            {products.map((product) => {
+              const cartItem = cart?.items?.find(
+                (item) => item.product?.id === product.id,
+              );
+
+              const isInCart = !!cartItem;
+
+              const handleCartButtonClick = () => {
+                if (!product.variants) return;
+
+                if (isInCart) {
+                  void removeCartItem(dispatch, cartItem?.id);
+                } else {
+                  void handleAddToCartClick(product.variants[0].id);
+                }
+              };
+
+              return (
+                <div
+                  key={product.id}
+                  className="flex flex-col rounded-lg hover:shadow-product-cart transition-shadow relative"
+                >
+                  {isInCart && (
+                    <Badge className="absolute top-2 left-2">В корзине</Badge>
+                  )}
+
+                  {product.thumbnail && (
+                    <Link href={`${paths.productPage}/${product.handle}`}>
+                      <Image
+                        src={product.thumbnail}
+                        alt={product.title}
+                        width={300}
+                        height={300}
+                        className="w-full object-cover rounded-t-lg"
+                      />
+                    </Link>
+                  )}
+                  <div className="flex flex-col gap-1 p-2 grow">
+                    <Link
+                      href={`${paths.productPage}/${product.handle}`}
+                      className="font-semibold hover:underline"
                     >
-                      <Icons.cart className="[&_path]:stroke-primary-foreground" />
-                    </Button>
+                      {product.title}
+                    </Link>
+                    <div className="flex justify-between items-center mt-auto">
+                      {product.variants?.[0]?.calculated_price && (
+                        <p className="text-lg font-bold">
+                          {product.variants[0].calculated_price.calculated_amount?.toFixed(
+                            2,
+                          )}{" "}
+                          {product.variants[0].calculated_price.currency_code?.toUpperCase()}
+                        </p>
+                      )}
+                      <Button
+                        size="icon"
+                        onClick={handleCartButtonClick}
+                        className="size-10"
+                        variant={isInCart ? "outline" : "default"}
+                      >
+                        <Icons.cart
+                          className={cn(
+                            isInCart
+                              ? "[&_path]:stroke-secondary-foreground"
+                              : "[&_path]:stroke-primary-foreground",
+                          )}
+                        />
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {productsQuery.hasNextPage && (

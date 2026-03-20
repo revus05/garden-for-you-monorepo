@@ -74,20 +74,25 @@ export const CartList = () => {
               >
                 <TableCell className="w-24">
                   {item.thumbnail && (
-                    <Image
-                      src={item.thumbnail}
-                      width={80}
-                      height={80}
-                      alt={item.product_title || ""}
-                      className="rounded-2xl border border-border/50 object-cover"
-                    />
+                    <Link href={`${paths.productPage}/${item.product_handle}`}>
+                      <Image
+                        src={item.thumbnail}
+                        width={80}
+                        height={80}
+                        alt={item.product_title || ""}
+                        className="rounded-2xl border border-border/50 object-cover"
+                      />
+                    </Link>
                   )}
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium text-foreground">
+                    <Link
+                      className="font-medium text-foreground hover:underline"
+                      href={`${paths.productPage}/${item.product_handle}`}
+                    >
                       {item.product_title}
-                    </span>
+                    </Link>
                   </div>
                 </TableCell>
                 <TableCell className="w-40 font-medium">
