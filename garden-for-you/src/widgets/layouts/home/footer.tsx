@@ -1,7 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Icons } from "shared/ui/icons";
 import { NavItems } from "widgets/layouts/home/nav-items";
 import plantsPattern from "../../../../public/image/plants-pattern.png";
+import telegram from "../../../../public/image/telegram.svg";
 
 export const Footer = () => {
   return (
@@ -32,17 +33,29 @@ export const Footer = () => {
             </span>
           </div>
           <nav className="flex md:justify-center">
-            <ul className="flex flex-col gap-2">
+            <ul className="flex flex-col gap-2 [&_a]:font-normal [&_a]:text-primary-foreground">
               <NavItems />
             </ul>
           </nav>
           <div className="flex flex-col gap-2">
-            <span>
-              Александр:{" "}
-              <Link href="tel:+375291066556" className="hover:underline">
-                +375 (29) 106-65-56
+            <iframe
+              title="Яндекс карта"
+              src="https://yandex.ru/map-widget/v1/?um=constructor%3Ae5089923a4e2685886697236ae92f5e0eb12726f30c58d73cb59846fe2a82f8e&amp;source=constructor"
+              width="500"
+              height="300"
+              className="w-full"
+            />
+            <div className="flex gap-2 items-center">
+              <span>
+                Александр:{" "}
+                <Link href="tel:+375291066556" className="hover:underline">
+                  +375 (29) 106-65-56
+                </Link>
+              </span>
+              <Link href="https://t.me/alex_key1" className="hover:underline">
+                <Image src={telegram} width={32} height={32} alt="telegram" />
               </Link>
-            </span>
+            </div>
             <span>
               Анатолий:{" "}
               <Link href="tel:+375297711088" className="hover:underline">
@@ -53,19 +66,6 @@ export const Footer = () => {
                 +375 (44) 732-17-71
               </Link>
             </span>
-            <div className="flex gap-2 items-center">
-              <Icons.telegram className="size-8 fill-white stroke-white" />
-              <Link href="https://t.me/alex_key1" className="hover:underline">
-                @alex_key1
-              </Link>
-            </div>
-            <iframe
-              title="Яндекс карта"
-              src="https://yandex.ru/map-widget/v1/?um=constructor%3Ae5089923a4e2685886697236ae92f5e0eb12726f30c58d73cb59846fe2a82f8e&amp;source=constructor"
-              width="500"
-              height="400"
-              className="w-full"
-            />
           </div>
         </div>
       </div>

@@ -1,10 +1,6 @@
 import Medusa from "@medusajs/js-sdk";
 import { AUTH_TOKEN_COOKIE } from "shared/config/auth";
-
-function requiredEnv(name: string, value: string | undefined): string {
-  if (!value) throw new Error(`Missing ${name}`);
-  return value;
-}
+import { requiredEnv } from "./utils";
 
 const NEXT_PUBLIC_MEDUSA_URL = requiredEnv(
   "NEXT_PUBLIC_MEDUSA_URL",

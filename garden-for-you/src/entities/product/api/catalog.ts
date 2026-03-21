@@ -1,15 +1,11 @@
 import { CATALOG_PRODUCTS_PAGE_SIZE } from "entities/product/model";
 import { sdk } from "shared/lib/sdk";
+import { requiredEnv } from "shared/lib/utils";
 import type {
   CatalogFilters,
   CatalogProductsPage,
   ProductCategory,
 } from "../model/types";
-
-function requiredEnv(name: string, value: string | undefined): string {
-  if (!value) throw new Error(`Missing ${name}`);
-  return value;
-}
 
 const NEXT_PUBLIC_REGION_ID = requiredEnv(
   "NEXT_PUBLIC_REGION_ID",

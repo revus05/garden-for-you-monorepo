@@ -1,8 +1,8 @@
 import { SignInForm } from "features/sign-in";
-import { withAuthLayout } from "widgets/layouts/auth";
+import { withHomeLayout } from "widgets/layouts/home";
 
 const SignInPage = () => {
   return <SignInForm />;
 };
 
-export default withAuthLayout(SignInPage);
+export default withHomeLayout(SignInPage);

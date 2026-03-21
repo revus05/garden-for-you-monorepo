@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { paths } from "shared/constants/navigation";
 import { useAppSelector } from "shared/lib/hooks";
-import { paths } from "shared/navigation";
 import { Button } from "shared/ui/button";
 import { Icons } from "shared/ui/icons";
 import { MobileMenu } from "./mobile-menu";

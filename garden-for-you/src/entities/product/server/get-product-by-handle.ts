@@ -2,11 +2,7 @@ import "server-only";
 
 import type { Product } from "entities/product/model/types";
 import { createServerSdk } from "shared/lib/server-sdk";
-
-function requiredEnv(name: string, value: string | undefined): string {
-  if (!value) throw new Error(`Missing ${name}`);
-  return value;
-}
+import { requiredEnv } from "shared/lib/utils";
 
 const NEXT_PUBLIC_REGION_ID = requiredEnv(
   "NEXT_PUBLIC_REGION_ID",

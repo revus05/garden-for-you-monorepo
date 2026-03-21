@@ -1,0 +1,1 @@
+export { BlogStaticContent } from "./ui";

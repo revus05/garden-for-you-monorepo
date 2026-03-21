@@ -4,9 +4,9 @@ import { removeCartItem, updateCartItemQuantity } from "features/cart";
 import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { paths } from "shared/constants/navigation";
 import { formatPrice } from "shared/lib/format-price";
 import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
-import { paths } from "shared/navigation";
 import { Button } from "shared/ui/button";
 import {
   Card,

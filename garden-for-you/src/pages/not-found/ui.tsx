@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { paths } from "shared/navigation";
+import { paths } from "shared/constants/navigation";
 import { Button } from "shared/ui/button";
 import { withHomeLayout } from "widgets/layouts/home";
 import notFoundImage from "../../../public/image/404.svg";

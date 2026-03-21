@@ -1,8 +1,8 @@
 import { SignUpForm } from "features/sign-up";
-import { withAuthLayout } from "widgets/layouts/auth";
+import { withHomeLayout } from "widgets/layouts/home";
 
 const SignUpPage = () => {
   return <SignUpForm />;
 };
 
-export default withAuthLayout(SignUpPage);
+export default withHomeLayout(SignUpPage);
