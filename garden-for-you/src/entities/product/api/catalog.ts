@@ -30,6 +30,7 @@ export async function fetchCatalogProductsPage({
     category_id: filters.categoryIds,
     q: filters.searchQuery || undefined,
     order: filters.orderBy,
+    fields: "+variants.inventory_quantity",
   });
 
   const nextOffset =

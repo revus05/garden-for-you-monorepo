@@ -5,6 +5,7 @@ import { addCartItem, removeCartItem } from "features/cart";
 import type { FC } from "react";
 import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
 import { cn } from "shared/lib/utils";
+import { Badge } from "shared/ui/badge";
 import { Button } from "shared/ui/button";
 import { Icons } from "shared/ui/icons";
 
@@ -23,6 +24,8 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
 
   const cartItem = cart?.items?.find((item) => item.product?.id === product.id);
 
+  const isInStock = !!product.variants?.[0].inventory_quantity;
+
   const isInCart = !!cartItem;
 
   const handleCartButtonClick = () => {
@@ -37,6 +40,7 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
 
   return (
     <div className="flex flex-col gap-4">
+      {!isInStock && <Badge variant="destructive">Нет в наличии</Badge>}
       <h1 className="font-black text-3xl">{product.title}</h1>
       {product.variants?.[0]?.calculated_price && (
         <p className="text-lg font-bold">
@@ -49,6 +53,7 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
         className="w-fit"
         size="lg"
         variant={isInCart ? "outline" : "default"}
+        disabled={!isInStock}
       >
         {isInCart ? "Удалить из корзины" : "Добавить в корзину"}
         <Icons.cart

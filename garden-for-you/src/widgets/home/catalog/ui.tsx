@@ -234,9 +234,13 @@ export const Catalog = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {products.map((product) => {
+              if (!product.variants) return null;
+
               const cartItem = cart?.items?.find(
                 (item) => item.product?.id === product.id,
               );
+
+              const quantity = product.variants[0].inventory_quantity;
 
               const isInCart = !!cartItem;
 
@@ -255,6 +259,14 @@ export const Catalog = () => {
                   key={product.id}
                   className="flex flex-col rounded-lg hover:shadow-product-cart transition-shadow relative border hover:border-primary"
                 >
+                  {!quantity && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute top-2 left-2 shadow-md"
+                    >
+                      Нет в наличии
+                    </Badge>
+                  )}
                   {isInCart && (
                     <Badge className="absolute top-2 left-2 shadow-md">
                       В корзине
@@ -304,6 +316,7 @@ export const Catalog = () => {
                         onClick={handleCartButtonClick}
                         className="size-10"
                         variant={isInCart ? "outline" : "default"}
+                        disabled={!quantity}
                       >
                         <Icons.cart
                           className={cn(

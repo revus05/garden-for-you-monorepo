@@ -22,6 +22,7 @@ export async function getProductByHandle(
     handle,
     region_id: NEXT_PUBLIC_REGION_ID,
     limit: 1,
+    fields: "+variants.inventory_quantity",
   });
 
   return products[0] ?? null;
