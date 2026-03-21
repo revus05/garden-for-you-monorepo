@@ -8,6 +8,7 @@ import { CartInitializer } from "features/cart";
 import { type ReactNode, useRef, useState } from "react";
 import { Provider } from "react-redux";
 import { Toaster } from "shared/ui/sonner";
+import { TooltipProvider } from "shared/ui/tooltip";
 
 export function Providers({
   children,
@@ -37,8 +38,10 @@ export function Providers({
   return (
     <QueryClientProvider client={queryClient}>
       <Provider store={storeRef.current}>
-        <CartInitializer>{children}</CartInitializer>
-        <Toaster position="top-right" />
+        <TooltipProvider>
+          <CartInitializer>{children}</CartInitializer>
+          <Toaster position="top-right" />
+        </TooltipProvider>
       </Provider>
     </QueryClientProvider>
   );

@@ -43,6 +43,7 @@ import {
   SelectValue,
 } from "shared/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "shared/ui/tabs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "shared/ui/tooltip";
 import plantPlaceholder from "../../../../public/image/plant-placholder.svg";
 
 export const Catalog = () => {
@@ -60,14 +61,14 @@ export const Catalog = () => {
 
   const categoriesQuery = useCatalogCategoriesQuery();
 
-  const filteredCategories = getFilteredCategories(
+  const filteredCategoryIds = getFilteredCategories(
     activeTab,
     categoryIds,
     categoriesQuery.data || [],
   );
 
   const productsQuery = useCatalogProductsInfiniteQuery({
-    categoryIds: filteredCategories,
+    categoryIds: filteredCategoryIds,
     searchQuery: deferredSearchQuery,
     orderBy,
   });
@@ -96,9 +97,10 @@ export const Catalog = () => {
     await addCartItem(dispatch, variantId, 1);
   };
 
-  const activeCategories =
+  const activeCategories = (
     categoriesQuery.data?.find((category) => category.handle === activeTab)
-      ?.category_children || [];
+      ?.category_children || []
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
   const cart = useAppSelector((state) => state.cartSlice.cart);
 
@@ -311,21 +313,37 @@ export const Catalog = () => {
                           {product.variants[0].calculated_price.currency_code?.toUpperCase()}
                         </p>
                       )}
-                      <Button
-                        size="icon"
-                        onClick={handleCartButtonClick}
-                        className="size-10"
-                        variant={isInCart ? "outline" : "default"}
-                        disabled={!quantity}
-                      >
-                        <Icons.cart
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="icon"
+                            onClick={handleCartButtonClick}
+                            className="size-10"
+                            variant={isInCart ? "outline" : "default"}
+                            disabled={!quantity}
+                          >
+                            <Icons.cart
+                              className={cn(
+                                isInCart
+                                  ? "[&_path]:stroke-secondary-foreground"
+                                  : "[&_path]:stroke-primary-foreground",
+                              )}
+                            />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent
                           className={cn(
-                            isInCart
-                              ? "[&_path]:stroke-secondary-foreground"
-                              : "[&_path]:stroke-primary-foreground",
+                            isInCart &&
+                              "bg-background-secondary text-foreground border [&_svg]:bg-background-secondary [&_svg]:fill-background-secondary [&_svg]:stroke-background-secondary [&_svg]:border-b [&_svg]:border-r",
                           )}
-                        />
-                      </Button>
+                        >
+                          <p>
+                            {isInCart
+                              ? "Убрать из корзины"
+                              : "Добавить в корзину"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   </div>
                 </div>
