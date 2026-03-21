@@ -115,7 +115,11 @@ export const Catalog = () => {
         <TabsTrigger value="seedlings" className="flex-1 md:flex-none">
           Саженцы
         </TabsTrigger>
-        <TabsTrigger value="fertilizer" className="flex-1 md:flex-none">
+        <TabsTrigger
+          value="fertilizer"
+          className="flex-1 md:flex-none"
+          disabled
+        >
           Удобрения
         </TabsTrigger>
       </TabsList>
