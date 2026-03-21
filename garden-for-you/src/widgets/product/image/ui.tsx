@@ -16,7 +16,7 @@ export const ProductImage: FC<ProductImageProps> = ({ product }) => {
           width={620}
           height={620}
           alt={`${product.title} thumbnail`}
-          className="aspect-square rounded-xl"
+          className="aspect-square rounded-[13px]"
         />
       ) : (
         <Image
@@ -24,7 +24,7 @@ export const ProductImage: FC<ProductImageProps> = ({ product }) => {
           width={620}
           height={620}
           alt={`${product.title} thumbnail`}
-          className="w-[70%] object-cover translate-x-2"
+          className="w-[70%] object-cover translate-x-2 rounded-[13px]"
         />
       )}
     </div>

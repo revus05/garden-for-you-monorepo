@@ -266,12 +266,9 @@ export const Catalog = () => {
                   className="flex flex-col rounded-lg hover:shadow-product-cart transition-shadow relative border hover:border-primary"
                 >
                   {!quantity && (
-                    <Badge
-                      variant="destructive"
-                      className="absolute top-2 left-2 shadow-md"
-                    >
-                      Нет в наличии
-                    </Badge>
+                    <div className="absolute top-2 left-2 shadow-md bg-white rounded-full h-5 flex">
+                      <Badge variant="destructive">Нет в наличии</Badge>
+                    </div>
                   )}
                   {isInCart && (
                     <Badge className="absolute top-2 left-2 shadow-md">
@@ -289,7 +286,7 @@ export const Catalog = () => {
                         alt={product.title}
                         width={300}
                         height={300}
-                        className="w-full aspect-square object-cover rounded-t-lg"
+                        className="w-full aspect-square object-cover rounded-t-[9px]"
                       />
                     ) : (
                       <Image
@@ -297,7 +294,7 @@ export const Catalog = () => {
                         alt={product.title}
                         width={300}
                         height={300}
-                        className="w-[70%] aspect-square object-cover rounded-t-lg translate-x-2 fill-primary-foreground/70"
+                        className="w-[70%] aspect-square object-cover rounded-t-[9px] translate-x-2 fill-primary-foreground/70"
                       />
                     )}
                   </Link>
