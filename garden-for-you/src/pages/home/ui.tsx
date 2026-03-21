@@ -3,8 +3,8 @@ import { Badge } from "shared/ui/badge";
 import { Button } from "shared/ui/button";
 import { Icons } from "shared/ui/icons";
 import { Catalog } from "widgets/home/catalog";
+import { HeroSection } from "widgets/home/hero";
 import { withHomeLayout } from "widgets/layouts/home";
-import heroImage from "../../../public/image/hero.png";
 import leafPlant from "../../../public/image/leaf-plant.png";
 import leavesBg from "../../../public/image/leaves-bg.jpg";
 
@@ -12,27 +12,7 @@ const HomePage = () => {
   return (
     <div className="wrapper flex flex-col gap-12">
       <div className="bg-background-secondary w-[70vw] h-128 absolute top-0 left-0 rounded-br-[64px] -z-1" />
-      <section className="flex">
-        <div className="w-1/2 flex flex-col justify-center gap-4 md:min-h-128">
-          <h1 className="font-black text-3xl text-[#354733]">
-            Сад для вас — Магазин отборных саженцев
-          </h1>
-          <span>
-            Выбирайте подходящие растения и создавайте зелёный уголок, который
-            будет радовать вас долгие годы. 🌱
-          </span>
-          <Button className="w-fit">Перейти в каталог</Button>
-        </div>
-        <div className="relative w-1/2 -z-1 md:block flex items-center">
-          <Image
-            src={heroImage.src}
-            width={600}
-            height={1000}
-            className="md:absolute top-1/2 right-0 md:-translate-y-2/5 select-none -z-1 md:w-auto w-full md:max-w-112.5"
-            alt="hero image"
-          />
-        </div>
-      </section>
+      <HeroSection />
       <section className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
         <div className="px-6 py-8 bg-background-secondary rounded-lg flex flex-col gap-4 overflow-hidden relative">
           <Image

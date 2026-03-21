@@ -190,7 +190,7 @@ export const Catalog = () => {
   );
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-4" id="catalog">
       <div className="grid md:grid-cols-3 grid-cols-2 gap-8">
         <div className="flex gap-2 items-center col-span-2 md:col-span-1">
           <h2 className="text-2xl font-bold">Каталог</h2>

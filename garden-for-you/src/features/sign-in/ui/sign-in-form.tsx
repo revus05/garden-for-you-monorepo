@@ -113,7 +113,12 @@ export function SignInForm() {
               </FieldLabel>
             </Field>
 
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-fit mx-auto px-8"
+              size="lg"
+            >
               {isSubmitting ? "Входим..." : "Войти"}
             </Button>
           </FieldGroup>
