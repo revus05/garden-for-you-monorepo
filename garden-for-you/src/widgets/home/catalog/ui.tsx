@@ -54,7 +54,7 @@ export const Catalog = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [orderBy, setOrderBy] = useState<ProductCategoryOrder>("-created_at");
+  const [orderBy, setOrderBy] = useState<ProductCategoryOrder>("title");
   const deferredSearchQuery = useDeferredValue(searchQuery.trim());
   const categoryIds = [...selectedCategories].sort();
 
@@ -131,6 +131,8 @@ export const Catalog = () => {
       <SelectContent position="popper">
         <SelectGroup>
           <SelectLabel>Сортировать по</SelectLabel>
+          <SelectItem value="title">По алфавиту ↓</SelectItem>
+          <SelectItem value="-title">По алфавиту ↑</SelectItem>
           <SelectItem value="-created_at">Сначала новые</SelectItem>
           <SelectItem value="created_at">Сначала старые</SelectItem>
         </SelectGroup>
