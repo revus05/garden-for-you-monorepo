@@ -26,7 +26,7 @@ import {
   InputGroupInput,
 } from "shared/ui/input-group";
 import { toast } from "sonner";
-import { signInRequest } from "../api/sign-in";
+import { signInRequest } from "../api";
 import { type SignInValues, signInSchema } from "../model/schema";
 
 const largeInputClassName =
@@ -153,6 +153,13 @@ export function SignInForm() {
                 </FieldContent>
               </FieldLabel>
             </Field>
+
+            <Link
+              className="underline underline-offset-4 mt-1 text-sm text-muted-foreground"
+              href={paths.forgotPassword}
+            >
+              Забыли пароль?
+            </Link>
 
             <Button
               type="submit"

@@ -27,7 +27,7 @@ import {
   InputGroupInput,
 } from "shared/ui/input-group";
 import { toast } from "sonner";
-import { signUpRequest } from "../api/sign-up";
+import { signUpRequest } from "../api";
 import { type SignUpValues, signUpSchema } from "../model/schema";
 
 const largeInputGroupClassName =

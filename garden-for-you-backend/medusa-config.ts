@@ -2,6 +2,35 @@ import { loadEnv, defineConfig } from '@medusajs/framework/utils'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
+const notificationProviders: {
+  resolve: string
+  id: string
+  options: Record<string, unknown> & {
+    channels: string[]
+  }
+}[] = [
+]
+
+if (process.env.RESEND_API_KEY && process.env.RESEND_FROM) {
+  notificationProviders.push({
+    resolve: "./src/providers/notification-resend",
+    id: "resend",
+    options: {
+      channels: ["email"],
+      api_key: process.env.RESEND_API_KEY,
+      from: process.env.RESEND_FROM,
+    },
+  })
+} else {
+  notificationProviders.push({
+    resolve: "@medusajs/notification-local",
+    id: "local",
+    options: {
+      channels: ["email"],
+    },
+  })
+}
+
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -14,6 +43,12 @@ module.exports = defineConfig({
     }
   },
   modules: [
+    {
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: notificationProviders,
+      },
+    },
     {
       resolve: "@medusajs/medusa/file",
       options: {

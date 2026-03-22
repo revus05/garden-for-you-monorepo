@@ -43,9 +43,9 @@ export default BlogModuleService
 
 ## 3. Export Module Definition
 
-A module must have an `index.ts` file in its root directory that exports its definition. The definition specifies the main service of the module.
+A module must have an `api.ts` file in its root directory that exports its definition. The definition specifies the main service of the module.
 
-For example, create the file `src/modules/blog/index.ts` with the following content:
+For example, create the file `src/modules/blog/api.ts` with the following content:
 
 ```ts
 import BlogModuleService from "./service"

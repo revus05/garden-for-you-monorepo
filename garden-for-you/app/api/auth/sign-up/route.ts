@@ -1,5 +1,5 @@
 import type { User } from "entities/user";
-import { signUpSchema } from "features/sign-up/model/schema";
+import { signUpSchema } from "features/user/sign-up/model/schema";
 import { NextResponse } from "next/server";
 import { setAuthTokenCookie } from "shared/lib/auth-cookie.server";
 import { createSdk, sdk } from "shared/lib/sdk";

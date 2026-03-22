@@ -14,7 +14,7 @@ To add translations, create JSON translation files for each language under the `
 }
 ```
 
-Then, export the translations in `src/admin/i18n/index.ts`:
+Then, export the translations in `src/admin/i18n/api.ts`:
 
 ```ts
 import en from "./json/en.json" with { type: "json" }
