@@ -40,7 +40,13 @@ export const NavItems = ({ onItemClick }: NavItemsProps) => {
         </Link>
       </li>
       <li>
-        <Link href={paths.home} onClick={onItemClick}>
+        <Link
+          href={paths.reviews}
+          onClick={onItemClick}
+          className={cn(
+            pathname?.includes(paths.reviews) && "font-bold text-primary",
+          )}
+        >
           Отзывы
         </Link>
       </li>

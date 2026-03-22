@@ -8,5 +8,6 @@ export const paths = {
   cart: "/cart",
   productPage: "/product",
   aboutUs: "/about-us",
+  reviews: "/reviews",
   blog: "/blog",
 };

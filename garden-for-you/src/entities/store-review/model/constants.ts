@@ -1,0 +1,1 @@
+export const STORE_REVIEWS_PAGE_SIZE = 12;
