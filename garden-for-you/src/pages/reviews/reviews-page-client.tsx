@@ -116,30 +116,29 @@ export function ReviewsPageClient({ initialData }: ReviewsPageClientProps) {
   return (
     <div className="mx-auto w-full max-w-185 px-4 py-10">
       <section className="mt-10 space-y-4">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-black">Отзывы наших клиентов</h2>
-          </div>
-          <CreateStoreReviewForm />
+        <div>
+          <h2 className="text-2xl font-black">Отзывы наших клиентов</h2>
         </div>
 
-        <Select
-          disabled={sortLoading}
-          onValueChange={(v) => void onSortChange(v)}
-          value={sort}
-        >
-          <SelectTrigger className="w-full min-w-55 sm:w-65">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent position="popper">
-            {SORT_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <Select
+            disabled={sortLoading}
+            onValueChange={(v) => void onSortChange(v)}
+            value={sort}
+          >
+            <SelectTrigger className="w-full min-w-55 sm:w-65">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              {SORT_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <CreateStoreReviewForm />
+        </div>
         {sortLoading ? (
           <p className="text-sm text-muted-foreground">Загружаем…</p>
         ) : null}

@@ -1,9 +1,10 @@
 import { withHomeLayout } from "widgets/layouts/home";
+import { ProfileInfo } from "widgets/profile/info";
 
 const ProfilePage = () => {
   return (
     <div className="wrapper">
-      <span>Profile</span>
+      <ProfileInfo />
     </div>
   );
 };

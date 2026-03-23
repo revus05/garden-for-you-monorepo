@@ -4,14 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createStoreReviewRequest } from "features/store-review/create-review/api";
 import { PenLine } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useAppSelector } from "shared/lib/hooks";
 import { Button } from "shared/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -19,7 +18,6 @@ import {
 import {
   Field,
   FieldContent,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -46,7 +44,6 @@ export function CreateStoreReviewForm({
   );
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [formKey, setFormKey] = useState(0);
 
   const router = useRouter();
   const {
@@ -88,15 +85,7 @@ export function CreateStoreReviewForm({
   }
 
   return (
-    <Dialog
-      onOpenChange={(open) => {
-        setDialogOpen(open);
-        if (open) {
-          setFormKey((k) => k + 1);
-        }
-      }}
-      open={dialogOpen}
-    >
+    <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setDialogOpen(true)} size="lg" type="button">
           <PenLine className="stroke-primary-foreground" />

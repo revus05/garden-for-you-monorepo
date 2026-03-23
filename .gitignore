@@ -1,6 +1,9 @@
 # ide
 /.idea
 
+# ai
+.claude
+
 # Frontend
 /garden-for-you/.env
 /garden-for-you/node_modules
