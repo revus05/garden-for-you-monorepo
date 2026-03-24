@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock } from "lucide-react";
+import { Lock, Mail } from "lucide-react";
 import Link from "next/link";
 import { createElement, useState } from "react";
 import { paths } from "shared/constants/navigation";
@@ -21,27 +21,46 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "shared/ui/input-group";
-import { useResetPasswordForm } from "./model";
+import { useSignInForm } from "./model";
 
-export function ResetPasswordForm() {
+export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
 
   const {
     formState: { errors, isSubmitting },
     register,
     handleSubmit,
     onSubmit,
-    token,
-  } = useResetPasswordForm();
+  } = useSignInForm();
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-10">
-      <h2 className="text-center text-2xl font-black">Сброс пароля</h2>
+    <div className="mx-auto w-full max-w-md px-4 py-10 flex flex-col gap-6">
+      <h2 className="text-2xl font-black">Вход</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <FieldSet>
           <FieldGroup>
+            <Field data-invalid={!!errors.email}>
+              <FieldLabel className="flex w-full flex-col items-start">
+                <FieldContent className="w-full">
+                  <InputGroup className="gap-2 sm:px-1.5 px-1 shadow-md">
+                    <InputGroupAddon align="inline-start">
+                      <Mail className="stroke-primary" />
+                    </InputGroupAddon>
+                    <InputGroupInput
+                      type="email"
+                      autoComplete="email"
+                      aria-invalid={!!errors.email}
+                      placeholder="example@gmail.com"
+                      className="text-primary"
+                      {...register("email")}
+                    />
+                  </InputGroup>
+                  <FieldError errors={[errors.email]} />
+                </FieldContent>
+              </FieldLabel>
+            </Field>
+
             <Field data-invalid={!!errors.password}>
               <FieldLabel className="flex w-full flex-col items-start">
                 <FieldContent className="w-full">
@@ -81,70 +100,29 @@ export function ResetPasswordForm() {
               </FieldLabel>
             </Field>
 
-            <Field data-invalid={!!errors.repeatPassword}>
-              <FieldLabel className="flex w-full flex-col items-start">
-                <FieldContent className="w-full">
-                  <ButtonGroup
-                    className={cn(
-                      "w-full shadow-md rounded-lg",
-                      errors.repeatPassword &&
-                        "border-destructive dark:border-destructive/50",
-                    )}
-                  >
-                    <InputGroup className="gap-2 sm:px-1.5 px-1">
-                      <InputGroupAddon align="inline-start">
-                        <Lock className="stroke-primary" />
-                      </InputGroupAddon>
-                      <InputGroupInput
-                        type={showRepeatPassword ? "text" : "password"}
-                        autoComplete="current-password"
-                        aria-invalid={!!errors.repeatPassword}
-                        placeholder="Введите пароль"
-                        className="text-primary"
-                        {...register("repeatPassword")}
-                      />
-                    </InputGroup>
-                    <Button
-                      onClick={() => setShowRepeatPassword((prev) => !prev)}
-                      size="icon"
-                      type="button"
-                      variant="outline"
-                    >
-                      {createElement(
-                        Icons[showRepeatPassword ? "eyeOff" : "eye"],
-                        {
-                          className: "stroke-primary",
-                        },
-                      )}
-                    </Button>
-                  </ButtonGroup>
-                  <FieldError errors={[errors.repeatPassword]} />
-                </FieldContent>
-              </FieldLabel>
-            </Field>
-
-            {!token && (
-              <p className="text-center text-sm text-destructive">
-                Ссылка для сброса недействительна или неполная.
-              </p>
-            )}
+            <Link
+              className="underline underline-offset-4 text-sm text-muted-foreground"
+              href={paths.forgotPassword}
+            >
+              Забыли пароль?
+            </Link>
 
             <div className="flex flex-col gap-2">
               <Button
                 type="submit"
-                disabled={isSubmitting || !token}
+                disabled={isSubmitting}
                 className="mx-auto sm:w-fit sm:px-24 w-full"
                 size="lg"
               >
-                {isSubmitting ? "Сохраняем..." : "Сменить пароль"}
+                {isSubmitting ? "Входим..." : "Войти"}
               </Button>
               <p className="text-sm text-muted-foreground text-center">
-                Вспомнили пароль?{" "}
+                Нет аккаунта?{" "}
                 <Link
                   className="underline underline-offset-4"
-                  href={paths.signIn}
+                  href={paths.signUp}
                 >
-                  Войти
+                  Зарегистрироваться
                 </Link>
               </p>
             </div>

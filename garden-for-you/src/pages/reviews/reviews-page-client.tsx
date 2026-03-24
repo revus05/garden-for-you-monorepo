@@ -9,6 +9,7 @@ import type {
 } from "entities/store-review/model/types";
 import { CreateStoreReviewForm } from "features/store-review/create-review";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useAppSelector } from "shared/lib/hooks";
 import {
   Select,
   SelectContent,
@@ -54,6 +55,8 @@ export function ReviewsPageClient({ initialData }: ReviewsPageClientProps) {
   const [hasMore, setHasMore] = useState(initialData.pagination.has_more);
   const [loadingMore, setLoadingMore] = useState(false);
   const [sortLoading, setSortLoading] = useState(false);
+
+  const user = useAppSelector((state) => state.userSlice.user);
 
   const reviewsRef = useRef(reviews);
   reviewsRef.current = reviews;
@@ -137,7 +140,7 @@ export function ReviewsPageClient({ initialData }: ReviewsPageClientProps) {
               ))}
             </SelectContent>
           </Select>
-          <CreateStoreReviewForm />
+          {user && <CreateStoreReviewForm />}
         </div>
         {sortLoading ? (
           <p className="text-sm text-muted-foreground">Загружаем…</p>

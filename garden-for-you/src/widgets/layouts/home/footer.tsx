@@ -14,9 +14,9 @@ export const Footer = () => {
       }}
       className="md:py-32 py-12"
     >
-      <div className="wrapper text-primary-foreground flex flex-col gap-8">
-        <h2 className="font-black text-4xl">Сад Для Вас</h2>
-        <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
+      <div className="wrapper text-primary-foreground grid md:grid-cols-3 grid-cols-1 gap-8">
+        <div className="flex flex-col gap-8">
+          <h2 className="font-black text-4xl">Сад Для Вас</h2>
           <div className="flex flex-col gap-4">
             <Link href="#" className="underline">
               Политика конфиденциальности
@@ -32,41 +32,41 @@ export const Footer = () => {
               для Вас", УНП 691532502
             </span>
           </div>
-          <nav className="flex md:justify-center">
-            <ul className="flex flex-col gap-2 [&_a]:font-normal [&_a]:text-primary-foreground">
-              <NavItems />
-            </ul>
-          </nav>
-          <div className="flex flex-col gap-2">
-            <iframe
-              title="Яндекс карта"
-              src="https://yandex.ru/map-widget/v1/?um=constructor%3Ae5089923a4e2685886697236ae92f5e0eb12726f30c58d73cb59846fe2a82f8e&amp;source=constructor"
-              width="500"
-              height="300"
-              className="w-full"
-            />
-            <div className="flex gap-2 items-center">
-              <span>
-                Александр:{" "}
-                <Link href="tel:+375291066556" className="hover:underline">
-                  +375 (29) 106-65-56
-                </Link>
-              </span>
-              <Link href="https://t.me/alex_key1" className="hover:underline">
-                <Image src={telegram} width={32} height={32} alt="telegram" />
-              </Link>
-            </div>
+        </div>
+        <nav className="flex md:justify-center">
+          <ul className="flex flex-col gap-2 [&_a]:font-normal [&_a]:text-primary-foreground">
+            <NavItems />
+          </ul>
+        </nav>
+        <div className="flex flex-col gap-2">
+          <iframe
+            title="Яндекс карта"
+            src="https://yandex.ru/map-widget/v1/?um=constructor%3Ae5089923a4e2685886697236ae92f5e0eb12726f30c58d73cb59846fe2a82f8e&amp;source=constructor"
+            width="500"
+            height="300"
+            className="w-full"
+          />
+          <div className="flex gap-2 items-center">
             <span>
-              Анатолий:{" "}
-              <Link href="tel:+375297711088" className="hover:underline">
-                +375 (29) 771-10-88
-              </Link>
-              ,{" "}
-              <Link href="tel:+375447321771" className="hover:underline">
-                +375 (44) 732-17-71
+              Александр:{" "}
+              <Link href="tel:+375291066556" className="hover:underline">
+                +375 (29) 106-65-56
               </Link>
             </span>
+            <Link href="https://t.me/alex_key1" className="hover:underline">
+              <Image src={telegram} width={32} height={32} alt="telegram" />
+            </Link>
           </div>
+          <span>
+            Анатолий:{" "}
+            <Link href="tel:+375297711088" className="hover:underline">
+              +375 (29) 771-10-88
+            </Link>
+            ,{" "}
+            <Link href="tel:+375447321771" className="hover:underline">
+              +375 (44) 732-17-71
+            </Link>
+          </span>
         </div>
       </div>
     </footer>

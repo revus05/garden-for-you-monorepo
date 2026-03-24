@@ -262,12 +262,12 @@ export const ProfileInfo = () => {
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
-                variant="destructive"
+                variant="secondary"
                 size="sm"
-                className="mt-auto w-fit text-destructive hover:bg-destructive/10 hover:text-destructive"
+                className="mt-auto w-fit"
                 disabled={isSigningOut}
               >
-                <LogOut className="size-4 stroke-destructive" />
+                <LogOut className="size-4" />
                 {isSigningOut ? "Выход..." : "Выйти из аккаунта"}
               </Button>
             </AlertDialogTrigger>

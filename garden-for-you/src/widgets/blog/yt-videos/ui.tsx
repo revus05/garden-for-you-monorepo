@@ -12,8 +12,15 @@ export const BlogYouTubeVideos = async () => {
 
   const data = (await response.json()) as Videos;
 
+  if (data.length === 0) {
+    return null;
+  }
+
   return (
-    <>
+    <div className="flex flex-col gap-4">
+      <h2 className="font-bold text-2xl text-center">
+        Следите за нами в YouTube
+      </h2>
       {data.map((video: { url: string }, index: number) => {
         const videoId = video.url.split("v=")[1]?.split("&")[0] || "";
         const embedUrl = videoId
@@ -38,6 +45,6 @@ export const BlogYouTubeVideos = async () => {
           </div>
         );
       })}
-    </>
+    </div>
   );
 };

@@ -1,14 +1,9 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "entities/user";
-import { Phone } from "lucide-react";
+import { Lock, Mail, Phone, User } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { createElement, useState } from "react";
-import { useForm } from "react-hook-form";
 import { paths } from "shared/constants/navigation";
-import { useAppDispatch } from "shared/lib/hooks";
 import { cn } from "shared/lib/utils";
 import { Button } from "shared/ui/button";
 import { ButtonGroup } from "shared/ui/button-group";
@@ -26,66 +21,22 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "shared/ui/input-group";
-import { toast } from "sonner";
-import { signUpRequest } from "../api";
-import { type SignUpValues, signUpSchema } from "../model/schema";
-
-const largeInputGroupClassName =
-  "h-17 sm:gap-8 gap-4 rounded-[20px] bg-background-secondary sm:px-5 px-3 text-[20px] shadow-md";
-const largeInputClassName =
-  "h-full px-0 text-[20px] text-primary placeholder:text-[#184A2C]/78 md:text-[20px]";
-const largeIconClassName = "size-8 stroke-primary";
-const passwordToggleClassName =
-  "size-17 rounded-none border-0 bg-background-secondary text-primary shadow-none hover:bg-background-secondary";
-const passwordGroupClassName =
-  "w-full overflow-hidden rounded-[20px] border border-input bg-background-secondary shadow-md";
-const passwordGroupErrorClassName =
-  "border-destructive dark:border-destructive/50";
+import { useSignUpForm } from "./model";
 
 export function SignUpForm() {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
-
-  const form = useForm<SignUpValues>({
-    resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      password: "",
-      repeatPassword: "",
-    },
-  });
-
-  async function onSubmit(values: SignUpValues) {
-    try {
-      const customer = await signUpRequest(values);
-      dispatch(signIn(customer));
-
-      router.push(paths.home);
-      router.refresh();
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Не удалось зарегистрироваться. Проверьте данные и попробуйте снова.",
-      );
-    }
-  }
 
   const {
     formState: { errors, isSubmitting },
     register,
     handleSubmit,
-  } = form;
+    onSubmit,
+  } = useSignUpForm();
 
   return (
-    <div className="mx-auto flex w-full max-w-[740px] flex-col gap-10 px-4 py-10">
-      <h2 className="text-center text-2xl font-black">Регистрация</h2>
+    <div className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-10">
+      <h2 className="text-2xl font-black">Регистрация</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <FieldSet>
@@ -93,20 +44,18 @@ export function SignUpForm() {
             <Field data-invalid={!!errors.first_name}>
               <FieldLabel className="flex w-full flex-col items-start">
                 <FieldContent className="w-full">
-                  <InputGroup className={largeInputGroupClassName}>
+                  <InputGroup className="gap-2 sm:px-1.5 px-1 shadow-md">
                     <InputGroupAddon align="inline-start">
-                      <Icons.userForForm className="size-8 stroke-none" />
+                      <User className="stroke-primary" />
                     </InputGroupAddon>
                     <InputGroupInput
                       aria-invalid={!!errors.first_name}
                       placeholder="Введите ваше имя"
-                      className={largeInputClassName}
+                      className="text-primary"
                       {...register("first_name")}
                     />
                   </InputGroup>
-                  <FieldError
-                    errors={[{ message: errors.first_name?.message }]}
-                  />
+                  <FieldError errors={[errors.first_name]} />
                 </FieldContent>
               </FieldLabel>
             </Field>
@@ -114,20 +63,18 @@ export function SignUpForm() {
             <Field data-invalid={!!errors.last_name}>
               <FieldLabel className="flex w-full flex-col items-start">
                 <FieldContent className="w-full">
-                  <InputGroup className={largeInputGroupClassName}>
+                  <InputGroup className="gap-2 sm:px-1.5 px-1 shadow-md">
                     <InputGroupAddon align="inline-start">
-                      <Icons.userForForm className={largeIconClassName} />
+                      <User className="stroke-primary" />
                     </InputGroupAddon>
                     <InputGroupInput
                       aria-invalid={!!errors.last_name}
                       placeholder="Введите вашу фамилию"
-                      className={largeInputClassName}
+                      className="text-primary"
                       {...register("last_name")}
                     />
                   </InputGroup>
-                  <FieldError
-                    errors={[{ message: errors.last_name?.message }]}
-                  />
+                  <FieldError errors={[errors.last_name]} />
                 </FieldContent>
               </FieldLabel>
             </Field>
@@ -135,20 +82,20 @@ export function SignUpForm() {
             <Field data-invalid={!!errors.email}>
               <FieldLabel className="flex w-full flex-col items-start">
                 <FieldContent className="w-full">
-                  <InputGroup className={largeInputGroupClassName}>
+                  <InputGroup className="gap-2 sm:px-1.5 px-1 shadow-md">
                     <InputGroupAddon align="inline-start">
-                      <Icons.credentials className={largeIconClassName} />
+                      <Mail className="stroke-primary" />
                     </InputGroupAddon>
                     <InputGroupInput
                       type="email"
                       autoComplete="email"
                       aria-invalid={!!errors.email}
                       placeholder="example@gmail.com"
-                      className={largeInputClassName}
+                      className="text-primary"
                       {...register("email")}
                     />
                   </InputGroup>
-                  <FieldError errors={[{ message: errors.email?.message }]} />
+                  <FieldError errors={[errors.email]} />
                 </FieldContent>
               </FieldLabel>
             </Field>
@@ -156,21 +103,16 @@ export function SignUpForm() {
             <Field data-invalid={!!errors.phone}>
               <FieldLabel className="flex w-full flex-col items-start">
                 <FieldContent className="w-full">
-                  <InputGroup className={largeInputGroupClassName}>
+                  <InputGroup className="gap-2 sm:px-1.5 px-1 shadow-md">
                     <InputGroupAddon align="inline-start">
-                      <Phone
-                        className={cn(
-                          largeIconClassName,
-                          "fill-[#184a2c] stroke-[#184a2c]",
-                        )}
-                      />
+                      <Phone className="stroke-primary" />
                     </InputGroupAddon>
                     <InputGroupInput
                       type="tel"
                       autoComplete="tel"
                       aria-invalid={!!errors.phone}
                       placeholder="+375 (29) 123-45-67"
-                      className={largeInputClassName}
+                      className="text-primary"
                       {...register("phone")}
                     />
                   </InputGroup>
@@ -184,27 +126,21 @@ export function SignUpForm() {
                 <FieldContent className="w-full">
                   <ButtonGroup
                     className={cn(
-                      passwordGroupClassName,
-                      errors.password && passwordGroupErrorClassName,
+                      "w-full shadow-md rounded-lg",
+                      errors.password &&
+                        "border-destructive dark:border-destructive/50",
                     )}
                   >
-                    <InputGroup
-                      className={cn(
-                        largeInputGroupClassName,
-                        "rounded-none border-0 bg-transparent shadow-none",
-                      )}
-                    >
+                    <InputGroup className="gap-2 sm:px-1.5 px-1">
                       <InputGroupAddon align="inline-start">
-                        <Icons.lock className={largeIconClassName} />
+                        <Lock className="stroke-primary" />
                       </InputGroupAddon>
                       <InputGroupInput
                         type={showPassword ? "text" : "password"}
-                        autoComplete="new-password"
+                        autoComplete="current-password"
                         aria-invalid={!!errors.password}
-                        placeholder={
-                          showPassword ? "StrongPassword" : "••••••••"
-                        }
-                        className={largeInputClassName}
+                        placeholder="Введите пароль"
+                        className="text-primary"
                         {...register("password")}
                       />
                     </InputGroup>
@@ -213,16 +149,13 @@ export function SignUpForm() {
                       size="icon"
                       type="button"
                       variant="outline"
-                      className={passwordToggleClassName}
                     >
                       {createElement(Icons[showPassword ? "eyeOff" : "eye"], {
-                        className: largeIconClassName,
+                        className: "stroke-primary",
                       })}
                     </Button>
                   </ButtonGroup>
-                  <FieldError
-                    errors={[{ message: errors.password?.message }]}
-                  />
+                  <FieldError errors={[errors.password]} />
                 </FieldContent>
               </FieldLabel>
             </Field>
@@ -232,27 +165,21 @@ export function SignUpForm() {
                 <FieldContent className="w-full">
                   <ButtonGroup
                     className={cn(
-                      passwordGroupClassName,
-                      errors.repeatPassword && passwordGroupErrorClassName,
+                      "w-full shadow-md rounded-lg",
+                      errors.repeatPassword &&
+                        "border-destructive dark:border-destructive/50",
                     )}
                   >
-                    <InputGroup
-                      className={cn(
-                        largeInputGroupClassName,
-                        "rounded-none border-0 bg-transparent shadow-none",
-                      )}
-                    >
+                    <InputGroup className="gap-2 sm:px-1.5 px-1">
                       <InputGroupAddon align="inline-start">
-                        <Icons.lock className={largeIconClassName} />
+                        <Lock className="stroke-primary" />
                       </InputGroupAddon>
                       <InputGroupInput
                         type={showRepeatPassword ? "text" : "password"}
-                        autoComplete="new-password"
+                        autoComplete="current-password"
                         aria-invalid={!!errors.repeatPassword}
-                        placeholder={
-                          showRepeatPassword ? "StrongPassword" : "••••••••"
-                        }
-                        className={largeInputClassName}
+                        placeholder="Введите пароль"
+                        className="text-primary"
                         {...register("repeatPassword")}
                       />
                     </InputGroup>
@@ -261,31 +188,30 @@ export function SignUpForm() {
                       size="icon"
                       type="button"
                       variant="outline"
-                      className={passwordToggleClassName}
                     >
                       {createElement(
                         Icons[showRepeatPassword ? "eyeOff" : "eye"],
-                        { className: largeIconClassName },
+                        {
+                          className: "stroke-primary",
+                        },
                       )}
                     </Button>
                   </ButtonGroup>
-                  <FieldError
-                    errors={[{ message: errors.repeatPassword?.message }]}
-                  />
+                  <FieldError errors={[errors.repeatPassword]} />
                 </FieldContent>
               </FieldLabel>
             </Field>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-2">
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="mx-auto sm:w-fit sm:px-32 w-full bg-[#184a2c] hover:bg-[#184a2c]/90 h-12.5"
+                className="mx-auto sm:w-fit sm:px-24 w-full"
                 size="lg"
               >
                 {isSubmitting ? "Создаем..." : "Создать аккаунт"}
               </Button>
-              <p className="mt-1 text-sm text-muted-foreground text-center">
+              <p className="text-sm text-muted-foreground text-center">
                 Уже есть аккаунт?{" "}
                 <Link
                   className="underline underline-offset-4 text-primary"

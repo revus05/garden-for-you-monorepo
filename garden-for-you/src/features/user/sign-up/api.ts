@@ -1,12 +1,12 @@
 import type { User } from "entities/user";
-import type { SignInValues } from "../model/schema";
+import type { SignUpValues } from "./model";
 
-type SignInResponse = {
+type SignUpResponse = {
   customer: User;
 };
 
-export async function signInRequest(values: SignInValues): Promise<User> {
-  const response = await fetch("/api/auth/sign-in", {
+export async function signUpRequest(values: SignUpValues): Promise<User> {
+  const response = await fetch("/api/auth/sign-up", {
     method: "POST",
     headers: { "content-type": "application/json" },
     credentials: "include",
@@ -18,9 +18,9 @@ export async function signInRequest(values: SignInValues): Promise<User> {
     const data = (await response.json().catch(() => null)) as {
       message?: string;
     } | null;
-    throw new Error(data?.message ?? "Не удалось войти.");
+    throw new Error(data?.message ?? "Не удалось зарегистрироваться.");
   }
 
-  const data = (await response.json()) as SignInResponse;
+  const data = (await response.json()) as SignUpResponse;
   return data.customer;
 }
