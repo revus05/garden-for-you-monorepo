@@ -10,4 +10,6 @@ export const paths = {
   aboutUs: "/about-us",
   reviews: "/reviews",
   blog: "/blog",
+  contacts: "/contacts",
+  paymentAndShipping: "/payment-and-shipping",
 };

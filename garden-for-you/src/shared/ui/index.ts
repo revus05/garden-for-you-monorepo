@@ -74,7 +74,7 @@ export {
   TableHeader,
   TableRow,
 } from "./table";
-export { Tabs, TabsList, TabsTrigger } from "./tabs";
+export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 export { Textarea } from "./textarea";
 export {
   Tooltip,

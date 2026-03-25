@@ -35,7 +35,14 @@ export const NavItems = ({ onItemClick }: NavItemsProps) => {
         </Link>
       </li>
       <li>
-        <Link href={paths.home} onClick={onItemClick}>
+        <Link
+          href={paths.paymentAndShipping}
+          onClick={onItemClick}
+          className={cn(
+            pathname?.includes(paths.paymentAndShipping) &&
+              "font-bold text-primary",
+          )}
+        >
           Оплата и доставка
         </Link>
       </li>
@@ -59,6 +66,17 @@ export const NavItems = ({ onItemClick }: NavItemsProps) => {
           )}
         >
           Блог
+        </Link>
+      </li>
+      <li>
+        <Link
+          href={paths.contacts}
+          onClick={onItemClick}
+          className={cn(
+            pathname?.includes(paths.contacts) && "font-bold text-primary",
+          )}
+        >
+          Контакты
         </Link>
       </li>
     </>
