@@ -1,0 +1,1 @@
+export { PaymentAndShippingStaticContent } from "./ui";

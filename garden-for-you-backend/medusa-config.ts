@@ -47,6 +47,9 @@ module.exports = defineConfig({
       resolve: "./src/modules/store-review",
     },
     {
+      resolve: "./src/modules/site-config",
+    },
+    {
       resolve: "@medusajs/medusa/notification",
       options: {
         providers: notificationProviders,
