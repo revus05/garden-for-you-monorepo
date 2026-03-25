@@ -1,39 +1,35 @@
 "use client";
 
 import type { CheckedState } from "@radix-ui/react-checkbox";
-import type { ProductCategoryOrder } from "entities/product/model/types";
-import { addCartItem, removeCartItem } from "features/cart";
-import {
-  useCatalogCategoriesQuery,
-  useCatalogProductsInfiniteQuery,
-} from "features/catalog";
-import { getFilteredCategories } from "features/catalog/lib/category-utils";
+import { Search, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDeferredValue, useState } from "react";
-import { paths } from "shared/constants/navigation";
-import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
-import { cn } from "shared/lib/utils";
-import { Badge } from "shared/ui/badge";
-import { Button } from "shared/ui/button";
-import { Checkbox } from "shared/ui/checkbox";
+import type { ProductCategoryOrder } from "@/entities/product";
+import { addCartItem, removeCartItem } from "@/features/cart";
 import {
+  getFilteredCategories,
+  useCatalogCategoriesQuery,
+  useCatalogProductsInfiniteQuery,
+} from "@/features/catalog";
+import plantPlaceholder from "@/images/plant-placholder.svg";
+import { paths } from "@/shared/constants/navigation";
+import { cn, useAppDispatch, useAppSelector } from "@/shared/lib";
+import {
+  Badge,
+  Button,
+  Checkbox,
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "shared/ui/drawer";
-import { Field } from "shared/ui/field";
-import { Icons } from "shared/ui/icons";
-import {
+  Field,
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "shared/ui/input-group";
-import { Label } from "shared/ui/label";
-import {
+  Label,
   Select,
   SelectContent,
   SelectGroup,
@@ -41,10 +37,13 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "shared/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "shared/ui/tabs";
-import { Tooltip, TooltipContent, TooltipTrigger } from "shared/ui/tooltip";
-import plantPlaceholder from "../../../../public/image/plant-placholder.svg";
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/ui";
 
 export const Catalog = () => {
   const dispatch = useAppDispatch();
@@ -149,7 +148,7 @@ export const Catalog = () => {
   const search = (
     <InputGroup>
       <InputGroupAddon align="inline-start">
-        <Icons.search />
+        <Search />
       </InputGroupAddon>
       <InputGroupInput
         id="products-search"
@@ -323,11 +322,11 @@ export const Catalog = () => {
                             variant={isInCart ? "outline" : "default"}
                             disabled={!quantity}
                           >
-                            <Icons.cart
+                            <ShoppingCart
                               className={cn(
                                 isInCart
-                                  ? "[&_path]:stroke-secondary-foreground"
-                                  : "[&_path]:stroke-primary-foreground",
+                                  ? "stroke-secondary-foreground"
+                                  : "stroke-primary-foreground",
                               )}
                             />
                           </Button>

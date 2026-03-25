@@ -1,19 +1,17 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "entities/user";
-import { signInRequest } from "features/user/sign-in/api";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { paths } from "shared/constants/navigation";
-import { useAppDispatch } from "shared/lib/hooks";
 import { toast } from "sonner";
-import { z } from "zod";
+import { signIn } from "@/entities/user";
+import { paths } from "@/shared/constants/navigation";
+import { useAppDispatch } from "@/shared/lib";
+import { signInRequest } from "./api";
+import { type SignInValues, signInSchema } from "./schema";
 
-export const signInSchema = z.object({
-  email: z.string().trim().email("Некорректный email"),
-  password: z.string().min(8, "Пароль должен быть не короче 8 символов"),
-});
-
-export type SignInValues = z.infer<typeof signInSchema>;
+export type { SignInValues } from "./schema";
+export { signInSchema } from "./schema";
 
 export const useSignInForm = () => {
   const router = useRouter();

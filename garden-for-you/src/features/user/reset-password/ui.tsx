@@ -1,26 +1,23 @@
 "use client";
 
-import { Lock } from "lucide-react";
+import { Eye, EyeOff, Lock } from "lucide-react";
 import Link from "next/link";
-import { createElement, useState } from "react";
-import { paths } from "shared/constants/navigation";
-import { cn } from "shared/lib/utils";
-import { Button } from "shared/ui/button";
-import { ButtonGroup } from "shared/ui/button-group";
+import { useState } from "react";
+import { paths } from "@/shared/constants/navigation";
+import { cn } from "@/shared/lib";
 import {
+  Button,
+  ButtonGroup,
   Field,
   FieldContent,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from "shared/ui/field";
-import { Icons } from "shared/ui/icons";
-import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "shared/ui/input-group";
+} from "@/shared/ui";
 import { useResetPasswordForm } from "./model";
 
 export function ResetPasswordForm() {
@@ -71,9 +68,11 @@ export function ResetPasswordForm() {
                       type="button"
                       variant="outline"
                     >
-                      {createElement(Icons[showPassword ? "eyeOff" : "eye"], {
-                        className: "stroke-primary",
-                      })}
+                      {showPassword ? (
+                        <EyeOff className="stroke-primary" />
+                      ) : (
+                        <Eye className="stroke-primary" />
+                      )}
                     </Button>
                   </ButtonGroup>
                   <FieldError errors={[errors.password]} />
@@ -110,11 +109,10 @@ export function ResetPasswordForm() {
                       type="button"
                       variant="outline"
                     >
-                      {createElement(
-                        Icons[showRepeatPassword ? "eyeOff" : "eye"],
-                        {
-                          className: "stroke-primary",
-                        },
+                      {showRepeatPassword ? (
+                        <EyeOff className="stroke-primary" />
+                      ) : (
+                        <Eye className="stroke-primary" />
                       )}
                     </Button>
                   </ButtonGroup>

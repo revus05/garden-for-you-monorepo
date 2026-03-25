@@ -1,7 +1,7 @@
-import { resolveServerCart } from "entities/cart/server/resolve-server-cart";
 import { NextResponse } from "next/server";
-import { setCartIdCookie } from "shared/lib/cart-cookie.server";
-import { createServerSdk } from "shared/lib/server-sdk";
+import { resolveServerCart } from "@/entities/cart/server/resolve-server-cart";
+import { setCartIdCookie } from "@/shared/lib/cart-cookie.server";
+import { createServerSdk } from "@/shared/lib/server-sdk";
 
 type AddCartItemBody = {
   variantId?: string;

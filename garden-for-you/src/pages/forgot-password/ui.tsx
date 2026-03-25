@@ -1,5 +1,5 @@
-import { ForgotPasswordForm } from "features/user/forgot-password/ui";
-import { withHomeLayout } from "widgets/layouts/home";
+import { ForgotPasswordForm } from "@/features/user/forgot-password/ui";
+import { withHomeLayout } from "@/widgets/layouts/home";
 
 const ForgotPasswordPage = () => {
   return <ForgotPasswordForm />;

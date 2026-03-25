@@ -1,31 +1,29 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createStoreReviewRequest } from "features/store-review/create-review/api";
 import { PenLine } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { useAppSelector } from "shared/lib/hooks";
-import { Button } from "shared/ui/button";
+import { toast } from "sonner";
+import { useAppSelector } from "@/shared/lib";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "shared/ui/dialog";
-import {
   Field,
   FieldContent,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from "shared/ui/field";
-import { Rating } from "shared/ui/rating";
-import { Textarea } from "shared/ui/textarea";
-import { toast } from "sonner";
+  Rating,
+  Textarea,
+} from "@/shared/ui";
+import { createStoreReviewRequest } from "./api";
 import { type CreateStoreReviewValues, createStoreReviewSchema } from "./model";
 
 type CreateStoreReviewFormProps = {

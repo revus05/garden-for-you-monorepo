@@ -1,1 +1,1 @@
-export { default } from "pages/forgot-password";
+export { default } from "@/pages/forgot-password";

@@ -1,8 +1,11 @@
-import type { AppDispatch } from "app/store";
-import { setCartInitialized, updateCart } from "entities/cart";
-import { syncCartRequest } from "entities/cart/api/cart";
+import type { Dispatch } from "@reduxjs/toolkit";
+import {
+  setCartInitialized,
+  syncCartRequest,
+  updateCart,
+} from "@/entities/cart";
 
-export async function syncCart(dispatch: AppDispatch) {
+export async function syncCart(dispatch: Dispatch) {
   try {
     const cart = await syncCartRequest();
 

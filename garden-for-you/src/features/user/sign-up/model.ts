@@ -1,31 +1,17 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "entities/user";
-import { signUpRequest } from "features/user/sign-up/api";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { paths } from "shared/constants/navigation";
-import { useAppDispatch } from "shared/lib/hooks";
-import { phoneSchema } from "shared/model/phone-schema";
 import { toast } from "sonner";
-import { z } from "zod";
+import { signIn } from "@/entities/user";
+import { paths } from "@/shared/constants/navigation";
+import { useAppDispatch } from "@/shared/lib";
+import { signUpRequest } from "./api";
+import { type SignUpValues, signUpSchema } from "./schema";
 
-export const signUpSchema = z
-  .object({
-    first_name: z.string().trim().min(2, "Введите имя"),
-    last_name: z.string().trim().min(2, "Введите фамилию"),
-    email: z.string().trim().email("Некорректный email"),
-    phone: phoneSchema,
-    password: z.string().min(8, "Пароль должен быть не короче 8 символов"),
-    repeatPassword: z
-      .string()
-      .min(8, "Пароль должен быть не короче 8 символов"),
-  })
-  .refine((data) => data.password === data.repeatPassword, {
-    message: "Пароли не совпадают",
-    path: ["repeatPassword"],
-  });
-
-export type SignUpValues = z.infer<typeof signUpSchema>;
+export type { SignUpValues } from "./schema";
+export { signUpSchema } from "./schema";
 
 export const useSignUpForm = () => {
   const router = useRouter();

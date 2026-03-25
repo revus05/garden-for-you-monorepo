@@ -15,7 +15,7 @@ async function AuthLayout({ children }: AuthLayoutProps) {
 }
 
 export const withAuthLayout = <P extends object>(
-  Component: ComponentType<P>
+  Component: ComponentType<P>,
 ) => {
   const WrappedComponent = async (props: P) => (
     <AuthLayout>

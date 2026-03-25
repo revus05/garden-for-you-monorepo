@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { AUTH_TOKEN_COOKIE } from "shared/config/auth";
-import { requiredEnv } from "shared/lib/utils";
+import { AUTH_TOKEN_COOKIE } from "@/shared/config/auth";
+import { requireEnv } from "@/shared/lib";
 
 const MEDUSA_BACKEND_URL =
   process.env.MEDUSA_BACKEND_URL ||
-  requiredEnv("NEXT_PUBLIC_MEDUSA_URL", process.env.NEXT_PUBLIC_MEDUSA_URL);
-const MEDUSA_PUBLISHABLE_KEY = requiredEnv(
+  requireEnv("NEXT_PUBLIC_MEDUSA_URL", process.env.NEXT_PUBLIC_MEDUSA_URL);
+const MEDUSA_PUBLISHABLE_KEY = requireEnv(
   "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
 );

@@ -1,16 +1,12 @@
 import "server-only";
-
-import { STORE_REVIEWS_PAGE_SIZE } from "entities/store-review/model/constants";
-import type {
-  StoreReviewSort,
-  StoreReviewsListResponse,
-} from "entities/store-review/model/types";
-import { requiredEnv } from "shared/lib/utils";
+import { requireEnv } from "@/shared/lib";
+import { STORE_REVIEWS_PAGE_SIZE } from "../model/constants";
+import type { StoreReviewSort, StoreReviewsListResponse } from "../model/types";
 
 const MEDUSA_BACKEND_URL =
   process.env.MEDUSA_BACKEND_URL ||
-  requiredEnv("NEXT_PUBLIC_MEDUSA_URL", process.env.NEXT_PUBLIC_MEDUSA_URL);
-const MEDUSA_PUBLISHABLE_KEY = requiredEnv(
+  requireEnv("NEXT_PUBLIC_MEDUSA_URL", process.env.NEXT_PUBLIC_MEDUSA_URL);
+const MEDUSA_PUBLISHABLE_KEY = requireEnv(
   "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
 );

@@ -1,11 +1,7 @@
-import type { AppDispatch } from "app/store";
-import { updateCart } from "entities/cart";
-import { removeCartItemRequest } from "entities/cart/api/cart";
+import type { Dispatch } from "@reduxjs/toolkit";
+import { removeCartItemRequest, updateCart } from "@/entities/cart";
 
-export async function removeCartItem(
-  dispatch: AppDispatch,
-  lineItemId: string,
-) {
+export async function removeCartItem(dispatch: Dispatch, lineItemId: string) {
   try {
     const updatedCart = await removeCartItemRequest(lineItemId);
 

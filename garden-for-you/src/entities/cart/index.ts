@@ -1,4 +1,12 @@
 export {
+  addCartItemRequest,
+  CartRequestError,
+  removeCartItemRequest,
+  resetCartRequest,
+  syncCartRequest,
+  updateCartItemQuantityRequest,
+} from "./api/cart";
+export {
   default as cartSlice,
   resetCart,
   setCartInitialized,

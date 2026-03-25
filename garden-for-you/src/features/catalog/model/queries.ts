@@ -1,9 +1,9 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
+  type CatalogFilters,
   fetchCatalogCategories,
   fetchCatalogProductsPage,
-} from "entities/product/api/catalog";
-import type { CatalogFilters } from "entities/product/model/types";
+} from "@/entities/product";
 
 const catalogQueryKeys = {
   all: ["catalog"] as const,

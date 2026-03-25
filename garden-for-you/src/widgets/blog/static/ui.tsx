@@ -1,9 +1,9 @@
 import Image from "next/image";
-import blog from "../../../../public/image/blog.webp";
-import blog1 from "../../../../public/image/blog-1.svg";
-import blog2 from "../../../../public/image/blog-2.svg";
-import blog3 from "../../../../public/image/blog-3.svg";
-import brushes from "../../../../public/image/brushes.jpg";
+import blog from "@/images/blog.webp";
+import blog1 from "@/images/blog-1.svg";
+import blog2 from "@/images/blog-2.svg";
+import blog3 from "@/images/blog-3.svg";
+import brushes from "@/images/brushes.jpg";
 
 export const BlogStaticContent = () => {
   return (

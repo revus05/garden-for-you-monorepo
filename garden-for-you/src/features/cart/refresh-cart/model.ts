@@ -1,8 +1,7 @@
-import type { AppDispatch } from "app/store";
-import { resetCart } from "entities/cart";
-import { resetCartRequest } from "entities/cart/api/cart";
+import type { Dispatch } from "@reduxjs/toolkit";
+import { resetCart, resetCartRequest } from "@/entities/cart";
 
-export async function refreshCart(dispatch: AppDispatch) {
+export async function refreshCart(dispatch: Dispatch) {
   try {
     await resetCartRequest();
     dispatch(resetCart());

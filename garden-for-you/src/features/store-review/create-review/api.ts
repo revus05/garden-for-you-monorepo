@@ -1,4 +1,4 @@
-import type { StoreReview } from "entities/store-review/model/types";
+import type { StoreReview } from "@/entities/store-review";
 import type { CreateStoreReviewValues } from "./model";
 
 type CreateStoreReviewResponse = {

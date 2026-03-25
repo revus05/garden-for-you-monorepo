@@ -1,6 +1,6 @@
-import { resetPasswordSchema } from "features/user/reset-password/model";
 import { NextResponse } from "next/server";
-import { sdk } from "shared/lib/sdk";
+import { resetPasswordSchema } from "@/features/user/reset-password/schema";
+import { sdk } from "@/shared/lib";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);

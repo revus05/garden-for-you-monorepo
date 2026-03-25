@@ -1,13 +1,11 @@
 "use client";
 
 import type { StoreProduct } from "@medusajs/types";
-import { addCartItem, removeCartItem } from "features/cart";
+import { ShoppingCart } from "lucide-react";
 import type { FC } from "react";
-import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
-import { cn } from "shared/lib/utils";
-import { Badge } from "shared/ui/badge";
-import { Button } from "shared/ui/button";
-import { Icons } from "shared/ui/icons";
+import { addCartItem, removeCartItem } from "@/features/cart";
+import { cn, useAppDispatch, useAppSelector } from "@/shared/lib";
+import { Badge, Button } from "@/shared/ui";
 
 type ProductInfoProps = {
   product: StoreProduct;
@@ -56,11 +54,11 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
         disabled={!isInStock}
       >
         {isInCart ? "Удалить из корзины" : "Добавить в корзину"}
-        <Icons.cart
+        <ShoppingCart
           className={cn(
             isInCart
-              ? "[&_path]:stroke-secondary-foreground"
-              : "[&_path]:stroke-primary-foreground",
+              ? "stroke-secondary-foreground"
+              : "stroke-primary-foreground",
           )}
         />
       </Button>

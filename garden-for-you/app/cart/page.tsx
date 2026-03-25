@@ -1,1 +1,1 @@
-export { default } from "pages/cart";
+export { default } from "@/pages/cart";

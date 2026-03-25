@@ -1,8 +1,8 @@
-import type { Product } from "entities/product/model/types";
+import type { Product } from "@/entities/product";
 
-import { withHomeLayout } from "widgets/layouts/home";
-import { ProductImage } from "widgets/product/image";
-import { ProductInfo } from "widgets/product/info";
+import { withHomeLayout } from "@/widgets/layouts/home";
+import { ProductImage } from "@/widgets/product/image";
+import { ProductInfo } from "@/widgets/product/info";
 
 type ProductPageViewProps = {
   product: Product;

@@ -1,9 +1,9 @@
-import { resolveServerCart } from "entities/cart/server/resolve-server-cart";
 import { NextResponse } from "next/server";
+import { resolveServerCart } from "@/entities/cart/server/resolve-server-cart";
 import {
   clearCartIdCookie,
   setCartIdCookie,
-} from "shared/lib/cart-cookie.server";
+} from "@/shared/lib/cart-cookie.server";
 
 export async function GET() {
   try {

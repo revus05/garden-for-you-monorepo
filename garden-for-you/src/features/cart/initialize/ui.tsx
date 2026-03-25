@@ -1,8 +1,8 @@
 "use client";
 
-import { syncCart } from "features/cart";
 import { type ReactNode, useEffect, useRef } from "react";
-import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
+import { syncCart } from "@/features/cart";
+import { useAppDispatch, useAppSelector } from "@/shared/lib";
 
 export function CartInitializer({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();

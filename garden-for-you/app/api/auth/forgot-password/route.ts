@@ -1,7 +1,7 @@
-import { forgotPasswordSchema } from "features/user/forgot-password/model";
 import { NextResponse } from "next/server";
-import { paths } from "shared/constants/navigation";
-import { sdk } from "shared/lib/sdk";
+import { forgotPasswordSchema } from "@/features/user/forgot-password/schema";
+import { paths } from "@/shared/constants/navigation";
+import { sdk } from "@/shared/lib";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);

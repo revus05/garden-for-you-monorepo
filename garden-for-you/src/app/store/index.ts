@@ -1,8 +1,8 @@
 import type { StoreCustomer } from "@medusajs/types";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import type { Cart } from "entities/cart";
-import { cartSlice } from "entities/cart";
-import { userSlice } from "entities/user";
+import type { Cart } from "@/entities/cart";
+import { cartSlice } from "@/entities/cart";
+import { userSlice } from "@/entities/user";
 
 const rootReducer = {
   userSlice,

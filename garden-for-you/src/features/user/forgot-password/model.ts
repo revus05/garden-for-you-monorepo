@@ -1,14 +1,13 @@
+"use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import { forgotPasswordRequest } from "./api";
+import { type ForgotPasswordValues, forgotPasswordSchema } from "./schema";
 
-export const forgotPasswordSchema = z.object({
-  email: z.string().trim().email("Некорректный email"),
-});
-
-export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
+export type { ForgotPasswordValues } from "./schema";
+export { forgotPasswordSchema } from "./schema";
 
 export const useForgotPasswordForm = () => {
   const form = useForm<ForgotPasswordValues>({

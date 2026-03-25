@@ -1,10 +1,7 @@
 "use client";
 
-import { STORE_REVIEWS_PAGE_SIZE } from "entities/store-review/model/constants";
-import type {
-  StoreReviewSort,
-  StoreReviewsListResponse,
-} from "entities/store-review/model/types";
+import { STORE_REVIEWS_PAGE_SIZE } from "../model/constants";
+import type { StoreReviewSort, StoreReviewsListResponse } from "../model/types";
 
 export async function fetchStoreReviewsPage(params: {
   limit?: number;

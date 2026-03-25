@@ -1,14 +1,13 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { type AppStore, makeStore } from "app/store";
-import type { Cart } from "entities/cart";
-import type { User } from "entities/user";
-import { CartInitializer } from "features/cart";
 import { type ReactNode, useRef, useState } from "react";
 import { Provider } from "react-redux";
-import { Toaster } from "shared/ui/sonner";
-import { TooltipProvider } from "shared/ui/tooltip";
+import { type AppStore, makeStore } from "@/app/store";
+import type { Cart } from "@/entities/cart";
+import type { User } from "@/entities/user";
+import { CartInitializer } from "@/features/cart";
+import { Toaster, TooltipProvider } from "@/shared/ui";
 
 export function Providers({
   children,

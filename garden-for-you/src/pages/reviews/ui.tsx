@@ -1,8 +1,10 @@
-import { STORE_REVIEWS_PAGE_SIZE } from "entities/store-review/model/constants";
-import type { StoreReviewsListResponse } from "entities/store-review/model/types";
-import { getStoreReviews } from "entities/store-review/server/get-store-reviews";
-import { ReviewsPageClient } from "pages/reviews/reviews-page-client";
-import { withHomeLayout } from "widgets/layouts/home";
+import {
+  STORE_REVIEWS_PAGE_SIZE,
+  type StoreReviewsListResponse,
+} from "@/entities/store-review";
+import { getStoreReviews } from "@/entities/store-review/server";
+import { withHomeLayout } from "@/widgets/layouts/home";
+import { ReviewsPageClient } from "./reviews-page-client";
 
 async function ReviewsPage() {
   const initialData: StoreReviewsListResponse = await getStoreReviews({

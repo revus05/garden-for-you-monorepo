@@ -1,7 +1,7 @@
 import type { StoreProduct } from "@medusajs/types";
 import Image from "next/image";
 import type { FC } from "react";
-import plantPlaceholder from "../../../../public/image/plant-placholder.svg";
+import plantPlaceholder from "@/images/plant-placholder.svg";
 
 type ProductImageProps = {
   product: StoreProduct;

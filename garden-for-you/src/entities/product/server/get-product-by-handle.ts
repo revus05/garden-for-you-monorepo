@@ -1,10 +1,9 @@
 import "server-only";
+import { requireEnv } from "@/shared/lib";
+import { createServerSdk } from "@/shared/lib/server-sdk";
+import type { Product } from "../model/types";
 
-import type { Product } from "entities/product/model/types";
-import { createServerSdk } from "shared/lib/server-sdk";
-import { requiredEnv } from "shared/lib/utils";
-
-const NEXT_PUBLIC_REGION_ID = requiredEnv(
+const NEXT_PUBLIC_REGION_ID = requireEnv(
   "NEXT_PUBLIC_REGION_ID",
   process.env.NEXT_PUBLIC_REGION_ID,
 );

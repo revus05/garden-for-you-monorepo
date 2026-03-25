@@ -1,10 +1,10 @@
 "use client";
 
+import { Search, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
-import { paths } from "shared/constants/navigation";
-import { useAppSelector } from "shared/lib/hooks";
-import { Button } from "shared/ui/button";
-import { Icons } from "shared/ui/icons";
+import { paths } from "@/shared/constants/navigation";
+import { useAppSelector } from "@/shared/lib";
+import { Button } from "@/shared/ui";
 import { MobileMenu } from "./mobile-menu";
 import { NavItems } from "./nav-items";
 
@@ -28,11 +28,11 @@ export const Header = () => {
           </nav>
           <div className="flex gap-1 items-center">
             <Button variant="ghost" size="icon">
-              <Icons.search />
+              <Search />
             </Button>
             <Button variant="ghost" size="icon" asChild>
               <Link href={paths.cart} className="relative">
-                <Icons.cart />
+                <ShoppingCart />
                 {cart?.items && cart?.items?.length > 0 && (
                   <div className="absolute size-4 top-0 right-0 translate-x-1 -translate-y-1 rounded-full bg-red-500 flex justify-center items-center">
                     <span className="text-xs font-medium text-primary-foreground">
@@ -54,7 +54,7 @@ export const Header = () => {
                       : user.first_name}
                   </span>
                 )}
-                <Icons.user />
+                <User />
               </Link>
             </Button>
             <MobileMenu />

@@ -1,11 +1,10 @@
 import "server-only";
-
-import type { Cart } from "entities/cart";
 import { cookies } from "next/headers";
-import { AUTH_TOKEN_COOKIE } from "shared/config/auth";
-import { CART_ID_COOKIE } from "shared/config/cart";
-import { requireEnv } from "shared/lib/require-env";
-import { createServerSdk } from "shared/lib/server-sdk";
+import { AUTH_TOKEN_COOKIE } from "@/shared/config/auth";
+import { CART_ID_COOKIE } from "@/shared/config/cart";
+import { requireEnv } from "@/shared/lib";
+import { createServerSdk } from "@/shared/lib/server-sdk";
+import type { Cart } from "../model/types";
 
 const REGION_ID = requireEnv(
   "NEXT_PUBLIC_REGION_ID",

@@ -4,7 +4,7 @@ import type { NextResponse } from "next/server";
 import {
   AUTH_TOKEN_COOKIE,
   AUTH_TOKEN_COOKIE_MAX_AGE_SECONDS,
-} from "shared/config/auth";
+} from "@/shared/config/auth";
 
 function isSecureCookie() {
   return process.env.NODE_ENV === "production";

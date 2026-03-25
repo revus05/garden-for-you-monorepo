@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { AUTH_TOKEN_COOKIE } from "shared/config/auth";
-import { createSdk } from "shared/lib/sdk";
+import { AUTH_TOKEN_COOKIE } from "@/shared/config/auth";
+import { createSdk } from "@/shared/lib";
 
 export async function GET() {
   const cookieStore = await cookies();

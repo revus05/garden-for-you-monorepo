@@ -1,10 +1,10 @@
-import { requiredEnv } from "shared/lib/utils";
+import { requireEnv } from "@/shared/lib";
 
 type Videos = { url: string }[];
 
 export const BlogYouTubeVideos = async () => {
   const response = await fetch(
-    `${requiredEnv(
+    `${requireEnv(
       "NEXT_PUBLIC_CONTENT_TABLE_URL",
       process.env.NEXT_PUBLIC_CONTENT_TABLE_URL,
     )}/Видео для Блога`,

@@ -1,6 +1,6 @@
-import { BlogStaticContent } from "widgets/blog/static";
-import { BlogYouTubeVideos } from "widgets/blog/yt-videos";
-import { withHomeLayout } from "widgets/layouts/home";
+import { BlogStaticContent } from "@/widgets/blog/static";
+import { BlogYouTubeVideos } from "@/widgets/blog/yt-videos";
+import { withHomeLayout } from "@/widgets/layouts/home";
 
 const BlogPage = async () => {
   return (

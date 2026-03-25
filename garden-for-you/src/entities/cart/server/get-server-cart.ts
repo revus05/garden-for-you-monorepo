@@ -1,4 +1,4 @@
-import type { Cart } from "entities/cart";
+import type { Cart } from "../model/types";
 import { resolveServerCart } from "./resolve-server-cart";
 
 export async function getServerCart(): Promise<Cart | null> {

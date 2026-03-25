@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { paths } from "shared/constants/navigation";
-import { cn } from "shared/lib/utils";
+import { paths } from "@/shared/constants/navigation";
+import { cn } from "@/shared/lib";
 
 type NavItemsProps = {
   onItemClick?: () => void;

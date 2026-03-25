@@ -1,9 +1,8 @@
-import type { AppDispatch } from "app/store";
-import { updateCart } from "entities/cart";
-import { addCartItemRequest } from "entities/cart/api/cart";
+import type { Dispatch } from "@reduxjs/toolkit";
+import { addCartItemRequest, updateCart } from "@/entities/cart";
 
 export async function addCartItem(
-  dispatch: AppDispatch,
+  dispatch: Dispatch,
   variantId: string,
   quantity = 1,
 ) {

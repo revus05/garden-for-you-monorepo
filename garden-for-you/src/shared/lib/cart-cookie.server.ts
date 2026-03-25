@@ -1,7 +1,7 @@
 import "server-only";
 
 import type { NextResponse } from "next/server";
-import { CART_ID_COOKIE } from "shared/config/cart";
+import { CART_ID_COOKIE } from "@/shared/config/cart";
 
 const CART_ID_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 

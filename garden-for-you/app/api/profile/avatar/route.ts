@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { AUTH_TOKEN_COOKIE } from "shared/config/auth";
-import { createSdk } from "shared/lib/sdk";
+import { AUTH_TOKEN_COOKIE } from "@/shared/config/auth";
+import { createSdk } from "@/shared/lib";
 
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const CLOUDINARY_UPLOAD_PRESET = process.env.CLOUDINARY_UPLOAD_PRESET;

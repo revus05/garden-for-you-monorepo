@@ -1,6 +1,6 @@
-import { getProductByHandle } from "entities/product/server/get-product-by-handle";
 import { notFound } from "next/navigation";
-import ProductPageView from "pages/product";
+import { getProductByHandle } from "@/entities/product/server/get-product-by-handle";
+import ProductPageView from "@/pages/product";
 
 type ProductPageProps = {
   params: Promise<{

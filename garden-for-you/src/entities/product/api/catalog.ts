@@ -1,13 +1,12 @@
-import { CATALOG_PRODUCTS_PAGE_SIZE } from "entities/product/model";
-import { sdk } from "shared/lib/sdk";
-import { requiredEnv } from "shared/lib/utils";
+import { requireEnv, sdk } from "@/shared/lib";
+import { CATALOG_PRODUCTS_PAGE_SIZE } from "../model";
 import type {
   CatalogFilters,
   CatalogProductsPage,
   ProductCategory,
 } from "../model/types";
 
-const NEXT_PUBLIC_REGION_ID = requiredEnv(
+const NEXT_PUBLIC_REGION_ID = requireEnv(
   "NEXT_PUBLIC_REGION_ID",
   process.env.NEXT_PUBLIC_REGION_ID,
 );

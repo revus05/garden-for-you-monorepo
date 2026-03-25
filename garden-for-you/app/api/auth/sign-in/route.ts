@@ -1,8 +1,8 @@
-import type { User } from "entities/user";
-import { signInSchema } from "features/user/sign-in/model/schema";
 import { NextResponse } from "next/server";
-import { setAuthTokenCookie } from "shared/lib/auth-cookie.server";
-import { createSdk, sdk } from "shared/lib/sdk";
+import type { User } from "@/entities/user";
+import { signInSchema } from "@/features/user/sign-in/schema";
+import { createSdk, sdk } from "@/shared/lib";
+import { setAuthTokenCookie } from "@/shared/lib/auth-cookie.server";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);

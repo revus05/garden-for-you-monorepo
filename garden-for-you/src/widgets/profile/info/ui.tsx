@@ -2,8 +2,6 @@
 
 import type { HttpTypes } from "@medusajs/types";
 import { useQuery } from "@tanstack/react-query";
-import { signIn, signOut } from "entities/user";
-import { EditProfileForm } from "features/profile/edit-profile";
 import {
   Camera,
   History,
@@ -17,8 +15,11 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type { ChangeEvent } from "react";
 import { useRef, useState } from "react";
-import { paths } from "shared/constants/navigation";
-import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
+import { toast } from "sonner";
+import { signIn, signOut } from "@/entities/user";
+import { EditProfileForm } from "@/features/profile/edit-profile";
+import { paths } from "@/shared/constants/navigation";
+import { useAppDispatch, useAppSelector } from "@/shared/lib";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,18 +30,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "shared/ui/alert-dialog";
-import { Badge } from "shared/ui/badge";
-import { Button } from "shared/ui/button";
-import {
+  Badge,
+  Button,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "shared/ui/table";
-import { toast } from "sonner";
+} from "@/shared/ui";
 
 type StoreOrder = HttpTypes.StoreOrder;
 

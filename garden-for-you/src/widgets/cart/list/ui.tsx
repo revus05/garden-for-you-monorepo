@@ -1,28 +1,25 @@
 "use client";
 
-import { removeCartItem, updateCartItemQuantity } from "features/cart";
 import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { paths } from "shared/constants/navigation";
-import { formatPrice } from "shared/lib/format-price";
-import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
-import { Button } from "shared/ui/button";
+import { removeCartItem, updateCartItemQuantity } from "@/features/cart";
+import { paths } from "@/shared/constants/navigation";
+import { formatPrice, useAppDispatch, useAppSelector } from "@/shared/lib";
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "shared/ui/card";
-import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "shared/ui/table";
+} from "@/shared/ui";
 
 export const CartList = () => {
   const cart = useAppSelector((state) => state.cartSlice.cart);
@@ -30,7 +27,7 @@ export const CartList = () => {
 
   if (!cart || !cart?.items?.length) {
     return (
-      <div className="flex flex-col gap-4 items-center">
+      <div className="flex flex-col gap-4 items-center w-full">
         <p className="text-secondary-foreground/70">Нет товаров в корзине</p>
         <Button className="w-fit" asChild>
           <Link href={paths.home}>В каталог</Link>

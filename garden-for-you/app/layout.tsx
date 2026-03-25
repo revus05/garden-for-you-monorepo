@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { EB_Garamond, Noto_Sans } from "next/font/google";
 import "./globals.css";
-import { Providers } from "app/providers";
-import { getServerCart } from "entities/cart/server/get-server-cart";
-import { getServerUser } from "entities/user/server/get-server-user";
 import type { ReactNode } from "react";
+import { Providers } from "@/app/providers";
+import { getServerCart } from "@/entities/cart/server/get-server-cart";
+import { getServerUser } from "@/entities/user/server/get-server-user";
 
 const notoSans = Noto_Sans({ subsets: ["cyrillic"], variable: "--font-sans" });
 const ebGaramond = EB_Garamond({

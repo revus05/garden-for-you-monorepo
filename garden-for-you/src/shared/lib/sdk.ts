@@ -1,13 +1,13 @@
 import Medusa from "@medusajs/js-sdk";
-import { AUTH_TOKEN_COOKIE } from "shared/config/auth";
-import { requiredEnv } from "./utils";
+import { AUTH_TOKEN_COOKIE } from "@/shared/config/auth";
+import { requireEnv } from "./require-env";
 
-const NEXT_PUBLIC_MEDUSA_URL = requiredEnv(
+const NEXT_PUBLIC_MEDUSA_URL = requireEnv(
   "NEXT_PUBLIC_MEDUSA_URL",
   process.env.NEXT_PUBLIC_MEDUSA_URL,
 );
 const MEDUSA_BACKEND_URL = process.env.MEDUSA_BACKEND_URL;
-const MEDUSA_PUBLISHABLE_KEY = requiredEnv(
+const MEDUSA_PUBLISHABLE_KEY = requireEnv(
   "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
 );

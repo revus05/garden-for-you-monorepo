@@ -2,21 +2,19 @@
 
 import { Mail } from "lucide-react";
 import Link from "next/link";
-import { paths } from "shared/constants/navigation";
-import { Button } from "shared/ui/button";
+import { paths } from "@/shared/constants/navigation";
 import {
+  Button,
   Field,
   FieldContent,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from "shared/ui/field";
-import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "shared/ui/input-group";
+} from "@/shared/ui";
 import { useForgotPasswordForm } from "./model";
 
 export function ForgotPasswordForm() {

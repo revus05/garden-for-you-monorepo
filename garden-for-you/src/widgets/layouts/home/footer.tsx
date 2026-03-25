@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { NavItems } from "widgets/layouts/home/nav-items";
-import plantsPattern from "../../../../public/image/plants-pattern.png";
-import telegram from "../../../../public/image/telegram.svg";
+import plantsPattern from "@/images/plants-pattern.png";
+import telegram from "@/images/telegram.svg";
+import { NavItems } from "./nav-items";
 
 export const Footer = () => {
   return (

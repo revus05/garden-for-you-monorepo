@@ -1,7 +1,7 @@
-import type { User } from "entities/user/model/types";
 import { cookies } from "next/headers";
-import { AUTH_TOKEN_COOKIE } from "shared/config/auth";
-import { createSdk } from "shared/lib/sdk";
+import { AUTH_TOKEN_COOKIE } from "@/shared/config/auth";
+import { createSdk } from "@/shared/lib";
+import type { User } from "../model/types";
 
 export async function getServerUser(): Promise<User | null> {
   const cookieStore = await cookies();

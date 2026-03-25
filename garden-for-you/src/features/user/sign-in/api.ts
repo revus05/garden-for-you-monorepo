@@ -1,4 +1,4 @@
-import type { User } from "entities/user";
+import type { User } from "@/entities/user";
 import type { SignInValues } from "./model";
 
 type SignInResponse = {

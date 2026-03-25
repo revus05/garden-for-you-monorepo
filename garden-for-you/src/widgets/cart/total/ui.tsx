@@ -1,17 +1,16 @@
 "use client";
 
-import { formatPrice } from "shared/lib/format-price";
-import { useAppSelector } from "shared/lib/hooks";
-import { Button } from "shared/ui/button";
+import { formatPrice, useAppSelector } from "@/shared/lib";
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "shared/ui/card";
-import { Separator } from "shared/ui/separator";
+  Separator,
+} from "@/shared/ui";
 
 export const CartTotal = () => {
   const cart = useAppSelector((state) => state.cartSlice.cart);

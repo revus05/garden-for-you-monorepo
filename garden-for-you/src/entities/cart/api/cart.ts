@@ -1,5 +1,5 @@
-import type { Cart } from "entities/cart";
 import { toast } from "sonner";
+import type { Cart } from "../model/types";
 
 type CartResponse = {
   cart: Cart | null;

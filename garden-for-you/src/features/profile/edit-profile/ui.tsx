@@ -1,29 +1,27 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "entities/user";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "shared/lib/hooks";
-import { Button } from "shared/ui/button";
+import { toast } from "sonner";
+import { signIn } from "@/entities/user";
+import { useAppDispatch, useAppSelector } from "@/shared/lib";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "shared/ui/dialog";
-import {
   Field,
   FieldContent,
   FieldError,
   FieldGroup,
   FieldLabel,
   FieldSet,
-} from "shared/ui/field";
-import { Input } from "shared/ui/input";
-import { toast } from "sonner";
+  Input,
+} from "@/shared/ui";
 import { type EditProfileValues, editProfileSchema } from "./model/schema";
 
 export function EditProfileForm() {

@@ -1,0 +1,1 @@
+export { AboutUsStaticContent } from "./ui";

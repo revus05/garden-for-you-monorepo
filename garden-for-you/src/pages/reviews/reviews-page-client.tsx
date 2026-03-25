@@ -1,22 +1,22 @@
 "use client";
 
-import { fetchStoreReviewsPage } from "entities/store-review/api/fetch-store-reviews";
-import { STORE_REVIEWS_PAGE_SIZE } from "entities/store-review/model/constants";
-import type {
-  StoreReview,
-  StoreReviewSort,
-  StoreReviewsListResponse,
-} from "entities/store-review/model/types";
-import { CreateStoreReviewForm } from "features/store-review/create-review";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useAppSelector } from "shared/lib/hooks";
+import {
+  fetchStoreReviewsPage,
+  STORE_REVIEWS_PAGE_SIZE,
+  type StoreReview,
+  type StoreReviewSort,
+  type StoreReviewsListResponse,
+} from "@/entities/store-review";
+import { CreateStoreReviewForm } from "@/features/store-review/create-review";
+import { useAppSelector } from "@/shared/lib";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "shared/ui/select";
+} from "@/shared/ui";
 
 const SORT_OPTIONS: { value: StoreReviewSort; label: string }[] = [
   { value: "newest", label: "Сначала новые" },

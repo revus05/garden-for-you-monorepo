@@ -3,8 +3,8 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useCallback } from "react";
-import { Button } from "shared/ui/button";
-import heroImage from "../../../../public/image/hero.png";
+import heroImage from "@/images/hero.png";
+import { Button } from "@/shared/ui";
 
 export const HeroSection = () => {
   const scrollToCatalog = useCallback(() => {
