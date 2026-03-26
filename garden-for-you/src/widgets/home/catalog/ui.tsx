@@ -212,7 +212,7 @@ export const Catalog = () => {
                 </DrawerDescription>
               </DrawerHeader>
               <div className="flex flex-col gap-4 overflow-y-auto px-4 pb-4">
-                {tabs}
+                <div className="hidden">{tabs}</div>
                 {sorting}
                 {categoryFilters}
               </div>
@@ -222,7 +222,7 @@ export const Catalog = () => {
 
         <div className="block md:hidden col-span-2">{search}</div>
 
-        <div className="hidden md:block">{tabs}</div>
+        <div className="hidden md:block opacity-0">{tabs}</div>
 
         <div className="hidden md:block">{sorting}</div>
       </div>

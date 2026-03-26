@@ -22,6 +22,9 @@ import {
   FieldSet,
   Rating,
   Textarea,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "@/shared/ui";
 import { createStoreReviewRequest } from "./api";
 import { type CreateStoreReviewValues, createStoreReviewSchema } from "./model";
@@ -33,6 +36,7 @@ type CreateStoreReviewFormProps = {
 export function CreateStoreReviewForm({
   onSuccess,
 }: CreateStoreReviewFormProps) {
+  const user = useAppSelector((state) => state.userSlice.user);
   const userPhone = useAppSelector((state) => state.userSlice.user?.phone);
   const userFirstName = useAppSelector(
     (state) => state.userSlice.user?.first_name,
@@ -85,10 +89,31 @@ export function CreateStoreReviewForm({
   return (
     <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setDialogOpen(true)} size="lg" type="button">
-          <PenLine className="stroke-primary-foreground" />
-          Оставить отзыв
-        </Button>
+        {!user ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="inline-block w-fit">
+                <Button
+                  onClick={() => setDialogOpen(true)}
+                  size="lg"
+                  type="button"
+                  disabled
+                >
+                  <PenLine className="stroke-primary-foreground" />
+                  Оставить отзыв
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Войдите в аккаунт, чтобы оставить отзыв</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <Button onClick={() => setDialogOpen(true)} size="lg" type="button">
+            <PenLine className="stroke-primary-foreground" />
+            Оставить отзыв
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-h-[min(92vh,800px)] sm:max-w-md">
         <DialogHeader>

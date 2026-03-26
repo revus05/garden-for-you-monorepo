@@ -12,4 +12,6 @@ export const paths = {
   blog: "/blog",
   contacts: "/contacts",
   paymentAndShipping: "/payment-and-shipping",
+  privacyPolicy: "/privacy-policy",
+  offerAgreement: "/offer-agreement",
 };

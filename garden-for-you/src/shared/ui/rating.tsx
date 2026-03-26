@@ -53,7 +53,7 @@ export const Rating: FC<StarRatingInputProps> = ({
           >
             <StarIcon
               className={cn(
-                "size-9 sm:size-10 transition-colors",
+                "size-9 sm:size-10 transition-colors stroke-primary",
                 display >= star
                   ? "fill-amber-400 text-amber-400"
                   : "text-muted-foreground/50",

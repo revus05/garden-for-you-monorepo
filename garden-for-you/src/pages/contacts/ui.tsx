@@ -1,6 +1,8 @@
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { getSiteConfig } from "@/entities/site-config/server";
+import telegram from "@/images/telegram.svg";
 import { withHomeLayout } from "@/widgets/layouts/home";
 
 const ContactsPage = async () => {
@@ -16,13 +18,13 @@ const ContactsPage = async () => {
       <div className="text-center flex flex-col gap-2">
         <h1 className="text-4xl font-bold tracking-tight">Контакты</h1>
         <p className="text-muted-foreground text-lg">
-          Свяжитесь с нами или приходите в магазин «Сад для вас»
+          Свяжитесь с нами или приходите в магазин «Сад Для Вас»
         </p>
       </div>
 
       <div className="grid md:grid-cols-[1fr_3fr] grid-cols-1 gap-4">
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2 items-center">
+        <div className="grid grid-rows-3 gap-4">
+          <div className="flex flex-col gap-2 items-center self-center">
             <MapPin className="size-8 stroke-primary" />
             <span className="text-center">
               Республика Беларусь, Минская обл., Минский р-н., 22-ой км трассы Р
@@ -31,23 +33,24 @@ const ContactsPage = async () => {
             </span>
           </div>
 
-          <div className="flex flex-col gap-2 items-center">
+          <div className="flex flex-col gap-2 items-center self-center">
             <Mail className="size-8 stroke-primary" />
             <span className="text-center">saddlyavas@gmail.com</span>
           </div>
 
-          <div className="flex flex-col gap-2 items-center">
+          <div className="flex flex-col gap-2 items-center self-center">
             <Phone className="size-8 stroke-primary" />
-            <span className="text-center">
-              Анатолий:{" "}
-              <Link href="tel:+375297711088" className="hover:underline">
-                +375 (29) 771-10-88
+            <div className="flex gap-2 items-center">
+              <span className="text-center">
+                Александр:{" "}
+                <Link href="tel:+375291066556" className="hover:underline">
+                  +375 (29) 106-65-56
+                </Link>
+              </span>
+              <Link href="https://t.me/alex_key1" className="hover:underline">
+                <Image src={telegram} width={32} height={32} alt="telegram" />
               </Link>
-              ,{" "}
-              <Link href="tel:+375447321771" className="hover:underline">
-                +375 (44) 732-17-71
-              </Link>
-            </span>
+            </div>
           </div>
         </div>
 

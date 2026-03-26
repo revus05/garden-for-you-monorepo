@@ -1,0 +1,1 @@
+export { OfferAgreementText } from "./ui";

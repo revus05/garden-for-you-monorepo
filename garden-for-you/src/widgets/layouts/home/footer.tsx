@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import plantsPattern from "@/images/plants-pattern.png";
 import telegram from "@/images/telegram.svg";
+import { paths } from "@/shared/constants/navigation";
 import { NavItems } from "./nav-items";
 
 export const Footer = () => {
@@ -18,13 +19,10 @@ export const Footer = () => {
         <div className="flex flex-col gap-8">
           <h2 className="font-black text-4xl">Сад Для Вас</h2>
           <div className="flex flex-col gap-4">
-            <Link href="#" className="underline">
+            <Link href={paths.privacyPolicy} className="underline">
               Политика конфиденциальности
             </Link>
-            <Link href="#" className="underline">
-              Соглашение на обработку персональных данных
-            </Link>
-            <Link href="#" className="underline">
+            <Link href={paths.offerAgreement} className="underline">
               Договор оферты
             </Link>
             <span>
@@ -57,16 +55,6 @@ export const Footer = () => {
               <Image src={telegram} width={32} height={32} alt="telegram" />
             </Link>
           </div>
-          <span>
-            Анатолий:{" "}
-            <Link href="tel:+375297711088" className="hover:underline">
-              +375 (29) 771-10-88
-            </Link>
-            ,{" "}
-            <Link href="tel:+375447321771" className="hover:underline">
-              +375 (44) 732-17-71
-            </Link>
-          </span>
         </div>
       </div>
     </footer>

@@ -13,8 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import type { ChangeEvent } from "react";
-import { useRef, useState } from "react";
+import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { signIn, signOut } from "@/entities/user";
 import { EditProfileForm } from "@/features/profile/edit-profile";
@@ -104,14 +103,17 @@ export const ProfileInfo = () => {
     queryKey: ["orders"],
     queryFn: async () => {
       const res = await fetch("/api/orders");
-      return res.json() as Promise<{ orders: StoreOrder[] }>;
+      return (await res.json()) as Promise<{ orders: StoreOrder[] }>;
     },
   });
 
-  if (!user) {
-    void router.push(paths.home);
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      router.push(paths.signIn);
+    }
+  }, [user, router]);
+
+  if (!user) return null;
 
   const avatarUrl = user.metadata?.avatar_url as string | undefined;
   const fullName =
