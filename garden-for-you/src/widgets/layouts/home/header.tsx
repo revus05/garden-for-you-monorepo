@@ -1,12 +1,13 @@
 "use client";
 
-import { Search, ShoppingCart, User } from "lucide-react";
+import { ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { paths } from "@/shared/constants/navigation";
 import { useAppSelector } from "@/shared/lib";
 import { Button } from "@/shared/ui";
 import { MobileMenu } from "./mobile-menu";
 import { NavItems } from "./nav-items";
+import { SearchPopover } from "./search-popover";
 
 export const Header = () => {
   const user = useAppSelector((state) => state.userSlice.user);
@@ -27,9 +28,7 @@ export const Header = () => {
             </ul>
           </nav>
           <div className="flex gap-1 items-center">
-            <Button variant="ghost" size="icon">
-              <Search />
-            </Button>
+            <SearchPopover />
             <Button variant="ghost" size="icon" asChild>
               <Link href={paths.cart} className="relative">
                 <ShoppingCart />
