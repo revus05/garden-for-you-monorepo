@@ -105,3 +105,8 @@
     @apply w-full px-2 mx-auto xl:w-7xl xl:px-0;
   }
 }
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
