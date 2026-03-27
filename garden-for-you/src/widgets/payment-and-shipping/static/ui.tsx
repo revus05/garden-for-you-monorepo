@@ -29,32 +29,37 @@ export const PaymentAndShippingStaticContent = () => {
         <TabsList className="flex flex-col w-full h-auto bg-muted/50 p-1 rounded-xl sticky top-6">
           <TabsTrigger
             value="payment"
-            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium"
+            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium relative overflow-hidden data-[state=active]:[&_>_div]:block!"
           >
+            <div className="hidden absolute top-0 left-0 h-full w-1 bg-primary rounded-full" />
             Способы оплаты
           </TabsTrigger>
           <TabsTrigger
             value="minsk"
-            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium"
+            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium relative overflow-hidden data-[state=active]:[&_>_div]:block!"
           >
+            <div className="hidden absolute top-0 left-0 h-full w-1 bg-primary rounded-full" />
             Доставка по Минску
           </TabsTrigger>
           <TabsTrigger
             value="belarus"
-            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium"
+            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium relative overflow-hidden data-[state=active]:[&_>_div]:block!"
           >
+            <div className="hidden absolute top-0 left-0 h-full w-1 bg-primary rounded-full" />
             Доставка по Беларуси
           </TabsTrigger>
           <TabsTrigger
             value="pickup"
-            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium"
+            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium relative overflow-hidden data-[state=active]:[&_>_div]:block!"
           >
+            <div className="hidden absolute top-0 left-0 h-full w-1 bg-primary rounded-full" />
             Самовывоз
           </TabsTrigger>
           <TabsTrigger
             value="services"
-            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium"
+            className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium relative overflow-hidden data-[state=active]:[&_>_div]:block!"
           >
+            <div className="hidden absolute top-0 left-0 h-full w-1 bg-primary rounded-full" />
             Дополнительные услуги
           </TabsTrigger>
         </TabsList>
