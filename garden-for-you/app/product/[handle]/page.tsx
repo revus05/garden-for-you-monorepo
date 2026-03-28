@@ -10,13 +10,13 @@ type ProductPageProps = {
 
 const ProductPage = async ({ params }: ProductPageProps) => {
   const { handle } = await params;
-  const product = await getProductByHandle(handle);
+  const result = await getProductByHandle(handle);
 
-  if (!product) {
+  if (!result) {
     notFound();
   }
 
-  return <ProductPageView product={product} />;
+  return <ProductPageView product={result.product} specs={result.specs} />;
 };
 
 export default ProductPage;

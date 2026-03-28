@@ -9,4 +9,6 @@ export type {
   Product,
   ProductCategory,
   ProductCategoryOrder,
+  ProductSpec,
+  SpecDefinition,
 } from "./model/types";

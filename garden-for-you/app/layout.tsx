@@ -4,6 +4,7 @@ import "./globals.css";
 import type { ReactNode } from "react";
 import { Providers } from "@/app/providers";
 import { getServerCart } from "@/entities/cart/server/get-server-cart";
+import { getServerComparison } from "@/entities/comparison/server/get-server-comparison";
 import { getServerUser } from "@/entities/user/server/get-server-user";
 
 const notoSans = Noto_Sans({ subsets: ["cyrillic"], variable: "--font-sans" });
@@ -22,13 +23,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const preloadedCart = await getServerCart();
-  const preloadedUser = await getServerUser();
+  const [preloadedCart, preloadedUser, preloadedComparison] = await Promise.all(
+    [getServerCart(), getServerUser(), getServerComparison()],
+  );
 
   return (
     <html lang="ru" className={notoSans.variable}>
       <body className={`${ebGaramond.variable} antialiased`}>
-        <Providers preloadedCart={preloadedCart} preloadedUser={preloadedUser}>
+        <Providers
+          preloadedCart={preloadedCart}
+          preloadedUser={preloadedUser}
+          preloadedComparison={preloadedComparison}
+        >
           {children}
         </Providers>
       </body>

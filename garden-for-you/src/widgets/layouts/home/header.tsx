@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingCart, User } from "lucide-react";
+import { Scale, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { paths } from "@/shared/constants/navigation";
 import { useAppSelector } from "@/shared/lib";
@@ -12,6 +12,9 @@ import { SearchPopover } from "./search-popover";
 export const Header = () => {
   const user = useAppSelector((state) => state.userSlice.user);
   const cart = useAppSelector((state) => state.cartSlice.cart);
+  const comparisonCount = useAppSelector(
+    (state) => state.comparisonSlice.products.length,
+  );
 
   return (
     <header className="relative sm:h-17 h-23">
@@ -29,6 +32,22 @@ export const Header = () => {
           </nav>
           <div className="flex gap-1 items-center">
             <SearchPopover />
+            <Button variant="ghost" size="icon" asChild>
+              <Link
+                href={paths.compare}
+                className="relative"
+                aria-label="Сравнение"
+              >
+                <Scale />
+                {comparisonCount > 0 && (
+                  <div className="absolute size-4 top-0 right-0 translate-x-1 -translate-y-1 rounded-full bg-primary flex justify-center items-center">
+                    <span className="text-xs font-medium text-primary-foreground">
+                      {comparisonCount}
+                    </span>
+                  </div>
+                )}
+              </Link>
+            </Button>
             <Button variant="ghost" size="icon" asChild>
               <Link href={paths.cart} className="relative">
                 <ShoppingCart />

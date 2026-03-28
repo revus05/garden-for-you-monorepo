@@ -14,4 +14,5 @@ export const paths = {
   paymentAndShipping: "/payment-and-shipping",
   privacyPolicy: "/privacy-policy",
   offerAgreement: "/offer-agreement",
+  compare: "/compare",
 };
