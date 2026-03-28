@@ -4,7 +4,6 @@ import { Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDeferredValue, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import { useCatalogProductsInfiniteQuery } from "@/features/catalog";
 import plantPlaceholder from "@/images/plant-placholder.svg";
 import { paths } from "@/shared/constants/navigation";
@@ -47,7 +46,7 @@ export const SearchPopover = () => {
       </PopoverTrigger>
 
       <PopoverContent
-        className="w-[95vw] lg:translate-x-0 translate-x-[2.5vw] max-w-[800px] z-50 bg-background shadow-2xl flex flex-col rounded-3xl border-none p-0"
+        className="w-[95vw] max-h-[90svh] overflow-y-scroll lg:translate-x-0 translate-x-[2.5vw] max-w-200 z-50 bg-background/75 backdrop-blur-2xl shadow-2xl flex flex-col rounded-3xl border-none p-0"
         align="end"
         sideOffset={0}
       >
@@ -95,7 +94,7 @@ export const SearchPopover = () => {
                 key={product.id}
                 href={`${paths.productPage}/${product.handle}`}
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-4 py-3 px-2 hover:bg-accent rounded-lg transition-colors"
+                className="flex items-center gap-4 py-3 px-2 hover:bg-accent/50 rounded-lg transition-colors"
               >
                 <div className="size-14 shrink-0 rounded-md overflow-hidden bg-muted flex items-center justify-center">
                   {product.thumbnail ? (
