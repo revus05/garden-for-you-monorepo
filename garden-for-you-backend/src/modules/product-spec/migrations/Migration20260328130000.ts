@@ -3,9 +3,19 @@ import { Migration } from "@medusajs/framework/mikro-orm/migrations"
 export class Migration20260328130000 extends Migration {
 
   override async up(): Promise<void> {
-    // Переименовываем колонку spec_definition_id -> definition_id
-    // (ORM генерирует FK-колонку по имени relation "definition" + "_id")
-    this.addSql(`ALTER TABLE "product_spec" RENAME COLUMN "spec_definition_id" TO "definition_id";`)
+    // Переименовываем колонку spec_definition_id -> definition_id если она ещё существует.
+    // На свежей БД Migration20260328120000 уже создаёт колонку с именем definition_id,
+    // поэтому переименование нужно только для существующих БД со старой схемой.
+    this.addSql(`
+      DO $$ BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.columns
+          WHERE table_name = 'product_spec' AND column_name = 'spec_definition_id'
+        ) THEN
+          ALTER TABLE "product_spec" RENAME COLUMN "spec_definition_id" TO "definition_id";
+        END IF;
+      END $$;
+    `)
 
     // Пересоздаём индексы с правильным именем колонки
     this.addSql(`DROP INDEX IF EXISTS "IDX_product_spec_product_definition";`)
