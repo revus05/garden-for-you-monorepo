@@ -2,10 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PenLine } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { paths } from "@/shared/constants/navigation";
 import { useAppSelector } from "@/shared/lib";
 import {
   Button,
@@ -22,9 +24,6 @@ import {
   FieldSet,
   Rating,
   Textarea,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
 } from "@/shared/ui";
 import { createStoreReviewRequest } from "./api";
 import { type CreateStoreReviewValues, createStoreReviewSchema } from "./model";
@@ -90,24 +89,12 @@ export function CreateStoreReviewForm({
     <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
       <DialogTrigger asChild>
         {!user ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span className="inline-block w-fit">
-                <Button
-                  onClick={() => setDialogOpen(true)}
-                  size="lg"
-                  type="button"
-                  disabled
-                >
-                  <PenLine className="stroke-primary-foreground" />
-                  Оставить отзыв
-                </Button>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Войдите в аккаунт, чтобы оставить отзыв</p>
-            </TooltipContent>
-          </Tooltip>
+          <Link href={paths.signIn}>
+            <Button size="lg" type="button">
+              <PenLine className="stroke-primary-foreground" />
+              Оставить отзыв
+            </Button>
+          </Link>
         ) : (
           <Button onClick={() => setDialogOpen(true)} size="lg" type="button">
             <PenLine className="stroke-primary-foreground" />
