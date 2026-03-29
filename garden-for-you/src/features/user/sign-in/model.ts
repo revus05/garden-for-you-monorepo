@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { signIn } from "@/entities/user";
@@ -17,6 +17,12 @@ export const useSignInForm = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
 
+  const searchParams = useSearchParams();
+  let path = "";
+  if (searchParams?.has("path")) {
+    path = searchParams?.get("path") || "";
+  }
+
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: { email: "", password: "" },
@@ -27,7 +33,11 @@ export const useSignInForm = () => {
       const customer = await signInRequest(values);
       dispatch(signIn(customer));
 
-      router.push(paths.home);
+      if (path) {
+        router.push(path);
+      } else {
+        router.push(paths.home);
+      }
       router.refresh();
     } catch (error) {
       toast.error(

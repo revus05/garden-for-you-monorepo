@@ -85,22 +85,23 @@ export function CreateStoreReviewForm({
     }
   }
 
+  if (!user) {
+    return (
+      <Link href={`${paths.signIn}?path=${paths.reviews}`}>
+        <Button size="lg" type="button">
+          <PenLine className="stroke-primary-foreground" />
+          Оставить отзыв123
+        </Button>
+      </Link>
+    );
+  }
   return (
     <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
       <DialogTrigger asChild>
-        {!user ? (
-          <Link href={paths.signIn}>
-            <Button size="lg" type="button">
-              <PenLine className="stroke-primary-foreground" />
-              Оставить отзыв
-            </Button>
-          </Link>
-        ) : (
-          <Button onClick={() => setDialogOpen(true)} size="lg" type="button">
-            <PenLine className="stroke-primary-foreground" />
-            Оставить отзыв
-          </Button>
-        )}
+        <Button onClick={() => setDialogOpen(true)} size="lg" type="button">
+          <PenLine className="stroke-primary-foreground" />
+          Оставить отзыв
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[min(92vh,800px)] sm:max-w-md">
         <DialogHeader>
