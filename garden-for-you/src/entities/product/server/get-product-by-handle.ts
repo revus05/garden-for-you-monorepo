@@ -1,6 +1,5 @@
 import "server-only";
 import { requireEnv } from "@/shared/lib";
-import { createServerSdk } from "@/shared/lib/server-sdk";
 import type { Product, ProductSpec } from "../model/types";
 
 const NEXT_PUBLIC_REGION_ID = requireEnv(
@@ -16,15 +15,20 @@ const MEDUSA_PUBLISHABLE_KEY = requireEnv(
   process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
 );
 
-async function fetchProductSpecs(productId: string): Promise<ProductSpec[]> {
+const STORE_HEADERS = {
+  "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY,
+};
+
+async function fetchProductSpecs(
+  productId: string,
+  handle: string,
+): Promise<ProductSpec[]> {
   try {
     const res = await fetch(
       `${MEDUSA_BACKEND_URL}/store/products/${productId}/specs`,
       {
-        headers: {
-          "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY,
-        },
-        next: { revalidate: 60 },
+        headers: STORE_HEADERS,
+        next: { tags: ["products", `product-handle-${handle}`] },
       },
     );
 
@@ -45,19 +49,28 @@ export type ProductWithSpecs = {
 export async function getProductByHandle(
   handle: string,
 ): Promise<ProductWithSpecs | null> {
-  const serverSdk = await createServerSdk();
-
-  const { products } = await serverSdk.store.product.list({
+  const params = new URLSearchParams({
     handle,
     region_id: NEXT_PUBLIC_REGION_ID,
-    limit: 1,
+    limit: "1",
     fields: "+variants.inventory_quantity",
   });
 
-  const product = products[0] ?? null;
+  const res = await fetch(
+    `${MEDUSA_BACKEND_URL}/store/products?${params}`,
+    {
+      headers: STORE_HEADERS,
+      next: { tags: ["products", `product-handle-${handle}`] },
+    },
+  );
+
+  if (!res.ok) return null;
+
+  const data = (await res.json()) as { products: Product[] };
+  const product = data.products?.[0] ?? null;
   if (!product) return null;
 
-  const specs = await fetchProductSpecs(product.id);
+  const specs = await fetchProductSpecs(product.id, handle);
 
   return { product, specs };
 }
