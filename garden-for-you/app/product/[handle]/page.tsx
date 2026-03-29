@@ -5,7 +5,6 @@ import {
 } from "@/entities/product/server";
 import ProductPageView from "@/pages/product";
 
-export const revalidate = false;
 export const dynamicParams = true;
 
 type ProductPageProps = {
