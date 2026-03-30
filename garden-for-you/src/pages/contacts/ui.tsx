@@ -15,11 +15,20 @@ const ContactsPage = async () => {
 
   return (
     <div className="wrapper py-12 flex flex-col gap-8">
-      <div className="text-center flex flex-col gap-2">
+      <div className="relative text-center flex flex-col gap-2">
         <h1 className="text-4xl font-bold tracking-tight">Контакты</h1>
-        <p className="text-muted-foreground text-lg">
-          Свяжитесь с нами или приходите в магазин «Сад Для Вас»
-        </p>
+        <div className="relative z-1 w-fit mx-auto">
+          <p className="text-muted-foreground text-lg">
+            Свяжитесь с нами или приходите в магазин «Сад Для Вас»
+          </p>
+          <Image
+            src={leafPlant.src}
+            width={150}
+            height={100}
+            alt="hero image"
+            className="-rotate-90 absolute -right-5 -bottom-3 -z-10 select-none w-24"
+          />
+        </div>
       </div>
 
       <div className="grid md:grid-cols-[3fr_8fr] grid-cols-1 gap-4">
@@ -40,7 +49,6 @@ const ContactsPage = async () => {
                 <ul className="flex flex-col gap-2 text-[15px]">
                   {scheduleLines.map((line) => (
                     <li key={line} className="flex gap-2">
-                      <span className="text-green-600 font-medium">•</span>
                       <span>{line}</span>
                     </li>
                   ))}
@@ -62,14 +70,7 @@ const ContactsPage = async () => {
           </div>
         </div>
 
-        <div className="relative min-h-125">
-          <Image
-            src={leafPlant.src}
-            width={150}
-            height={100}
-            alt="hero image"
-            className="-scale-x-100 absolute -right-2 bottom-0 select-none"
-          />
+        <div className="min-h-125">
           <iframe
             title="Яндекс карта"
             src="https://yandex.ru/map-widget/v1/?um=constructor%3Ae5089923a4e2685886697236ae92f5e0eb12726f30c58d73cb59846fe2a82f8e&amp;source=constructor"

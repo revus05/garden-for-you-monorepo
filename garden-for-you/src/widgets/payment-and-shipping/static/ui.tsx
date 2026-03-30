@@ -26,7 +26,7 @@ export const PaymentAndShippingStaticContent = () => {
         className="w-full grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8"
         orientation="vertical"
       >
-        <TabsList className="flex flex-col w-full h-auto bg-muted/50 p-1 rounded-xl sticky top-6">
+        <TabsList className="flex flex-col w-full h-auto p-1 rounded-xl sticky top-6">
           <TabsTrigger
             value="payment"
             className="justify-start text-left py-3.5 px-5 w-full data-[state=active]:bg-background data-[state=active]:shadow-sm font-medium relative overflow-hidden data-[state=active]:[&_>_div]:block!"

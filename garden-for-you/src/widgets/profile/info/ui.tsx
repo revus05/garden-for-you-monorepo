@@ -279,7 +279,11 @@ export const ProfileInfo = () => {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Отмена</AlertDialogCancel>
+                <AlertDialogCancel asChild>
+                  <Button variant="secondary" size="sm" className="mt-auto">
+                    Отмена
+                  </Button>
+                </AlertDialogCancel>
                 <AlertDialogAction
                   variant="destructive"
                   onClick={handleSignOut}
@@ -308,8 +312,8 @@ export const ProfileInfo = () => {
             </div>
           ) : orders.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 py-12 text-muted-foreground">
-              <Package className="size-10 opacity-40" />
-              <p className="text-sm">У вас пока нет заказов</p>
+              <Package className="size-10 stroke-primary" />
+              <p className="text-sm text-primary">У вас пока нет заказов</p>
             </div>
           ) : (
             <Table>

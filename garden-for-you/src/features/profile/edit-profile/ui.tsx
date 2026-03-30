@@ -77,7 +77,7 @@ export function EditProfileForm() {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="secondary" size="sm">
           <Pencil className="size-4" />
           Редактировать
         </Button>

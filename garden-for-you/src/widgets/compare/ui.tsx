@@ -1,6 +1,6 @@
 "use client";
 
-import { Scale, Trash2, X } from "lucide-react";
+import { ArrowRight, Scale, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ComparisonProduct } from "@/entities/comparison";
@@ -8,9 +8,11 @@ import {
   clearComparisonWithSync,
   removeFromComparisonWithSync,
 } from "@/features/comparison";
+import leavesBg1 from "@/images/leaves-bg-1.png";
+import leavesBg2 from "@/images/leaves-bg-2.png";
 import { paths } from "@/shared/constants/navigation";
 import { useAppDispatch, useAppSelector } from "@/shared/lib";
-import { Button } from "@/shared/ui";
+import { Badge, Button } from "@/shared/ui";
 
 function collectAllSpecs(products: ComparisonProduct[]) {
   const seen = new Map<
@@ -98,9 +100,7 @@ export const CompareWidget = () => {
         <div className="flex items-center gap-3">
           <Scale className="size-6 text-primary shrink-0" />
           <h1 className="text-2xl font-bold">Сравнение товаров</h1>
-          <span className="text-muted-foreground text-sm shrink-0">
-            {products.length} из 4
-          </span>
+          <Badge>{products.length} из 4</Badge>
         </div>
         <Button
           variant="ghost"
@@ -169,6 +169,17 @@ export const CompareWidget = () => {
                   </div>
                 </th>
               ))}
+
+              {products.length < 2 && (
+                <th>
+                  <Link href={paths.home}>
+                    <Button>
+                      Еще товары
+                      <ArrowRight className="stroke-primary-foreground" />
+                    </Button>
+                  </Link>
+                </th>
+              )}
             </tr>
           </thead>
 

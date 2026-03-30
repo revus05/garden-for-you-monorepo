@@ -1,31 +1,12 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
-import leafPlant from "@/images/leaf-plant.png";
 import leavesBg from "@/images/leaves-bg.jpg";
 import { Badge, Button } from "@/shared/ui";
 
 export const SalesCardsSection = () => {
   return (
     <section className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
-      <div className="px-6 py-8 bg-background-secondary rounded-lg flex flex-col gap-4 overflow-hidden relative">
-        <Image
-          src={leafPlant.src}
-          width={150}
-          height={100}
-          alt="hero image"
-          className="-scale-x-100 absolute -right-2 bottom-0 select-none"
-        />
-        <div className="flex flex-col gap-1 z-1">
-          <Badge>Акция</Badge>
-          <h2 className="text-4xl font-black">37% скидка</h2>
-          <span className="font-medium">Бесплатная доставка при 20 заказе</span>
-        </div>
-        <Button className="w-fit">
-          Подробнее <ArrowRight className="stroke-primary-foreground" />
-        </Button>
-      </div>
       <div
         className="px-6 py-8 bg-background-secondary rounded-lg flex flex-col gap-4 overflow-hidden"
         style={{

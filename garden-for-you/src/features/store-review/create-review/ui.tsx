@@ -114,7 +114,7 @@ export function CreateStoreReviewForm({
               <input type="hidden" {...register("phone")} />
 
               <Field data-invalid={!!errors.rating}>
-                <FieldLabel>Оценка магазина</FieldLabel>
+                <FieldLabel>Оцените наш магазин</FieldLabel>
                 <FieldContent className="flex justify-center">
                   <Controller
                     control={control}
@@ -137,7 +137,7 @@ export function CreateStoreReviewForm({
                 <FieldContent>
                   <Textarea
                     rows={6}
-                    placeholder="Расскажите, что понравилось в магазине или что можно улучшить"
+                    placeholder="Расскажите, что понравилось или что можно улучшить"
                     aria-invalid={!!errors.message}
                     {...register("message")}
                   />
