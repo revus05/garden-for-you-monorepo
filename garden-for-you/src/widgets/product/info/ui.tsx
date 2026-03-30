@@ -3,7 +3,7 @@
 import type { StoreProduct } from "@medusajs/types";
 import { Scale, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import type { FC } from "react";
+import { type FC, useState } from "react";
 import {
   type ComparisonProduct,
   MAX_COMPARISON_COUNT,
@@ -19,6 +19,9 @@ import { cn, useAppDispatch, useAppSelector } from "@/shared/lib";
 import {
   Badge,
   Button,
+  Tabs,
+  TabsList,
+  TabsTrigger,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -36,6 +39,16 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
   const comparisonProducts = useAppSelector(
     (state) => state.comparisonSlice.products,
   );
+
+  const initialOptions: Record<string, string> = Object.fromEntries(
+    product.options?.map((option) => [
+      option.id,
+      option.values?.[0]?.id ?? "",
+    ]) ?? [],
+  );
+
+  const [selectedOptions, setSelectedOptions] =
+    useState<Record<string, string>>(initialOptions);
 
   const cartItem = cart?.items?.find((item) => item.product?.id === product.id);
   const isInStock = !!product.variants?.[0].inventory_quantity;
@@ -81,14 +94,39 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
     }
   };
 
+  const handleSelectedOption = (value: string, optionId: string) => {
+    setSelectedOptions((prev) => ({
+      ...prev,
+      [optionId]: value,
+    }));
+  };
+
+  const isOptionValueAvailable = (
+    optionId: string,
+    valueId: string,
+  ): boolean => {
+    const hypothetical = { ...selectedOptions, [optionId]: valueId };
+    return !!product.variants?.some((variant) =>
+      variant.options?.every(
+        (opt) => opt.id === hypothetical[opt.option_id ?? ""],
+      ),
+    );
+  };
+
+  const selectedVariant = product.variants?.find((variant) =>
+    variant.options?.every(
+      (option) => option.id === selectedOptions[option.option_id ?? ""],
+    ),
+  );
+
   return (
     <div className="flex flex-col gap-4">
       {!isInStock && <Badge variant="destructive">Нет в наличии</Badge>}
       <h1 className="font-black text-3xl">{product.title}</h1>
-      {product.variants?.[0]?.calculated_price && (
+      {selectedVariant?.calculated_price && (
         <p className="text-lg font-bold">
-          {product.variants[0].calculated_price.calculated_amount?.toFixed(2)}{" "}
-          {product.variants[0].calculated_price.currency_code?.toUpperCase()}
+          {selectedVariant.calculated_price.calculated_amount?.toFixed(2)}{" "}
+          {selectedVariant.calculated_price.currency_code?.toUpperCase()}
         </p>
       )}
       <div className="flex gap-2 flex-wrap">
@@ -142,6 +180,36 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
           </TooltipContent>
         </Tooltip>
       </div>
+
+      {product.options && product.options.length > 0 && (
+        <div className="flex flex-col gap-4">
+          {product.options?.map((option) => (
+            <div key={option.id}>
+              <h4>{option.title}</h4>
+
+              <Tabs
+                value={selectedOptions[option.id]}
+                onValueChange={(value) =>
+                  handleSelectedOption(value, option.id)
+                }
+              >
+                <TabsList>
+                  {option.values?.map((value) => (
+                    <TabsTrigger
+                      key={value.id}
+                      value={value.id}
+                      disabled={!isOptionValueAvailable(option.id, value.id)}
+                    >
+                      {value.value}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+              <Tabs></Tabs>
+            </div>
+          ))}
+        </div>
+      )}
 
       <span className="whitespace-pre-line">{product.description}</span>
 

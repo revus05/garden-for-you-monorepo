@@ -2,24 +2,21 @@
 
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { useCallback } from "react";
+import { useEffect } from "react";
 import heroImage from "@/images/hero.png";
+import { useScrollToCatalog } from "@/shared/lib";
 import { Button } from "@/shared/ui";
 
 export const HeroSection = () => {
-  const scrollToCatalog = useCallback(() => {
-    const element = document.querySelector("#catalog");
-    if (!element) return;
+  const scrollToCatalog = useScrollToCatalog();
 
-    const headerOffset = 120;
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.scrollY - headerOffset;
+  useEffect(() => {
+    if (window.location.hash === "#catalog") {
+      scrollToCatalog();
 
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: "smooth",
-    });
-  }, []);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [scrollToCatalog]);
 
   return (
     <section className="flex">

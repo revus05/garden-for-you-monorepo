@@ -1,3 +1,5 @@
+import Image from "next/image";
+import leafPlant from "@/images/leaf-plant.png";
 import { requireEnv } from "@/shared/lib";
 
 type Videos = { url: string }[];
@@ -18,9 +20,17 @@ export const BlogYouTubeVideos = async () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="font-bold text-2xl text-center">
-        Следите за нами в YouTube
-      </h2>
+      <div className="relative w-fit mx-auto">
+        <h2 className="font-bold text-2xl">Следите за нами в YouTube</h2>
+
+        <Image
+          src={leafPlant.src}
+          width={150}
+          height={100}
+          alt={"leaf"}
+          className="absolute -bottom-10 -right-16 -scale-x-100 "
+        />
+      </div>
       {data.map((video: { url: string }, index: number) => {
         const videoId = video.url.split("v=")[1]?.split("&")[0] || "";
         const embedUrl = videoId

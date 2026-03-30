@@ -8,8 +8,6 @@ import {
   clearComparisonWithSync,
   removeFromComparisonWithSync,
 } from "@/features/comparison";
-import leavesBg1 from "@/images/leaves-bg-1.png";
-import leavesBg2 from "@/images/leaves-bg-2.png";
 import { paths } from "@/shared/constants/navigation";
 import { useAppDispatch, useAppSelector } from "@/shared/lib";
 import { Badge, Button } from "@/shared/ui";
@@ -81,12 +79,14 @@ export const CompareWidget = () => {
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-bold">Нет товаров для сравнения</h1>
           <p className="text-muted-foreground max-w-sm">
-            Добавьте товары к сравнению на страницах товаров, чтобы увидеть их
-            характеристики рядом.
+            Добавьте товары для сравнения характеристик
           </p>
         </div>
         <Button asChild size="lg">
-          <Link href={paths.home}>Перейти к товарам</Link>
+          <Link href={`${paths.home}#catalog`} scroll={false}>
+            Перейти в каталог
+            <ArrowRight className="stroke-primary-foreground" />
+          </Link>
         </Button>
       </div>
     );
@@ -128,15 +128,16 @@ export const CompareWidget = () => {
                   key={product.id}
                   className="min-w-50 p-4 text-center align-top bg-background"
                 >
-                  <div className="flex flex-col items-center gap-3 relative">
-                    <button
+                  <div className="flex flex-col items-center gap-3 relative w-fit mx-auto">
+                    <Button
                       type="button"
                       onClick={() => handleRemove(product.id)}
-                      className="absolute top-0 right-0 size-6 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      className="absolute top-0 right-0 size-6 p-0"
                       aria-label="Удалить из сравнения"
+                      variant="destructive"
                     >
                       <X className="size-3.5" />
-                    </button>
+                    </Button>
 
                     <Link href={`${paths.productPage}/${product.handle}`}>
                       <div className="size-28 rounded-lg border border-border overflow-hidden bg-muted flex items-center justify-center hover:border-primary transition-colors">
@@ -187,7 +188,7 @@ export const CompareWidget = () => {
             {allSpecs.length === 0 ? (
               <tr>
                 <td
-                  colSpan={products.length + 1}
+                  colSpan={products.length + 2}
                   className="p-6 text-center text-muted-foreground text-sm"
                 >
                   У выбранных товаров нет характеристик

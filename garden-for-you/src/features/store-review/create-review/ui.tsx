@@ -90,7 +90,7 @@ export function CreateStoreReviewForm({
       <Link href={`${paths.signIn}?path=${paths.reviews}`}>
         <Button size="lg" type="button">
           <PenLine className="stroke-primary-foreground" />
-          Оставить отзыв123
+          Оставить отзыв
         </Button>
       </Link>
     );

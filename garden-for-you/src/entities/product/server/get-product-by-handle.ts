@@ -53,7 +53,7 @@ export async function getProductByHandle(
     handle,
     region_id: NEXT_PUBLIC_REGION_ID,
     limit: "1",
-    fields: "+variants.inventory_quantity",
+    fields: "+variants.inventory_quantity,*variants.options",
   });
 
   const res = await fetch(

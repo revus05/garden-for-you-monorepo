@@ -1,13 +1,23 @@
 import Image from "next/image";
 import aboutUsImage1 from "@/images/about-us-1.jpg";
 import aboutUsImage2 from "@/images/about-us-2.jpg";
+import singleLeaf from "@/images/single-leaf.png";
 
 export const AboutUsStaticContent = () => {
   return (
     <div className="wrapper md:w-[80ch] w-full flex flex-col gap-4">
-      <h1 className="font-bold text-4xl">
-        Питомник плодово-ягодных культур "Сад для Вас"
-      </h1>
+      <div className="relative">
+        <h1 className="font-bold text-4xl">
+          Питомник плодово-ягодных культур "Сад для Вас"
+        </h1>
+        <Image
+          src={singleLeaf.src}
+          width={50}
+          height={50}
+          alt="leaf"
+          className="absolute -top-2 -left-2 -rotate-120 h-7 w-auto"
+        />
+      </div>
       <span className="text-secondary-foreground/70 text-justify">
         Питомник плодово-ягодных культур «Сад для Вас» предлагает широкий
         ассортимент качественного посадочного материала для создания красивого,
@@ -24,13 +34,22 @@ export const AboutUsStaticContent = () => {
         установленного образца для сезонной реализации.
       </span>
       <div className="grid grid-cols-2 gap-4">
-        <Image
-          src={aboutUsImage1.src}
-          width={500}
-          height={300}
-          alt="about-us-image-1"
-          className="rounded-xl"
-        />
+        <div className="relative">
+          <Image
+            src={aboutUsImage1.src}
+            width={500}
+            height={300}
+            alt="about-us-image-1"
+            className="rounded-xl"
+          />
+          <Image
+            src={singleLeaf.src}
+            width={50}
+            height={50}
+            alt="leaf"
+            className="absolute -top-2 -right-2 rotate-120 h-7 w-auto scale-y-100"
+          />
+        </div>
         <Image
           src={aboutUsImage2.src}
           width={500}
