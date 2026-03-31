@@ -36,7 +36,7 @@ export default async function autoCreateInventoryLevel({
     return
   }
 
-  const inventoryItemId = variant.inventory_items[0].inventory_item_id
+  const inventoryItemId = variant.inventory_items?.[0]?.inventory_item_id
   if (!inventoryItemId) return
 
   const [location] = await stockLocationService.listStockLocations({}, { take: 1 })
