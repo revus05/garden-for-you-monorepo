@@ -344,7 +344,7 @@ export const ProfileInfo = () => {
                       {order.items?.length ?? 0} поз.
                     </TableCell>
                     <TableCell className="text-right font-medium">
-                      {formatCurrency(order.total, order.currency_code)}
+                      {formatCurrency(order.total * 100, order.currency_code)}
                     </TableCell>
                   </TableRow>
                 ))}
