@@ -24,19 +24,20 @@ export default async function autoCreateInventoryLevel({
   // Give Medusa time to create & link the inventory item for the variant
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
-  const { data: variants } = await query.graph({
-    entity: "product_variant",
-    fields: ["id", "inventory_items.inventory_item_id"],
-    filters: { id: variantId },
+  // Query the link table directly by its registered alias — more reliable than
+  // traversing from product_variant via inventory_items.inventory_item_id
+  const { data: inventoryLinks } = await query.graph({
+    entity: "product_variant_inventory_item",
+    fields: ["inventory_item_id", "variant_id"],
+    filters: { variant_id: variantId },
   })
 
-  const variant = variants?.[0]
-  if (!variant?.inventory_items?.length) {
-    logger.warn(`[auto-inventory] No inventory items found for variant ${variantId}`)
+  if (!inventoryLinks?.length) {
+    logger.warn(`[auto-inventory] No inventory item link found for variant ${variantId}`)
     return
   }
 
-  const inventoryItemId = variant.inventory_items?.[0]?.inventory_item_id
+  const inventoryItemId = inventoryLinks[0].inventory_item_id
   if (!inventoryItemId) return
 
   const [location] = await stockLocationService.listStockLocations({}, { take: 1 })

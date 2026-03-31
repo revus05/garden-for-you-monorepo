@@ -1,6 +1,16 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 
+/** Resolves inventory_item_id for a variant using the link table directly. */
+async function getInventoryItemId(query: any, variantId: string): Promise<string | null> {
+  const { data: links } = await query.graph({
+    entity: "product_variant_inventory_item",
+    fields: ["inventory_item_id", "variant_id"],
+    filters: { variant_id: variantId },
+  })
+  return links?.[0]?.inventory_item_id ?? null
+}
+
 /**
  * GET /admin/inventory/:variantId
  *
@@ -13,16 +23,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const inventoryService: any = req.scope.resolve(Modules.INVENTORY)
   const stockLocationService: any = req.scope.resolve(Modules.STOCK_LOCATION)
 
-  const { data: variants } = await query.graph({
-    entity: "product_variant",
-    fields: ["id", "title", "sku", "inventory_items.inventory_item_id"],
-    filters: { id: variantId },
-  })
-
-  const variant = variants?.[0]
-  if (!variant) return res.status(404).json({ message: "Вариант не найден" })
-
-  const inventoryItemId = variant.inventory_items?.[0]?.inventory_item_id ?? null
+  const inventoryItemId = await getInventoryItemId(query, variantId)
 
   if (!inventoryItemId) {
     return res.json({ variant_id: variantId, stocked_quantity: 0, reserved_quantity: 0, inventory_item_id: null, location_id: null })
@@ -60,7 +61,7 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   const { variantId } = req.params
   const { stocked_quantity } = req.body as { stocked_quantity: number }
 
-  if (typeof stocked_quantity !== "number" || !Number.isInteger(stocked_quantity) || stocked_quantity < 0) {
+  if (!Number.isInteger(stocked_quantity) || stocked_quantity < 0) {
     return res.status(400).json({ message: "stocked_quantity должен быть целым неотрицательным числом" })
   }
 
@@ -68,18 +69,12 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
   const inventoryService: any = req.scope.resolve(Modules.INVENTORY)
   const stockLocationService: any = req.scope.resolve(Modules.STOCK_LOCATION)
 
-  const { data: variants } = await query.graph({
-    entity: "product_variant",
-    fields: ["id", "inventory_items.inventory_item_id"],
-    filters: { id: variantId },
-  })
+  const inventoryItemId = await getInventoryItemId(query, variantId)
 
-  const variant = variants?.[0]
-  if (!variant) return res.status(404).json({ message: "Вариант не найден" })
-
-  const inventoryItemId = variant.inventory_items?.[0]?.inventory_item_id ?? null
   if (!inventoryItemId) {
-    return res.status(400).json({ message: "У этого варианта нет inventory item (manage_inventory = false)" })
+    return res.status(400).json({
+      message: "У этого варианта нет inventory item. Убедитесь, что manage_inventory = true и перезапустите бэкенд.",
+    })
   }
 
   const [location] = await stockLocationService.listStockLocations({}, { take: 1 })

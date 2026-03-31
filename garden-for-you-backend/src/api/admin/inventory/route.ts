@@ -14,8 +14,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
   const inventoryService: any = req.scope.resolve(Modules.INVENTORY)
 
-  const filters: Record<string, any> = {}
-  if (product_id) filters.product_id = product_id
+  // Step 1: Fetch variants (with product info)
+  const variantFilters: Record<string, any> = {}
+  if (product_id) variantFilters.product_id = product_id
 
   const { data: variants } = await query.graph({
     entity: "product_variant",
@@ -27,22 +28,31 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       "product.id",
       "product.title",
       "product.thumbnail",
-      "inventory_items.inventory_item_id",
     ],
-    filters: Object.keys(filters).length > 0 ? filters : undefined,
+    filters: Object.keys(variantFilters).length > 0 ? variantFilters : undefined,
     pagination: { skip: 0, take: 500 },
   })
 
-  // Collect all inventory item IDs from all variants
-  const inventoryItemIds: string[] = variants
-    .flatMap((v: any) => v.inventory_items?.map((i: any) => i.inventory_item_id) ?? [])
-    .filter(Boolean)
+  if (!variants.length) return res.json({ variants: [] })
 
-  // Fetch inventory levels for all collected IDs at once
-  const levelsMap: Record<
-    string,
-    { stocked_quantity: number; reserved_quantity: number; location_id: string }
-  > = {}
+  // Step 2: Get inventory item IDs from the link table directly
+  const variantIds = variants.map((v: any) => v.id)
+
+  const { data: inventoryLinks } = await query.graph({
+    entity: "product_variant_inventory_item",
+    fields: ["inventory_item_id", "variant_id"],
+    filters: { variant_id: variantIds },
+  })
+
+  // variant_id → inventory_item_id
+  const variantToInventoryItem = new Map<string, string>(
+    inventoryLinks.map((link: any) => [link.variant_id, link.inventory_item_id])
+  )
+
+  // Step 3: Fetch inventory levels for all collected item IDs
+  const inventoryItemIds = [...new Set(inventoryLinks.map((l: any) => l.inventory_item_id).filter(Boolean))]
+
+  const levelsMap = new Map<string, { stocked_quantity: number; reserved_quantity: number; location_id: string }>()
 
   if (inventoryItemIds.length > 0) {
     const levels = await inventoryService.listInventoryLevels({
@@ -50,24 +60,24 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
 
     for (const level of levels) {
-      const key = level.inventory_item_id
-      if (!levelsMap[key]) {
-        levelsMap[key] = {
+      const existing = levelsMap.get(level.inventory_item_id)
+      if (!existing) {
+        levelsMap.set(level.inventory_item_id, {
           stocked_quantity: level.stocked_quantity ?? 0,
           reserved_quantity: level.reserved_quantity ?? 0,
           location_id: level.location_id,
-        }
+        })
       } else {
         // Sum across multiple locations
-        levelsMap[key].stocked_quantity += level.stocked_quantity ?? 0
-        levelsMap[key].reserved_quantity += level.reserved_quantity ?? 0
+        existing.stocked_quantity += level.stocked_quantity ?? 0
+        existing.reserved_quantity += level.reserved_quantity ?? 0
       }
     }
   }
 
   const result = variants.map((variant: any) => {
-    const inventoryItemId = variant.inventory_items?.[0]?.inventory_item_id ?? null
-    const level = inventoryItemId ? (levelsMap[inventoryItemId] ?? null) : null
+    const inventoryItemId = variantToInventoryItem.get(variant.id) ?? null
+    const level = inventoryItemId ? (levelsMap.get(inventoryItemId) ?? null) : null
     return {
       id: variant.id,
       title: variant.title,
