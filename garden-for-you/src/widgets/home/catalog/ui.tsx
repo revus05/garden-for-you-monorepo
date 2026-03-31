@@ -1,7 +1,7 @@
 "use client";
 
 import type { CheckedState } from "@radix-ui/react-checkbox";
-import { Search, ShoppingCart } from "lucide-react";
+import { ChevronDown, Search, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useDeferredValue, useState } from "react";
@@ -55,6 +55,9 @@ export const Catalog = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [orderBy, setOrderBy] = useState<ProductCategoryOrder>("title");
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(
+    new Set(),
+  );
   const deferredSearchQuery = useDeferredValue(searchQuery.trim());
   const categoryIds = [...selectedCategories].sort();
 
@@ -66,16 +69,16 @@ export const Catalog = () => {
     categoriesQuery.data || [],
   );
 
-  const productsQuery = useCatalogProductsInfiniteQuery({
-    categoryIds: filteredCategoryIds,
-    searchQuery: deferredSearchQuery,
-    orderBy,
-  });
+  const productsQuery = useCatalogProductsInfiniteQuery(
+    { categoryIds: filteredCategoryIds, searchQuery: deferredSearchQuery, orderBy },
+    { enabled: categoriesQuery.isSuccess },
+  );
 
   const products =
     productsQuery.data?.pages.flatMap((page) => page.products) ?? [];
   const totalProductsCount = productsQuery.data?.pages[0]?.count ?? 0;
-  const isInitialLoading = productsQuery.isPending;
+  const isInitialLoading =
+    categoriesQuery.isPending || productsQuery.isPending;
   const isLoadingMore = productsQuery.isFetchingNextPage;
   const hasProducts = products.length > 0;
 
@@ -163,28 +166,85 @@ export const Catalog = () => {
     <div className="flex flex-col gap-4 w-full bg-background-secondary p-4 rounded-lg h-fit md:w-64 lg:w-72">
       <div className="flex flex-col gap-2">
         <div className="hidden md:block">{search}</div>
-        {activeCategories?.map((category) => (
-          <Field
-            orientation="horizontal"
-            key={category.id}
-            className="max-w-full"
-          >
-            <Checkbox
-              id={`product-category-${category.id}`}
-              name="product-category"
-              checked={selectedCategories.includes(category.id)}
-              onCheckedChange={(state) =>
-                handleCategoryCheckedChange(category.id, state)
-              }
-            />
-            <Label
-              htmlFor={`product-category-${category.id}`}
-              className="block truncate w-full"
-            >
-              {category.name}
-            </Label>
-          </Field>
-        ))}
+        {activeCategories?.map((category) => {
+          const isCollapsed = collapsedCategories.has(category.id);
+          const hasChildren = !!category.category_children?.length;
+
+          return (
+            <div key={category.id} className="flex flex-col gap-2">
+              <div className="flex items-center gap-1">
+                <Field
+                  orientation="horizontal"
+                  className="max-w-[calc(100%-16px)]"
+                >
+                  <Checkbox
+                    id={`product-category-${category.id}`}
+                    name="product-category"
+                    checked={selectedCategories.includes(category.id)}
+                    onCheckedChange={(state) =>
+                      handleCategoryCheckedChange(category.id, state)
+                    }
+                  />
+                  <Label
+                    htmlFor={`product-category-${category.id}`}
+                    className="block truncate w-full"
+                  >
+                    {category.name}
+                  </Label>
+                </Field>
+                {hasChildren && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCollapsedCategories((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(category.id)) {
+                          next.delete(category.id);
+                        } else {
+                          next.add(category.id);
+                        }
+                        return next;
+                      })
+                    }
+                    className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label={isCollapsed ? "Развернуть" : "Свернуть"}
+                  >
+                    <ChevronDown
+                      className={cn(
+                        "size-4 transition-transform duration-200",
+                        isCollapsed && "-rotate-90",
+                      )}
+                    />
+                  </button>
+                )}
+              </div>
+
+              {!isCollapsed &&
+                category.category_children?.map((child) => (
+                  <Field
+                    orientation="horizontal"
+                    key={child.id}
+                    className="max-w-full pl-6"
+                  >
+                    <Checkbox
+                      id={`product-category-${child.id}`}
+                      name="product-category"
+                      checked={selectedCategories.includes(child.id)}
+                      onCheckedChange={(state) =>
+                        handleCategoryCheckedChange(child.id, state)
+                      }
+                    />
+                    <Label
+                      htmlFor={`product-category-${child.id}`}
+                      className="block truncate w-full"
+                    >
+                      {child.name}
+                    </Label>
+                  </Field>
+                ))}
+            </div>
+          );
+        })}
 
         {categoriesQuery.isPending && <p>Загрузка категорий...</p>}
         {categoriesQuery.isError && <p>Не удалось загрузить категории.</p>}

@@ -25,7 +25,8 @@ export async function fetchCatalogProductsPage({
     category_id: filters.categoryIds,
     q: filters.searchQuery || undefined,
     order: filters.orderBy,
-    fields: "+variants.inventory_quantity",
+    fields:
+      "id,handle,title,thumbnail,+variants.id,+variants.inventory_quantity,+variants.calculated_price.calculated_amount,+variants.calculated_price.currency_code",
   });
 
   const nextOffset =
