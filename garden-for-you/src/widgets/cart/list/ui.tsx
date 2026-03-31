@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { ArrowRight, ShoppingCart, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { removeCartItem, updateCartItemQuantity } from "@/features/cart";
@@ -27,10 +27,21 @@ export const CartList = () => {
 
   if (!cart || !cart?.items?.length) {
     return (
-      <div className="flex flex-col gap-4 items-center w-full">
-        <p className="text-secondary-foreground/70">Нет товаров в корзине</p>
-        <Button className="w-fit" asChild>
-          <Link href={paths.home}>В каталог</Link>
+      <div className="wrapper py-16 flex flex-col items-center gap-6 text-center">
+        <div className="size-24 rounded-full bg-muted flex items-center justify-center">
+          <ShoppingCart className="size-10 text-muted-foreground" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-bold">Нет товаров в корзине</h1>
+          <p className="text-muted-foreground max-w-sm">
+            Добавьте товары в корзину
+          </p>
+        </div>
+        <Button asChild size="lg">
+          <Link href={`${paths.home}#catalog`} scroll={false}>
+            Перейти в каталог
+            <ArrowRight className="stroke-primary-foreground" />
+          </Link>
         </Button>
       </div>
     );
