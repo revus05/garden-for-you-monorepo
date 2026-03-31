@@ -1,7 +1,9 @@
 "use client";
 
 import { Scale, ShoppingCart, User } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import logo from "@/images/logo.png";
 import { paths } from "@/shared/constants/navigation";
 import { useAppSelector } from "@/shared/lib";
 import { Button } from "@/shared/ui";
@@ -20,7 +22,14 @@ export const Header = () => {
     <header className="relative sm:h-17 h-23">
       <div className="fixed z-30 w-full bg-background-secondary/80 py-2 sm:py-4 backdrop-blur-2xl">
         <div className="wrapper flex sm:flex-row flex-col gap-2 items-center justify-between">
-          <Link href={paths.home}>
+          <Link href={paths.home} className="flex items-center gap-2">
+            <Image
+              src={logo.src}
+              height={256}
+              width={256}
+              alt="logo"
+              className="size-8"
+            />
             <h1 className="text-primary font-black text-3xl whitespace-nowrap">
               Сад Для Вас
             </h1>

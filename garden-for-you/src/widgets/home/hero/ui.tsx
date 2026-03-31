@@ -37,7 +37,7 @@ export const HeroSection = () => {
           src={heroImage.src}
           width={600}
           height={1000}
-          className="md:absolute top-1/2 right-0 md:-translate-y-2/5 select-none -z-1 md:w-auto w-full md:max-w-112.5"
+          className="md:absolute top-1/2 right-0 md:-translate-y-1/2 select-none -z-1 md:w-auto w-full md:max-w-112.5"
           alt="hero image"
         />
       </div>

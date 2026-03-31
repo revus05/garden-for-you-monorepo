@@ -1,31 +1,25 @@
 import { defineRouteConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Input, Button, Text, Textarea, toast } from "@medusajs/ui"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useDeferredValue } from "react"
 import { sdk } from "../../lib/sdk"
 
 type ConfigEntry = { key: string; value: string }
 
+type FieldDef = {
+    key: string
+    label: string
+    type: "input" | "textarea" | "product-select"
+    placeholder?: string
+    description?: string
+}
+
 type Section = {
     title: string
-    fields: {
-        key: string
-        label: string
-        type: "input" | "textarea"
-        placeholder?: string
-        description?: string
-    }[]
+    fields: FieldDef[]
 }
 
 const SECTIONS: Section[] = [
-    {
-        title: "Контакты",
-        fields: [
-            { key: "phone", label: "Телефон", type: "input", placeholder: "+7 (999) 000-00-00" },
-            { key: "email", label: "Email", type: "input", placeholder: "info@example.com" },
-            { key: "address", label: "Адрес", type: "input", placeholder: "г. Москва, ул. Цветочная, 1" },
-        ],
-    },
     {
         title: "График работы",
         fields: [
@@ -39,25 +33,127 @@ const SECTIONS: Section[] = [
         ],
     },
     {
-        title: "Социальные сети",
+        title: "Скидки на главной",
         fields: [
-            { key: "vk_url", label: "ВКонтакте", type: "input", placeholder: "https://vk.com/..." },
-            { key: "telegram_url", label: "Telegram", type: "input", placeholder: "https://t.me/..." },
-            { key: "instagram_url", label: "Instagram", type: "input", placeholder: "https://instagram.com/..." },
-        ],
-    },
-    {
-        title: "Тексты на сайте",
-        fields: [
+            { key: "sale.percent", label: "Размер скидки", type: "input", placeholder: "50%" },
+            { key: "sale.description", label: "Описание скидки", type: "textarea", placeholder: "В день рождения" },
             {
-                key: "about_short",
-                label: "Краткое описание (для шапки/футера)",
-                type: "textarea",
-                placeholder: "Магазин живых цветов и растений",
+                key: "sale.product_handle",
+                label: "Товар по кнопке «Подробнее»",
+                type: "product-select",
+                description: "Товар, на который ведёт кнопка на карточке акции",
             },
         ],
     },
 ]
+
+type AdminProduct = { id: string; handle: string; title: string }
+
+const ProductSelect = ({
+    value,
+    onChange,
+}: {
+    value: string
+    onChange: (handle: string) => void
+}) => {
+    const [searchText, setSearchText] = useState("")
+    const [isOpen, setIsOpen] = useState(false)
+    const deferredSearch = useDeferredValue(searchText)
+    const containerRef = useRef<HTMLDivElement>(null)
+
+    const { data: searchData, isFetching } = useQuery({
+        queryKey: ["admin", "products-search", deferredSearch],
+        queryFn: () =>
+            sdk.admin.product.list({
+                q: deferredSearch || undefined,
+                limit: 20,
+                fields: "id,handle,title",
+            } as Parameters<typeof sdk.admin.product.list>[0]),
+        staleTime: 30_000,
+        enabled: isOpen,
+    })
+
+    const { data: selectedData } = useQuery({
+        queryKey: ["admin", "product-by-handle", value],
+        queryFn: () =>
+            sdk.client.fetch<{ products: AdminProduct[] }>(
+                `/admin/products?handle=${value}&fields=id,handle,title`,
+            ),
+        enabled: !!value,
+        staleTime: Number.POSITIVE_INFINITY,
+    })
+
+    const selectedTitle = selectedData?.products?.[0]?.title ?? value
+    const products = (searchData?.products ?? []) as AdminProduct[]
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+                setIsOpen(false)
+                setSearchText("")
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
+
+    const handleSelect = (product: AdminProduct) => {
+        onChange(product.handle)
+        setIsOpen(false)
+        setSearchText("")
+    }
+
+    return (
+        <div ref={containerRef} className="relative">
+            {isOpen ? (
+                <>
+                    <Input
+                        placeholder="Поиск товара..."
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
+                        autoFocus
+                    />
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-ui-bg-base border border-ui-border-base rounded-md shadow-elevation-modal z-50 max-h-64 overflow-y-auto">
+                        {isFetching && (
+                            <div className="px-3 py-2 text-sm text-ui-fg-muted">Загрузка...</div>
+                        )}
+                        {!isFetching && products.length === 0 && (
+                            <div className="px-3 py-2 text-sm text-ui-fg-muted">Товары не найдены</div>
+                        )}
+                        {products.map((product) => (
+                            <div
+                                key={product.id}
+                                className={`px-3 py-2 cursor-pointer hover:bg-ui-bg-base-hover ${product.handle === value ? "bg-ui-bg-base-pressed" : ""}`}
+                                onMouseDown={() => handleSelect(product)}
+                            >
+                                <Text size="small" weight="plus">{product.title}</Text>
+                                <Text size="xsmall" className="text-ui-fg-muted">{product.handle}</Text>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            ) : (
+                <div className="flex gap-2 items-center">
+                    <div
+                        className="flex-1 border border-ui-border-base rounded-md px-3 py-1.75 text-sm cursor-pointer hover:border-ui-border-interactive transition-colors"
+                        onClick={() => setIsOpen(true)}
+                    >
+                        {value ? (
+                            <Text size="small">{selectedTitle}</Text>
+                        ) : (
+                            <Text size="small" className="text-ui-fg-muted">Выберите товар...</Text>
+                        )}
+                    </div>
+                    {value && (
+                        <Button variant="secondary" size="small" onClick={() => onChange("")}>
+                            Сбросить
+                        </Button>
+                    )}
+                </div>
+            )}
+        </div>
+    )
+}
 
 const SiteConfigPage = () => {
     const queryClient = useQueryClient()
@@ -145,6 +241,13 @@ const SiteConfigPage = () => {
                                             setValues((prev) => ({ ...prev, [key]: e.target.value }))
                                         }
                                         rows={4}
+                                    />
+                                ) : type === "product-select" ? (
+                                    <ProductSelect
+                                        value={values[key] ?? ""}
+                                        onChange={(handle) =>
+                                            setValues((prev) => ({ ...prev, [key]: handle }))
+                                        }
                                     />
                                 ) : (
                                     <Input
