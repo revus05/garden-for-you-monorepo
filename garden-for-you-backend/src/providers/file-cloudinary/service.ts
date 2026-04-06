@@ -1,6 +1,6 @@
 import { AbstractFileProviderService, MedusaError } from "@medusajs/framework/utils"
 import { v2 as cloudinary } from "cloudinary"
-import { Readable } from "node:stream"
+import { Readable, Writable } from "node:stream"
 import { v4 as uuidv4 } from "uuid"
 
 type CloudinaryProviderOptions = {
@@ -79,8 +79,14 @@ class CloudinaryFileProviderService extends AbstractFileProviderService {
     })
   }
 
-  async delete(file: { fileKey: string }) {
-    await cloudinary.uploader.destroy(file.fileKey, { resource_type: "auto" })
+  async delete(file: { fileKey: string } | { fileKey: string }[]) {
+    const files = Array.isArray(file) ? file : [file]
+    for (const f of files) {
+      if (!f.fileKey) continue
+      await cloudinary.uploader.destroy(f.fileKey, { resource_type: "raw" }).catch(() =>
+        cloudinary.uploader.destroy(f.fileKey, { resource_type: "image" })
+      )
+    }
   }
 
   async getAsBuffer(file: { fileKey: string }) {
@@ -97,6 +103,51 @@ class CloudinaryFileProviderService extends AbstractFileProviderService {
 
   async getPresignedDownloadUrl(file: { fileKey: string }) {
     return cloudinary.url(file.fileKey, { secure: true })
+  }
+
+  async getUploadStream(fileData: { filename: string; mimeType: string }): Promise<{
+    writeStream: Writable
+    promise: Promise<{ url: string; key: string }>
+    url: string
+    fileKey: string
+  }> {
+    const publicId = this.generatePublicId(fileData.filename)
+    const folder = this.options_?.folderName || undefined
+    const fileKey = folder ? `${folder}/${publicId}` : publicId
+
+    // CSV exports and other non-image files should use resource_type "raw"
+    const resourceType = fileData.mimeType?.startsWith("image/") ? "image" : "raw"
+
+    let resolveUpload!: (result: { url: string; key: string }) => void
+    let rejectUpload!: (err: Error) => void
+
+    const promise = new Promise<{ url: string; key: string }>((resolve, reject) => {
+      resolveUpload = resolve
+      rejectUpload = reject
+    })
+
+    const writeStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: resourceType as any,
+        public_id: publicId,
+        folder,
+      },
+      (error, result) => {
+        if (error) return rejectUpload(new Error(error.message))
+        if (!result?.secure_url || !result?.public_id) {
+          return rejectUpload(new Error("No result returned from Cloudinary upload."))
+        }
+        resolveUpload({ url: result.secure_url, key: result.public_id })
+      }
+    )
+
+    // Construct the expected URL ahead of time so callers can reference it immediately
+    const url = cloudinary.url(fileKey, {
+      resource_type: resourceType as any,
+      secure: true,
+    })
+
+    return { writeStream, promise, url, fileKey }
   }
 
   protected cleanFilename(filename: string) {

@@ -11,6 +11,15 @@ const notificationProviders: {
 }[] = [
 ]
 
+// Always register local provider for in-app (feed) notifications
+notificationProviders.push({
+  resolve: "@medusajs/notification-local",
+  id: "local",
+  options: {
+    channels: ["feed"],
+  },
+})
+
 if (process.env.RESEND_API_KEY && process.env.RESEND_FROM) {
   notificationProviders.push({
     resolve: "./src/providers/notification-resend",
@@ -24,7 +33,7 @@ if (process.env.RESEND_API_KEY && process.env.RESEND_FROM) {
 } else {
   notificationProviders.push({
     resolve: "@medusajs/notification-local",
-    id: "local",
+    id: "local-email",
     options: {
       channels: ["email"],
     },
