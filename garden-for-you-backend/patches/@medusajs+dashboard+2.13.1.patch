@@ -1,0 +1,722 @@
+diff --git a/node_modules/@medusajs/dashboard/dist/app.js b/node_modules/@medusajs/dashboard/dist/app.js
+index 630384f..24f5773 100644
+--- a/node_modules/@medusajs/dashboard/dist/app.js
++++ b/node_modules/@medusajs/dashboard/dist/app.js
+@@ -97517,14 +97517,14 @@ var init_hooks = __esm({
+           type: "pageShortcut",
+           to: "/products"
+         },
+-        {
++        /*{
+           keys: {
+             Mac: ["G", "C"]
+           },
+           label: t5("app.keyboardShortcuts.navigation.goToCollections"),
+           type: "pageShortcut",
+           to: "/collections"
+-        },
++        },*/
+         {
+           keys: {
+             Mac: ["G", "A"]
+@@ -97541,14 +97541,14 @@ var init_hooks = __esm({
+           type: "pageShortcut",
+           to: "/customers"
+         },
+-        {
++        /*{
+           keys: {
+             Mac: ["G", "G"]
+           },
+           label: t5("app.keyboardShortcuts.navigation.goToCustomerGroups"),
+           type: "pageShortcut",
+           to: "/customer-groups"
+-        },
++        },*/
+         {
+           keys: {
+             Mac: ["G", "I"]
+@@ -97573,7 +97573,7 @@ var init_hooks = __esm({
+           type: "pageShortcut",
+           to: "/price-lists"
+         },
+-        {
++        /*{
+           keys: {
+             Mac: ["G", "M"]
+           },
+@@ -97588,7 +97588,7 @@ var init_hooks = __esm({
+           label: t5("app.keyboardShortcuts.navigation.goToCampaigns"),
+           type: "pageShortcut",
+           to: "/campaigns"
+-        },
++        },*/
+         // Settings
+         {
+           keys: {
+@@ -100529,10 +100529,10 @@ var init_main_layout = __esm({
+           label: t5("products.domain"),
+           to: "/products",
+           items: [
+-            {
++            /*{
+               label: t5("collections.domain"),
+               to: "/collections"
+-            },
++            },*/
+             {
+               label: t5("categories.domain"),
+               to: "/categories"
+@@ -100560,21 +100560,10 @@ var init_main_layout = __esm({
+           label: t5("customers.domain"),
+           to: "/customers",
+           items: [
+-            {
++            /*{
+               label: t5("customerGroups.domain"),
+               to: "/customer-groups"
+-            }
+-          ]
+-        },
+-        {
+-          icon: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(import_icons10.ReceiptPercent, {}),
+-          label: t5("promotions.domain"),
+-          to: "/promotions",
+-          items: [
+-            {
+-              label: t5("campaigns.domain"),
+-              to: "/campaigns"
+-            }
++            }*/
+           ]
+         },
+         {
+@@ -153907,7 +153896,6 @@ var init_collection_list_table = __esm({
+       return /* @__PURE__ */ (0, import_jsx_runtime347.jsxs)(import_ui250.Container, { className: "divide-y p-0", children: [
+         /* @__PURE__ */ (0, import_jsx_runtime347.jsxs)("div", { className: "flex items-center justify-between px-6 py-4", children: [
+           /* @__PURE__ */ (0, import_jsx_runtime347.jsxs)("div", { children: [
+-            /* @__PURE__ */ (0, import_jsx_runtime347.jsx)(import_ui250.Heading, { children: t5("collections.domain") }),
+             /* @__PURE__ */ (0, import_jsx_runtime347.jsx)(import_ui250.Text, { className: "text-ui-fg-subtle", size: "small", children: t5("collections.subtitle") })
+           ] }),
+           /* @__PURE__ */ (0, import_jsx_runtime347.jsx)(import_react_router_dom114.Link, { to: "/collections/create", children: /* @__PURE__ */ (0, import_jsx_runtime347.jsx)(import_ui250.Button, { size: "small", variant: "secondary", children: t5("actions.create") }) })
+@@ -194114,145 +194102,6 @@ function getRouteMap({
+                 }
+               ]
+             },
+-            {
+-              path: "/promotions",
+-              errorElement: /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(ErrorBoundary, {}),
+-              handle: {
+-                breadcrumb: () => (0, import_i18next9.t)("promotions.domain")
+-              },
+-              children: [
+-                {
+-                  path: "",
+-                  lazy: () => Promise.resolve().then(() => (init_promotion_list(), promotion_list_exports))
+-                },
+-                {
+-                  path: "create",
+-                  lazy: () => Promise.resolve().then(() => (init_promotion_create2(), promotion_create_exports))
+-                },
+-                {
+-                  path: ":id",
+-                  lazy: async () => {
+-                    const { Component: Component5, Breadcrumb, loader } = await Promise.resolve().then(() => (init_promotion_detail2(), promotion_detail_exports));
+-                    return {
+-                      Component: Component5,
+-                      loader,
+-                      handle: {
+-                        breadcrumb: (match) => /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(Breadcrumb, { ...match })
+-                      }
+-                    };
+-                  },
+-                  children: [
+-                    {
+-                      path: "edit",
+-                      lazy: () => Promise.resolve().then(() => (init_promotion_edit_details2(), promotion_edit_details_exports))
+-                    },
+-                    {
+-                      path: "add-to-campaign",
+-                      lazy: () => Promise.resolve().then(() => (init_promotion_add_campaign2(), promotion_add_campaign_exports))
+-                    },
+-                    {
+-                      path: ":ruleType/edit",
+-                      lazy: () => Promise.resolve().then(() => (init_edit_rules2(), edit_rules_exports))
+-                    }
+-                  ]
+-                }
+-              ]
+-            },
+-            {
+-              path: "/campaigns",
+-              errorElement: /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(ErrorBoundary, {}),
+-              handle: {
+-                breadcrumb: () => (0, import_i18next9.t)("campaigns.domain")
+-              },
+-              children: [
+-                {
+-                  path: "",
+-                  lazy: () => Promise.resolve().then(() => (init_campaign_list2(), campaign_list_exports)),
+-                  children: []
+-                },
+-                {
+-                  path: "create",
+-                  lazy: () => Promise.resolve().then(() => (init_campaign_create2(), campaign_create_exports))
+-                },
+-                {
+-                  path: ":id",
+-                  lazy: async () => {
+-                    const { Component: Component5, Breadcrumb, loader } = await Promise.resolve().then(() => (init_campaign_detail2(), campaign_detail_exports));
+-                    return {
+-                      Component: Component5,
+-                      loader,
+-                      handle: {
+-                        breadcrumb: (match) => /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(Breadcrumb, { ...match })
+-                      }
+-                    };
+-                  },
+-                  children: [
+-                    {
+-                      path: "edit",
+-                      lazy: () => Promise.resolve().then(() => (init_campaign_edit2(), campaign_edit_exports))
+-                    },
+-                    {
+-                      path: "configuration",
+-                      lazy: () => Promise.resolve().then(() => (init_campaign_configuration2(), campaign_configuration_exports))
+-                    },
+-                    {
+-                      path: "edit-budget",
+-                      lazy: () => Promise.resolve().then(() => (init_campaign_budget_edit2(), campaign_budget_edit_exports))
+-                    },
+-                    {
+-                      path: "add-promotions",
+-                      lazy: () => Promise.resolve().then(() => (init_add_campaign_promotions2(), add_campaign_promotions_exports))
+-                    }
+-                  ]
+-                }
+-              ]
+-            },
+-            {
+-              path: "/collections",
+-              errorElement: /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(ErrorBoundary, {}),
+-              handle: {
+-                breadcrumb: () => (0, import_i18next9.t)("collections.domain")
+-              },
+-              children: [
+-                {
+-                  path: "",
+-                  lazy: () => Promise.resolve().then(() => (init_collection_list2(), collection_list_exports)),
+-                  children: [
+-                    {
+-                      path: "create",
+-                      lazy: () => Promise.resolve().then(() => (init_collection_create2(), collection_create_exports))
+-                    }
+-                  ]
+-                },
+-                {
+-                  path: ":id",
+-                  lazy: async () => {
+-                    const { Component: Component5, Breadcrumb, loader } = await Promise.resolve().then(() => (init_collection_detail2(), collection_detail_exports));
+-                    return {
+-                      Component: Component5,
+-                      loader,
+-                      handle: {
+-                        breadcrumb: (match) => /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(Breadcrumb, { ...match })
+-                      }
+-                    };
+-                  },
+-                  children: [
+-                    {
+-                      path: "edit",
+-                      lazy: () => Promise.resolve().then(() => (init_collection_edit2(), collection_edit_exports))
+-                    },
+-                    {
+-                      path: "products",
+-                      lazy: () => Promise.resolve().then(() => (init_collection_add_products2(), collection_add_products_exports))
+-                    },
+-                    {
+-                      path: "metadata/edit",
+-                      lazy: () => Promise.resolve().then(() => (init_collection_metadata2(), collection_metadata_exports))
+-                    }
+-                  ]
+-                }
+-              ]
+-            },
+             {
+               path: "/price-lists",
+               errorElement: /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(ErrorBoundary, {}),
+@@ -194357,52 +194206,6 @@ function getRouteMap({
+                 }
+               ]
+             },
+-            {
+-              path: "/customer-groups",
+-              errorElement: /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(ErrorBoundary, {}),
+-              handle: {
+-                breadcrumb: () => (0, import_i18next9.t)("customerGroups.domain")
+-              },
+-              children: [
+-                {
+-                  path: "",
+-                  lazy: () => Promise.resolve().then(() => (init_customer_group_list2(), customer_group_list_exports)),
+-                  children: [
+-                    {
+-                      path: "create",
+-                      lazy: () => Promise.resolve().then(() => (init_customer_group_create2(), customer_group_create_exports))
+-                    }
+-                  ]
+-                },
+-                {
+-                  path: ":id",
+-                  lazy: async () => {
+-                    const { Component: Component5, Breadcrumb, loader } = await Promise.resolve().then(() => (init_customer_group_detail2(), customer_group_detail_exports));
+-                    return {
+-                      Component: Component5,
+-                      loader,
+-                      handle: {
+-                        breadcrumb: (match) => /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(Breadcrumb, { ...match })
+-                      }
+-                    };
+-                  },
+-                  children: [
+-                    {
+-                      path: "edit",
+-                      lazy: () => Promise.resolve().then(() => (init_customer_group_edit2(), customer_group_edit_exports))
+-                    },
+-                    {
+-                      path: "add-customers",
+-                      lazy: () => Promise.resolve().then(() => (init_customer_group_add_customers2(), customer_group_add_customers_exports))
+-                    },
+-                    {
+-                      path: "metadata/edit",
+-                      lazy: () => Promise.resolve().then(() => (init_customer_group_metadata(), customer_group_metadata_exports))
+-                    }
+-                  ]
+-                }
+-              ]
+-            },
+             {
+               path: "/reservations",
+               errorElement: /* @__PURE__ */ (0, import_jsx_runtime705.jsx)(ErrorBoundary, {}),
+diff --git a/node_modules/@medusajs/dashboard/dist/chunk-SZ2YWQ76.mjs b/node_modules/@medusajs/dashboard/dist/chunk-SZ2YWQ76.mjs
+index 0517f65..3cd79b7 100644
+--- a/node_modules/@medusajs/dashboard/dist/chunk-SZ2YWQ76.mjs
++++ b/node_modules/@medusajs/dashboard/dist/chunk-SZ2YWQ76.mjs
+@@ -93167,14 +93167,14 @@ var useGlobalShortcuts = () => {
+       type: "pageShortcut",
+       to: "/products"
+     },
+-    {
++    /*{
+       keys: {
+         Mac: ["G", "C"]
+       },
+       label: t2("app.keyboardShortcuts.navigation.goToCollections"),
+       type: "pageShortcut",
+       to: "/collections"
+-    },
++    },*/
+     {
+       keys: {
+         Mac: ["G", "A"]
+@@ -93191,14 +93191,14 @@ var useGlobalShortcuts = () => {
+       type: "pageShortcut",
+       to: "/customers"
+     },
+-    {
++    /*{
+       keys: {
+         Mac: ["G", "G"]
+       },
+       label: t2("app.keyboardShortcuts.navigation.goToCustomerGroups"),
+       type: "pageShortcut",
+       to: "/customer-groups"
+-    },
++    },*/
+     {
+       keys: {
+         Mac: ["G", "I"]
+@@ -93223,7 +93223,7 @@ var useGlobalShortcuts = () => {
+       type: "pageShortcut",
+       to: "/price-lists"
+     },
+-    {
++    /*{
+       keys: {
+         Mac: ["G", "M"]
+       },
+@@ -93238,7 +93238,7 @@ var useGlobalShortcuts = () => {
+       label: t2("app.keyboardShortcuts.navigation.goToCampaigns"),
+       type: "pageShortcut",
+       to: "/campaigns"
+-    },
++    },*/
+     // Settings
+     {
+       keys: {
+@@ -95527,10 +95527,10 @@ var useCoreRoutes = () => {
+       label: t2("products.domain"),
+       to: "/products",
+       items: [
+-        {
++        /*{
+           label: t2("collections.domain"),
+           to: "/collections"
+-        },
++        },*/
+         {
+           label: t2("categories.domain"),
+           to: "/categories"
+@@ -95558,21 +95558,10 @@ var useCoreRoutes = () => {
+       label: t2("customers.domain"),
+       to: "/customers",
+       items: [
+-        {
++        /*{
+           label: t2("customerGroups.domain"),
+           to: "/customer-groups"
+-        }
+-      ]
+-    },
+-    {
+-      icon: /* @__PURE__ */ jsx13(ReceiptPercent, {}),
+-      label: t2("promotions.domain"),
+-      to: "/promotions",
+-      items: [
+-        {
+-          label: t2("campaigns.domain"),
+-          to: "/campaigns"
+-        }
++        }*/
+       ]
+     },
+     {
+@@ -96242,145 +96231,6 @@ function getRouteMap({
+                 }
+               ]
+             },
+-            {
+-              path: "/promotions",
+-              errorElement: /* @__PURE__ */ jsx17(ErrorBoundary, {}),
+-              handle: {
+-                breadcrumb: () => t("promotions.domain")
+-              },
+-              children: [
+-                {
+-                  path: "",
+-                  lazy: () => import("./promotion-list-L22GJE3P.mjs")
+-                },
+-                {
+-                  path: "create",
+-                  lazy: () => import("./promotion-create-I7OYJO55.mjs")
+-                },
+-                {
+-                  path: ":id",
+-                  lazy: async () => {
+-                    const { Component, Breadcrumb, loader } = await import("./promotion-detail-Q7MMF7CC.mjs");
+-                    return {
+-                      Component,
+-                      loader,
+-                      handle: {
+-                        breadcrumb: (match) => /* @__PURE__ */ jsx17(Breadcrumb, { ...match })
+-                      }
+-                    };
+-                  },
+-                  children: [
+-                    {
+-                      path: "edit",
+-                      lazy: () => import("./promotion-edit-details-6BSOOWQN.mjs")
+-                    },
+-                    {
+-                      path: "add-to-campaign",
+-                      lazy: () => import("./promotion-add-campaign-DO67QK6M.mjs")
+-                    },
+-                    {
+-                      path: ":ruleType/edit",
+-                      lazy: () => import("./edit-rules-OOIFNR4Z.mjs")
+-                    }
+-                  ]
+-                }
+-              ]
+-            },
+-            {
+-              path: "/campaigns",
+-              errorElement: /* @__PURE__ */ jsx17(ErrorBoundary, {}),
+-              handle: {
+-                breadcrumb: () => t("campaigns.domain")
+-              },
+-              children: [
+-                {
+-                  path: "",
+-                  lazy: () => import("./campaign-list-PEOTTWBA.mjs"),
+-                  children: []
+-                },
+-                {
+-                  path: "create",
+-                  lazy: () => import("./campaign-create-FJOECKGT.mjs")
+-                },
+-                {
+-                  path: ":id",
+-                  lazy: async () => {
+-                    const { Component, Breadcrumb, loader } = await import("./campaign-detail-2SHJIBIS.mjs");
+-                    return {
+-                      Component,
+-                      loader,
+-                      handle: {
+-                        breadcrumb: (match) => /* @__PURE__ */ jsx17(Breadcrumb, { ...match })
+-                      }
+-                    };
+-                  },
+-                  children: [
+-                    {
+-                      path: "edit",
+-                      lazy: () => import("./campaign-edit-K2POQH7M.mjs")
+-                    },
+-                    {
+-                      path: "configuration",
+-                      lazy: () => import("./campaign-configuration-QOE3D2BE.mjs")
+-                    },
+-                    {
+-                      path: "edit-budget",
+-                      lazy: () => import("./campaign-budget-edit-B5MSE26J.mjs")
+-                    },
+-                    {
+-                      path: "add-promotions",
+-                      lazy: () => import("./add-campaign-promotions-OYPGISTF.mjs")
+-                    }
+-                  ]
+-                }
+-              ]
+-            },
+-            {
+-              path: "/collections",
+-              errorElement: /* @__PURE__ */ jsx17(ErrorBoundary, {}),
+-              handle: {
+-                breadcrumb: () => t("collections.domain")
+-              },
+-              children: [
+-                {
+-                  path: "",
+-                  lazy: () => import("./collection-list-EFER73U6.mjs"),
+-                  children: [
+-                    {
+-                      path: "create",
+-                      lazy: () => import("./collection-create-PBAAYBMB.mjs")
+-                    }
+-                  ]
+-                },
+-                {
+-                  path: ":id",
+-                  lazy: async () => {
+-                    const { Component, Breadcrumb, loader } = await import("./collection-detail-7GFJ3MAT.mjs");
+-                    return {
+-                      Component,
+-                      loader,
+-                      handle: {
+-                        breadcrumb: (match) => /* @__PURE__ */ jsx17(Breadcrumb, { ...match })
+-                      }
+-                    };
+-                  },
+-                  children: [
+-                    {
+-                      path: "edit",
+-                      lazy: () => import("./collection-edit-7GW5PA32.mjs")
+-                    },
+-                    {
+-                      path: "products",
+-                      lazy: () => import("./collection-add-products-KTACHFJO.mjs")
+-                    },
+-                    {
+-                      path: "metadata/edit",
+-                      lazy: () => import("./collection-metadata-EVPJGU6A.mjs")
+-                    }
+-                  ]
+-                }
+-              ]
+-            },
+             {
+               path: "/price-lists",
+               errorElement: /* @__PURE__ */ jsx17(ErrorBoundary, {}),
+@@ -96485,52 +96335,6 @@ function getRouteMap({
+                 }
+               ]
+             },
+-            {
+-              path: "/customer-groups",
+-              errorElement: /* @__PURE__ */ jsx17(ErrorBoundary, {}),
+-              handle: {
+-                breadcrumb: () => t("customerGroups.domain")
+-              },
+-              children: [
+-                {
+-                  path: "",
+-                  lazy: () => import("./customer-group-list-KZHWADWX.mjs"),
+-                  children: [
+-                    {
+-                      path: "create",
+-                      lazy: () => import("./customer-group-create-RY4FVEIW.mjs")
+-                    }
+-                  ]
+-                },
+-                {
+-                  path: ":id",
+-                  lazy: async () => {
+-                    const { Component, Breadcrumb, loader } = await import("./customer-group-detail-GWTXNJ3C.mjs");
+-                    return {
+-                      Component,
+-                      loader,
+-                      handle: {
+-                        breadcrumb: (match) => /* @__PURE__ */ jsx17(Breadcrumb, { ...match })
+-                      }
+-                    };
+-                  },
+-                  children: [
+-                    {
+-                      path: "edit",
+-                      lazy: () => import("./customer-group-edit-MQWARIQZ.mjs")
+-                    },
+-                    {
+-                      path: "add-customers",
+-                      lazy: () => import("./customer-group-add-customers-XMR2WBXX.mjs")
+-                    },
+-                    {
+-                      path: "metadata/edit",
+-                      lazy: () => import("./customer-group-metadata-JQJRLLXG.mjs")
+-                    }
+-                  ]
+-                }
+-              ]
+-            },
+             {
+               path: "/reservations",
+               errorElement: /* @__PURE__ */ jsx17(ErrorBoundary, {}),
+diff --git a/node_modules/@medusajs/dashboard/dist/collection-list-EFER73U6.mjs b/node_modules/@medusajs/dashboard/dist/collection-list-EFER73U6.mjs
+index f9a5901..a8405fe 100644
+--- a/node_modules/@medusajs/dashboard/dist/collection-list-EFER73U6.mjs
++++ b/node_modules/@medusajs/dashboard/dist/collection-list-EFER73U6.mjs
+@@ -195,7 +195,7 @@ var CollectionListTable = () => {
+   return /* @__PURE__ */ jsxs(Container, { className: "divide-y p-0", children: [
+     /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between px-6 py-4", children: [
+       /* @__PURE__ */ jsxs("div", { children: [
+-        /* @__PURE__ */ jsx2(Heading, { children: t("collections.domain") }),
++        /* @__PURE__ */ /*jsx2(Heading, { children: t("collections.domain") }),*/
+         /* @__PURE__ */ jsx2(Text, { className: "text-ui-fg-subtle", size: "small", children: t("collections.subtitle") })
+       ] }),
+       /* @__PURE__ */ jsx2(Link, { to: "/collections/create", children: /* @__PURE__ */ jsx2(Button, { size: "small", variant: "secondary", children: t("actions.create") }) })
+diff --git a/node_modules/@medusajs/dashboard/src/components/layout/main-layout/main-layout.tsx b/node_modules/@medusajs/dashboard/src/components/layout/main-layout/main-layout.tsx
+index 01aa7b0..daeae1e 100644
+--- a/node_modules/@medusajs/dashboard/src/components/layout/main-layout/main-layout.tsx
++++ b/node_modules/@medusajs/dashboard/src/components/layout/main-layout/main-layout.tsx
+@@ -198,10 +198,10 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
+       label: t("products.domain"),
+       to: "/products",
+       items: [
+-        {
++        /*{
+           label: t("collections.domain"),
+           to: "/collections",
+-        },
++        },*/
+         {
+           label: t("categories.domain"),
+           to: "/categories",
+@@ -229,13 +229,13 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
+       label: t("customers.domain"),
+       to: "/customers",
+       items: [
+-        {
++        /*{
+           label: t("customerGroups.domain"),
+           to: "/customer-groups",
+-        },
++        },*/
+       ],
+     },
+-    {
++    /*{
+       icon: <ReceiptPercent />,
+       label: t("promotions.domain"),
+       to: "/promotions",
+@@ -245,7 +245,7 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
+           to: "/campaigns",
+         },
+       ],
+-    },
++    },*/
+     {
+       icon: <CurrencyDollar />,
+       label: t("priceLists.domain"),
+diff --git a/node_modules/@medusajs/dashboard/src/components/search/use-search-results.tsx b/node_modules/@medusajs/dashboard/src/components/search/use-search-results.tsx
+index 0628041..79a875b 100644
+--- a/node_modules/@medusajs/dashboard/src/components/search/use-search-results.tsx
++++ b/node_modules/@medusajs/dashboard/src/components/search/use-search-results.tsx
+@@ -581,7 +581,7 @@ const transformMap: TransformMap = {
+       value: `customerGroup:${customerGroup.id}`,
+     }),
+   },
+-  collection: {
++  /*collection: {
+     dataKey: "collections",
+     transform: (collection: HttpTypes.AdminCollection) => ({
+       id: collection.id,
+@@ -589,7 +589,7 @@ const transformMap: TransformMap = {
+       to: `/collections/${collection.id}`,
+       value: `collection:${collection.id}`,
+     }),
+-  },
++  },*/
+   promotion: {
+     dataKey: "promotions",
+     transform: (promotion: HttpTypes.AdminPromotion) => ({
+diff --git a/node_modules/@medusajs/dashboard/src/providers/keybind-provider/hooks.tsx b/node_modules/@medusajs/dashboard/src/providers/keybind-provider/hooks.tsx
+index 3b3c876..bc740a5 100644
+--- a/node_modules/@medusajs/dashboard/src/providers/keybind-provider/hooks.tsx
++++ b/node_modules/@medusajs/dashboard/src/providers/keybind-provider/hooks.tsx
+@@ -151,14 +151,14 @@ export const useGlobalShortcuts = () => {
+       type: "pageShortcut",
+       to: "/customers",
+     },
+-    {
++    /*{
+       keys: {
+         Mac: ["G", "G"],
+       },
+       label: t("app.keyboardShortcuts.navigation.goToCustomerGroups"),
+       type: "pageShortcut",
+       to: "/customer-groups",
+-    },
++    },*/
+     {
+       keys: {
+         Mac: ["G", "I"],
+@@ -183,7 +183,7 @@ export const useGlobalShortcuts = () => {
+       type: "pageShortcut",
+       to: "/price-lists",
+     },
+-    {
++    /*{
+       keys: {
+         Mac: ["G", "M"],
+       },
+@@ -198,7 +198,7 @@ export const useGlobalShortcuts = () => {
+       label: t("app.keyboardShortcuts.navigation.goToCampaigns"),
+       type: "pageShortcut",
+       to: "/campaigns",
+-    },
++    },*/
+     // Settings
+     {
+       keys: {
+diff --git a/node_modules/@medusajs/dashboard/src/routes/collections/collection-list/components/collection-list-table/collection-list-table.tsx b/node_modules/@medusajs/dashboard/src/routes/collections/collection-list/components/collection-list-table/collection-list-table.tsx
+index 23f8a92..30f6831 100644
+--- a/node_modules/@medusajs/dashboard/src/routes/collections/collection-list/components/collection-list-table/collection-list-table.tsx
++++ b/node_modules/@medusajs/dashboard/src/routes/collections/collection-list/components/collection-list-table/collection-list-table.tsx
+@@ -49,7 +49,7 @@ export const CollectionListTable = () => {
+     <Container className="divide-y p-0">
+       <div className="flex items-center justify-between px-6 py-4">
+         <div>
+-          <Heading>{t("collections.domain")}</Heading>
++          {/*<Heading>{t("collections.domain")}</Heading>*/}
+           <Text className="text-ui-fg-subtle" size="small">
+             {t("collections.subtitle")}
+           </Text>
