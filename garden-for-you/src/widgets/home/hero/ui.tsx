@@ -11,7 +11,7 @@ export const HeroSection = () => {
   const scrollToCatalog = useScrollToCatalog();
 
   useEffect(() => {
-    if (window.location.hash === "#catalog") {
+    if (window.location.hash.includes("#catalog")) {
       scrollToCatalog();
 
       window.history.replaceState(null, "", window.location.pathname);

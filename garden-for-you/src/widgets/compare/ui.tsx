@@ -173,7 +173,7 @@ export const CompareWidget = () => {
 
               {products.length < 2 && (
                 <th>
-                  <Link href={paths.home}>
+                  <Link href={`${paths.home}#catalog`} scroll={false}>
                     <Button>
                       Еще товары
                       <ArrowRight className="stroke-primary-foreground" />

@@ -78,14 +78,14 @@ export const CheckoutPage = () => {
         )}
 
         {currentStep === "payment" && selectedOption && (
-          <div>
+          <div className="flex flex-col gap-2">
             <h2 className="mb-1 text-xl font-semibold">Подтверждение заказа</h2>
             <p className="mb-6 text-sm text-muted-foreground">
               Проверьте состав заказа и подтвердите оформление
             </p>
             <ConfirmOrderForm shippingOption={selectedOption} />
             <Button
-              variant="secondary"
+              variant="outline"
               onClick={() => setCurrentStep("shipping")}
             >
               Изменить данные получения
