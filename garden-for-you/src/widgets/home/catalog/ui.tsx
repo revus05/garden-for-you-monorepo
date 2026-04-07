@@ -70,15 +70,18 @@ export const Catalog = () => {
   );
 
   const productsQuery = useCatalogProductsInfiniteQuery(
-    { categoryIds: filteredCategoryIds, searchQuery: deferredSearchQuery, orderBy },
+    {
+      categoryIds: filteredCategoryIds,
+      searchQuery: deferredSearchQuery,
+      orderBy,
+    },
     { enabled: categoriesQuery.isSuccess },
   );
 
   const products =
     productsQuery.data?.pages.flatMap((page) => page.products) ?? [];
   const totalProductsCount = productsQuery.data?.pages[0]?.count ?? 0;
-  const isInitialLoading =
-    categoriesQuery.isPending || productsQuery.isPending;
+  const isInitialLoading = categoriesQuery.isPending || productsQuery.isPending;
   const isLoadingMore = productsQuery.isFetchingNextPage;
   const hasProducts = products.length > 0;
 
@@ -305,7 +308,11 @@ export const Catalog = () => {
                 (item) => item.product?.id === product.id,
               );
 
-              const quantity = product.variants[0].inventory_quantity;
+              const isAvailable = product.variants.some((v) => {
+                if (!v.manage_inventory) return true;
+                if (v.allow_backorder) return true;
+                return (v.inventory_quantity ?? 0) > 0;
+              });
 
               const isInCart = !!cartItem;
 
@@ -324,7 +331,7 @@ export const Catalog = () => {
                   key={product.id}
                   className="flex flex-col rounded-lg hover:shadow-product-cart transition-shadow relative border hover:border-primary"
                 >
-                  {!quantity && (
+                  {!isAvailable && (
                     <div className="absolute top-2 left-2 shadow-md bg-white rounded-full h-5 flex">
                       <Badge variant="destructive">Нет в наличии</Badge>
                     </div>
@@ -380,7 +387,7 @@ export const Catalog = () => {
                             onClick={handleCartButtonClick}
                             className="size-10"
                             variant={isInCart ? "outline" : "default"}
-                            disabled={!quantity}
+                            disabled={!isAvailable}
                           >
                             <ShoppingCart
                               className={cn(

@@ -97,6 +97,16 @@ export const CartList = () => {
                     </Button>
                   </div>
 
+                  {(item.variant as any)?.options?.length > 0 && (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {(item.variant as any).options
+                        .map((o: any) =>
+                          o.option?.title ? `${o.option.title}: ${o.value}` : o.value,
+                        )
+                        .join(", ")}
+                    </p>
+                  )}
+
                   <p className="mt-2 text-sm text-muted-foreground">
                     Цена:{" "}
                     <span className="font-medium text-foreground">
@@ -187,13 +197,22 @@ export const CartList = () => {
                     )}
                   </TableCell>
                   <TableCell>
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-0.5">
                       <Link
                         className="font-medium text-foreground hover:underline"
                         href={`${paths.productPage}/${item.product_handle}`}
                       >
                         {item.product_title}
                       </Link>
+                      {(item.variant as any)?.options?.length > 0 && (
+                        <span className="text-xs text-muted-foreground">
+                          {(item.variant as any).options
+                            .map((o: any) =>
+                              o.option?.title ? `${o.option.title}: ${o.value}` : o.value,
+                            )
+                            .join(", ")}
+                        </span>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="w-40 font-medium">

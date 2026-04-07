@@ -24,7 +24,10 @@ export async function resolveServerCart(options?: {
 
   if (cartId) {
     try {
-      const response = await sdk.store.cart.retrieve(cartId);
+      const response = await sdk.store.cart.retrieve(cartId, {
+        fields:
+          "+items.variant.options.value,+items.variant.options.option.title",
+      });
       cart = response.cart;
     } catch {
       cart = null;

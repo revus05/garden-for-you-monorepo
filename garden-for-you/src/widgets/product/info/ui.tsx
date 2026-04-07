@@ -51,7 +51,6 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
     useState<Record<string, string>>(initialOptions);
 
   const cartItem = cart?.items?.find((item) => item.product?.id === product.id);
-  const isInStock = !!product.variants?.[0].inventory_quantity;
   const isInCart = !!cartItem;
   const isInComparison = comparisonProducts.some((p) => p.id === product.id);
   const isComparisonFull =
@@ -101,15 +100,22 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
     }));
   };
 
+  const isVariantAvailable = (variant: NonNullable<typeof product.variants>[number]) => {
+    if (!variant.manage_inventory) return true;
+    if (variant.allow_backorder) return true;
+    return (variant.inventory_quantity ?? 0) > 0;
+  };
+
   const isOptionValueAvailable = (
     optionId: string,
     valueId: string,
   ): boolean => {
     const hypothetical = { ...selectedOptions, [optionId]: valueId };
-    return !!product.variants?.some((variant) =>
-      variant.options?.every(
-        (opt) => opt.id === hypothetical[opt.option_id ?? ""],
-      ),
+    return !!product.variants?.some(
+      (variant) =>
+        variant.options?.every(
+          (opt) => opt.id === hypothetical[opt.option_id ?? ""],
+        ) && isVariantAvailable(variant),
     );
   };
 
@@ -119,9 +125,11 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
     ),
   );
 
+  const isSelectedInStock = selectedVariant ? isVariantAvailable(selectedVariant) : false;
+
   return (
     <div className="flex flex-col gap-4">
-      {!isInStock && <Badge variant="destructive">Нет в наличии</Badge>}
+      {!isSelectedInStock && <Badge variant="destructive">Нет в наличии</Badge>}
       <h1 className="font-black text-3xl">{product.title}</h1>
       {selectedVariant?.calculated_price && (
         <p className="text-lg font-bold">
@@ -135,7 +143,7 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
           className="w-fit"
           size="lg"
           variant={isInCart ? "outline" : "default"}
-          disabled={!isInStock}
+          disabled={!isSelectedInStock}
         >
           {isInCart ? "Удалить из корзины" : "Добавить в корзину"}
           <ShoppingCart

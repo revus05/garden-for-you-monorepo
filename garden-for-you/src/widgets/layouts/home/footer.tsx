@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import logo from "@/images/logo-light.png";
 import plantsPattern from "@/images/plants-pattern.png";
 import telegram from "@/images/telegram.svg";
 import { paths } from "@/shared/constants/navigation";
@@ -17,7 +18,18 @@ export const Footer = () => {
     >
       <div className="wrapper text-primary-foreground grid md:grid-cols-3 grid-cols-1 gap-8">
         <div className="flex flex-col gap-8">
-          <h2 className="font-black text-4xl">Сад Для Вас</h2>
+          <Link href={paths.home} className="flex items-center gap-2">
+            <Image
+              src={logo.src}
+              height={256}
+              width={256}
+              alt="logo"
+              className="size-8"
+            />
+            <h1 className="font-black font-logo text-2xl whitespace-nowrap">
+              Сад Для Вас
+            </h1>
+          </Link>
           <div className="flex flex-col gap-4">
             <Link href={paths.privacyPolicy} className="underline">
               Политика конфиденциальности

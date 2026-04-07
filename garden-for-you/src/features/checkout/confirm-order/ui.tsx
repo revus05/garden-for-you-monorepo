@@ -31,6 +31,15 @@ export function ConfirmOrderForm({ shippingOption }: Props) {
             >
               <span className="max-w-[16rem] text-sm leading-5 text-muted-foreground">
                 {item.product_title}
+                {(item.variant as any)?.options?.length > 0 && (
+                  <span className="block text-xs text-muted-foreground/80">
+                    {(item.variant as any).options
+                      .map((o: any) =>
+                        o.option?.title ? `${o.option.title}: ${o.value}` : o.value,
+                      )
+                      .join(", ")}
+                  </span>
+                )}
                 <span className="block text-xs uppercase text-muted-foreground/70">
                   {formatPrice(item.unit_price)} × {item.quantity}
                 </span>

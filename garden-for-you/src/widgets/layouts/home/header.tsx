@@ -30,7 +30,7 @@ export const Header = () => {
               alt="logo"
               className="size-8"
             />
-            <h1 className="text-primary font-black text-3xl whitespace-nowrap">
+            <h1 className="text-primary font-black font-logo text-2xl whitespace-nowrap">
               Сад Для Вас
             </h1>
           </Link>

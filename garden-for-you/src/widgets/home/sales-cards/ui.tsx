@@ -20,7 +20,7 @@ export const SalesCardsSection = async () => {
   return (
     <section>
       <div
-        className="px-6 py-8 bg-background-secondary rounded-lg flex flex-col gap-4 overflow-hidden items-center"
+        className="px-6 py-8 bg-background-secondary rounded-lg flex flex-col gap-4 overflow-hidden items-center max-w-lg mx-auto"
         style={{
           backgroundImage: `linear-gradient(oklch(0.502 0.0742 123.84 / 80%),oklch(0.502 0.0742 123.84 / 80%)),url(${leavesBg.src})`,
           backgroundSize: "cover",

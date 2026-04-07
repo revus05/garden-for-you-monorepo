@@ -26,7 +26,7 @@ export async function fetchCatalogProductsPage({
     q: filters.searchQuery || undefined,
     order: filters.orderBy,
     fields:
-      "id,handle,title,thumbnail,+variants.id,+variants.inventory_quantity,+variants.calculated_price.calculated_amount,+variants.calculated_price.currency_code",
+      "id,handle,title,thumbnail,+variants.id,+variants.inventory_quantity,+variants.manage_inventory,+variants.allow_backorder,+variants.calculated_price.calculated_amount,+variants.calculated_price.currency_code",
   });
 
   const nextOffset =

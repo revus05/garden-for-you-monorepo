@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { EB_Garamond, Noto_Sans } from "next/font/google";
+import { EB_Garamond, Noto_Sans, Noto_Serif } from "next/font/google";
 import "./globals.css";
 import type { ReactNode } from "react";
 import { Providers } from "@/app/providers";
@@ -8,6 +8,10 @@ import { getServerComparison } from "@/entities/comparison/server/get-server-com
 import { getServerUser } from "@/entities/user/server/get-server-user";
 
 const notoSans = Noto_Sans({ subsets: ["cyrillic"], variable: "--font-sans" });
+const notoSerif = Noto_Serif({
+  subsets: ["cyrillic"],
+  variable: "--font-logo",
+});
 const ebGaramond = EB_Garamond({
   subsets: ["cyrillic"],
   variable: "--font-serif",
@@ -28,8 +32,10 @@ export default async function RootLayout({
   );
 
   return (
-    <html lang="ru" className={notoSans.variable}>
-      <body className={`${ebGaramond.variable} antialiased`}>
+    <html lang="ru">
+      <body
+        className={`${ebGaramond.variable} ${notoSerif.variable} ${notoSans.variable} antialiased`}
+      >
         <Providers
           preloadedCart={preloadedCart}
           preloadedUser={preloadedUser}
