@@ -38,8 +38,6 @@ export async function POST(request: Request) {
     { method: "POST", body: cloudinaryForm },
   );
 
-  console.log(cloudinaryResponse);
-
   if (!cloudinaryResponse.ok) {
     return NextResponse.json(
       { message: "Ошибка загрузки изображения в Cloudinary" },

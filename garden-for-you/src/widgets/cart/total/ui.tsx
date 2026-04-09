@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { formatPrice, useAppSelector } from "@/shared/lib";
 import { paths } from "@/shared/constants/navigation";
+import { formatPrice, useAppSelector } from "@/shared/lib";
 import {
   Button,
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -32,9 +31,6 @@ export const CartTotal = () => {
     <Card className="w-full md:w-96 bg-card/95 lg:sticky lg:top-24">
       <CardHeader className="gap-2 border-b border-border/60">
         <CardTitle className="text-xl font-semibold">Итого</CardTitle>
-        <CardDescription>
-          Доставка по Минску — 20,00 BYN, самовывоз — бесплатно.
-        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="flex flex-col gap-3">
@@ -43,12 +39,18 @@ export const CartTotal = () => {
               key={item.id}
               className="flex items-start justify-between gap-4"
             >
-              <span className="max-w-[16rem] text-sm leading-5 text-muted-foreground">
-                {item.product_title}
+              <div className="flex flex-col">
+                <span className="max-w-[16rem] text-sm leading-5 text-muted-foreground">
+                  {item.product_title}
+                </span>
+                <span className="max-w-[16rem] text-sm leading-5 text-muted-foreground">
+                  {item.variant?.options?.[0].option?.title}-
+                  {item.variant?.options?.[0].value}
+                </span>
                 <span className="block text-xs uppercase text-muted-foreground/80">
                   {formatPrice(item.unit_price)} x {item.quantity}
                 </span>
-              </span>
+              </div>
               <span className="text-sm font-semibold text-foreground">
                 {formatPrice(item.unit_price * item.quantity)}
               </span>

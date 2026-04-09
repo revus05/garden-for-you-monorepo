@@ -32,7 +32,5 @@ export async function GET() {
 
   const data = await response.json().catch(() => null);
 
-  console.log(data, response);
-
   return NextResponse.json(data, { status: response.status });
 }

@@ -58,15 +58,6 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
 
   const currentIds = comparisonProducts.map((p) => p.id);
 
-  const handleCartButtonClick = () => {
-    if (!product.variants) return;
-    if (isInCart) {
-      void removeCartItem(dispatch, cartItem?.id);
-    } else {
-      void addCartItem(dispatch, product.variants[0].id, 1);
-    }
-  };
-
   const handleComparisonClick = () => {
     if (isInComparison) {
       void removeFromComparisonWithSync(
@@ -100,7 +91,9 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
     }));
   };
 
-  const isVariantAvailable = (variant: NonNullable<typeof product.variants>[number]) => {
+  const isVariantAvailable = (
+    variant: NonNullable<typeof product.variants>[number],
+  ) => {
     if (!variant.manage_inventory) return true;
     if (variant.allow_backorder) return true;
     return (variant.inventory_quantity ?? 0) > 0;
@@ -125,7 +118,18 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
     ),
   );
 
-  const isSelectedInStock = selectedVariant ? isVariantAvailable(selectedVariant) : false;
+  const isSelectedInStock = selectedVariant
+    ? isVariantAvailable(selectedVariant)
+    : false;
+
+  const handleCartButtonClick = () => {
+    if (!selectedVariant) return;
+    if (isInCart) {
+      void removeCartItem(dispatch, cartItem?.id);
+    } else {
+      void addCartItem(dispatch, selectedVariant.id, 1);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-4">

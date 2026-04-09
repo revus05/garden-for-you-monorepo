@@ -4,6 +4,7 @@ import { ArrowRight, ShoppingCart, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { removeCartItem, updateCartItemQuantity } from "@/features/cart";
+import plantPlaceholder from "@/images/plant-placholder.svg";
 import { paths } from "@/shared/constants/navigation";
 import { formatPrice, useAppDispatch, useAppSelector } from "@/shared/lib";
 import {
@@ -81,7 +82,7 @@ export const CartList = () => {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <Link
-                      className="font-medium text-foreground hover:underline break-words"
+                      className="font-medium text-foreground hover:underline wrap-break-word"
                       href={`${paths.productPage}/${item.product_handle}`}
                     >
                       {item.product_title}
@@ -101,7 +102,9 @@ export const CartList = () => {
                     <p className="mt-0.5 text-xs text-muted-foreground">
                       {(item.variant as any).options
                         .map((o: any) =>
-                          o.option?.title ? `${o.option.title}: ${o.value}` : o.value,
+                          o.option?.title
+                            ? `${o.option.title}: ${o.value}`
+                            : o.value,
                         )
                         .join(", ")}
                     </p>
@@ -182,19 +185,28 @@ export const CartList = () => {
                   className="border-border/60 hover:bg-muted/30"
                 >
                   <TableCell className="lg:w-24 w-16">
-                    {item.thumbnail && (
-                      <Link
-                        href={`${paths.productPage}/${item.product_handle}`}
-                      >
+                    <Link
+                      href={`${paths.productPage}/${item.product_handle}`}
+                      className="w-full aspect-square flex justify-center items-center border rounded-lg"
+                    >
+                      {item.thumbnail ? (
                         <Image
                           src={item.thumbnail}
-                          width={80}
-                          height={80}
-                          alt={item.product_title || ""}
-                          className="rounded-2xl border border-border/50 object-cover"
+                          alt={item.title}
+                          width={300}
+                          height={300}
+                          className="w-full aspect-square object-cover rounded-t-[9px]"
                         />
-                      </Link>
-                    )}
+                      ) : (
+                        <Image
+                          src={plantPlaceholder.src}
+                          alt={item.title}
+                          width={300}
+                          height={300}
+                          className="w-[70%] aspect-square object-cover rounded-t-[9px] translate-x-1 fill-primary-foreground/70"
+                        />
+                      )}
+                    </Link>
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-0.5">
@@ -208,7 +220,9 @@ export const CartList = () => {
                         <span className="text-xs text-muted-foreground">
                           {(item.variant as any).options
                             .map((o: any) =>
-                              o.option?.title ? `${o.option.title}: ${o.value}` : o.value,
+                              o.option?.title
+                                ? `${o.option.title}: ${o.value}`
+                                : o.value,
                             )
                             .join(", ")}
                         </span>

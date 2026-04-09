@@ -26,6 +26,7 @@ export const CheckoutPage = () => {
   const [selectedOption, setSelectedOption] = useState<ShippingOption | null>(
     null,
   );
+  const [orderPlaced, setOrderPlaced] = useState(false);
 
   const currentIndex = steps.findIndex((s) => s.id === currentStep);
 
@@ -35,36 +36,38 @@ export const CheckoutPage = () => {
   }
 
   return (
-    <div className="wrapper max-w-lg py-8 flex flex-col  gap-8">
+    <div className="wrapper max-w-lg py-8 flex flex-col gap-8">
       <h1 className="text-3xl font-black">Оформление заказа</h1>
 
-      <div className="flex items-center gap-2">
-        {steps.map((step, index) => (
-          <div key={step.id} className="flex items-center gap-2">
-            <div
-              className={cn(
-                "flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
-                index < currentIndex
-                  ? "bg-primary text-primary-foreground"
-                  : index === currentIndex
-                    ? "bg-primary/15 text-primary ring-1 ring-primary"
-                    : "bg-muted text-muted-foreground",
-              )}
-            >
-              {index < currentIndex ? <Check className="h-4 w-4" /> : step.icon}
-              {step.label}
-            </div>
-            {index < steps.length - 1 && (
+      {!orderPlaced && (
+        <div className="flex items-center gap-2">
+          {steps.map((step, index) => (
+            <div key={step.id} className="flex items-center gap-2">
               <div
                 className={cn(
-                  "h-px w-8 transition-colors",
-                  index < currentIndex ? "bg-primary" : "bg-border",
+                  "flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
+                  index < currentIndex
+                    ? "bg-primary text-primary-foreground"
+                    : index === currentIndex
+                      ? "bg-primary/15 text-primary ring-1 ring-primary"
+                      : "bg-muted text-muted-foreground",
                 )}
-              />
-            )}
-          </div>
-        ))}
-      </div>
+              >
+                {index < currentIndex ? <Check className="h-4 w-4" /> : step.icon}
+                {step.label}
+              </div>
+              {index < steps.length - 1 && (
+                <div
+                  className={cn(
+                    "h-px w-8 transition-colors",
+                    index < currentIndex ? "bg-primary" : "bg-border",
+                  )}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
 
       <div>
         {currentStep === "shipping" && (
@@ -79,17 +82,26 @@ export const CheckoutPage = () => {
 
         {currentStep === "payment" && selectedOption && (
           <div className="flex flex-col gap-2">
-            <h2 className="mb-1 text-xl font-semibold">Подтверждение заказа</h2>
-            <p className="mb-6 text-sm text-muted-foreground">
-              Проверьте состав заказа и подтвердите оформление
-            </p>
-            <ConfirmOrderForm shippingOption={selectedOption} />
-            <Button
-              variant="outline"
-              onClick={() => setCurrentStep("shipping")}
-            >
-              Изменить данные получения
-            </Button>
+            {!orderPlaced && (
+              <>
+                <h2 className="mb-1 text-xl font-semibold">Подтверждение заказа</h2>
+                <p className="mb-6 text-sm text-muted-foreground">
+                  Проверьте состав заказа и подтвердите оформление
+                </p>
+              </>
+            )}
+            <ConfirmOrderForm
+              shippingOption={selectedOption}
+              onOrderPlaced={() => setOrderPlaced(true)}
+            />
+            {!orderPlaced && (
+              <Button
+                variant="outline"
+                onClick={() => setCurrentStep("shipping")}
+              >
+                Изменить данные получения
+              </Button>
+            )}
           </div>
         )}
       </div>

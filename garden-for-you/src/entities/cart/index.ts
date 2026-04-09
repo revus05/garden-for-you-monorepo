@@ -11,5 +11,6 @@ export {
   resetCart,
   setCartInitialized,
   updateCart,
+  updateCartItemQuantityReducer,
 } from "./model";
 export type { Cart } from "./model/types";

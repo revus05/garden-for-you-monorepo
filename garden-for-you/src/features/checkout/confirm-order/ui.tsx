@@ -1,21 +1,34 @@
 "use client";
 
+import { useEffect } from "react";
 import { ShieldCheck, Truck, MapPin } from "lucide-react";
 import { formatPrice, useAppSelector } from "@/shared/lib";
 import { Button, Separator } from "@/shared/ui";
 import { useConfirmOrder } from "./model";
+import { OrderReceipt } from "./order-receipt";
 import type { ShippingOption } from "@/features/checkout/shipping-form";
 
 type Props = {
   shippingOption: ShippingOption;
+  onOrderPlaced?: () => void;
 };
 
-export function ConfirmOrderForm({ shippingOption }: Props) {
+export function ConfirmOrderForm({ shippingOption, onOrderPlaced }: Props) {
   const cart = useAppSelector((state) => state.cartSlice.cart);
-  const { placeOrder, isLoading } = useConfirmOrder();
+  const { placeOrder, isLoading, receiptData } = useConfirmOrder(shippingOption);
   const deliveryPrice = shippingOption.amount;
   const itemsTotal = cart?.total ?? 0;
   const grandTotal = itemsTotal + deliveryPrice;
+
+  useEffect(() => {
+    if (receiptData) {
+      onOrderPlaced?.();
+    }
+  }, [receiptData]);
+
+  if (receiptData) {
+    return <OrderReceipt receipt={receiptData} />;
+  }
 
   return (
     <div className="mt-2 flex flex-col gap-6">

@@ -37,8 +37,6 @@ export async function GET(request: Request) {
 
   const data = await response.json().catch(() => null);
 
-  console.log(data, response);
-
   return NextResponse.json(data, { status: response.status });
 }
 
@@ -52,8 +50,6 @@ export async function POST(request: Request) {
   });
 
   const data = await response.json().catch(() => null);
-
-  console.log(data, response);
 
   return NextResponse.json(data, { status: response.status });
 }

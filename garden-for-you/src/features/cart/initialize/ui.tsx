@@ -13,6 +13,10 @@ export function CartInitializer({ children }: { children: ReactNode }) {
   const user = useAppSelector((state) => state.userSlice.user);
   const isBootstrapInFlight = useRef(false);
   const lastMergeKeyRef = useRef<string | null>(null);
+  // Флаг для предотвращения race condition: если пользователь уже взаимодействует с корзиной,
+  // не вызываем syncCart, который может перезаписать его изменения
+  const lastUpdateTimeRef = useRef<number>(0);
+  const DEBOUNCE_SYNC_MS = 5000; // Минимум 5 секунд между синхронизациями
 
   useEffect(() => {
     if (isInitialized || isBootstrapInFlight.current) return;
@@ -21,6 +25,7 @@ export function CartInitializer({ children }: { children: ReactNode }) {
 
     void syncCart(dispatch).finally(() => {
       isBootstrapInFlight.current = false;
+      lastUpdateTimeRef.current = Date.now();
     });
   }, [dispatch, isInitialized]);
 
@@ -33,9 +38,20 @@ export function CartInitializer({ children }: { children: ReactNode }) {
 
     lastMergeKeyRef.current = mergeKey;
 
-    void syncCart(dispatch).catch(() => {
-      lastMergeKeyRef.current = null;
-    });
+    // Не синхронизируем слишком часто, чтобы избежать race condition
+    // с пользовательским взаимодействием (изменение количества товаров)
+    const timeSinceLastUpdate = Date.now() - lastUpdateTimeRef.current;
+    if (timeSinceLastUpdate < DEBOUNCE_SYNC_MS) {
+      return;
+    }
+
+    void syncCart(dispatch)
+      .catch(() => {
+        lastMergeKeyRef.current = null;
+      })
+      .finally(() => {
+        lastUpdateTimeRef.current = Date.now();
+      });
   }, [cart?.customer_id, cart?.id, dispatch, user?.id]);
 
   return children;

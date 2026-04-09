@@ -48,5 +48,7 @@ export async function resolveServerCart(options?: {
     cart = response.cart;
   }
 
+  console.log(cart);
+
   return cart;
 }
