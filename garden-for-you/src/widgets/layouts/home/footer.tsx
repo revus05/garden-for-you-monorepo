@@ -24,7 +24,7 @@ export const Footer = () => {
               height={256}
               width={256}
               alt="logo"
-              className="size-8"
+              className="size-10"
             />
             <h1 className="font-black font-logo text-2xl whitespace-nowrap">
               Сад Для Вас
