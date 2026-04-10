@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
 export { default } from "@/pages/payment-and-shipping";
+
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Оплата и доставка",
