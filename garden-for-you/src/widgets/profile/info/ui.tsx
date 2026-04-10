@@ -2,35 +2,18 @@
 
 import type { HttpTypes } from "@medusajs/types";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Camera,
-  History,
-  LogOut,
-  Mail,
-  Package,
-  Phone,
-  User,
-} from "lucide-react";
+import { Camera, History, Mail, Package, Phone, User } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { signIn, signOut } from "@/entities/user";
+import { signIn } from "@/entities/user";
 import { EditProfileForm } from "@/features/profile/edit-profile";
+import { SignOutButton } from "@/features/user/sign-out";
 import { paths } from "@/shared/constants/navigation";
 import { useAppDispatch, useAppSelector } from "@/shared/lib";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
   Badge,
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -97,8 +80,6 @@ export const ProfileInfo = () => {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
-  const [isSigningOut, setIsSigningOut] = useState(false);
-
   const { data: ordersData, isLoading: ordersLoading } = useQuery({
     queryKey: ["orders"],
     queryFn: async () => {
@@ -155,22 +136,8 @@ export const ProfileInfo = () => {
     }
   }
 
-  async function handleSignOut() {
-    setIsSigningOut(true);
-    try {
-      await fetch("/api/auth/sign-out", { method: "POST" });
-      dispatch(signOut());
-      void router.push(paths.home);
-    } catch {
-      toast.error("Ошибка при выходе из аккаунта");
-      setIsSigningOut(false);
-    }
-  }
-
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-3xl font-semibold">Профиль</h1>
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col items-center gap-4 rounded-xl border p-6">
           <div className="group relative">
@@ -258,41 +225,7 @@ export const ProfileInfo = () => {
               </div>
             )}
           </div>
-
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="mt-auto w-fit"
-                disabled={isSigningOut}
-              >
-                <LogOut className="size-4" />
-                {isSigningOut ? "Выход..." : "Выйти из аккаунта"}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent size="sm">
-              <AlertDialogHeader>
-                <AlertDialogTitle>Выйти из аккаунта?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Вы будете перенаправлены на главную страницу.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel asChild>
-                  <Button variant="secondary" size="sm" className="mt-auto">
-                    Отмена
-                  </Button>
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  variant="destructive"
-                  onClick={handleSignOut}
-                >
-                  Выйти
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <SignOutButton />
         </div>
       </div>
 
