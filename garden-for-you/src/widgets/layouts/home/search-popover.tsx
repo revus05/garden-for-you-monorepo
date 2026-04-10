@@ -96,7 +96,7 @@ export const SearchPopover = () => {
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-4 py-3 px-2 hover:bg-accent/50 rounded-lg transition-colors"
               >
-                <div className="size-14 shrink-0 rounded-md overflow-hidden bg-muted flex items-center justify-center">
+                <div className="size-14 shrink-0 rounded-md overflow-hidden bg-background-secondary flex items-center justify-center">
                   {product.thumbnail ? (
                     <Image
                       src={product.thumbnail}

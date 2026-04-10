@@ -29,7 +29,7 @@ export const CartList = () => {
   if (!cart || !cart?.items?.length) {
     return (
       <div className="wrapper py-16 flex flex-col items-center gap-6 text-center">
-        <div className="size-24 rounded-full bg-muted flex items-center justify-center">
+        <div className="size-24 rounded-full bg-background-secondary flex items-center justify-center">
           <ShoppingCart className="size-10 text-muted-foreground" />
         </div>
         <div className="flex flex-col gap-2">
@@ -61,7 +61,7 @@ export const CartList = () => {
           {cart?.items?.map((item) => (
             <div
               key={item.id}
-              className="rounded-2xl border border-border/60 bg-muted/20 p-4"
+              className="rounded-2xl border border-border/60 bg-background-secondary/20 p-4"
             >
               <div className="flex gap-3">
                 {item.thumbnail && (
@@ -124,7 +124,7 @@ export const CartList = () => {
                   Количество
                 </span>
 
-                <div className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-muted/40 p-1">
+                <div className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-background-secondary/40 p-1">
                   <Button
                     size="icon"
                     disabled={item.quantity === 1}
@@ -182,7 +182,7 @@ export const CartList = () => {
               {cart?.items?.map((item) => (
                 <TableRow
                   key={item.id}
-                  className="border-border/60 hover:bg-muted/30"
+                  className="border-border/60 hover:bg-background-secondary/30"
                 >
                   <TableCell className="lg:w-24 w-16">
                     <Link
@@ -233,7 +233,7 @@ export const CartList = () => {
                     {formatPrice(item.unit_price)}
                   </TableCell>
                   <TableCell className="w-44">
-                    <div className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-muted/40 p-1">
+                    <div className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-background-secondary/40 p-1">
                       <Button
                         size="icon"
                         disabled={item.quantity === 1}

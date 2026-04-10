@@ -123,7 +123,7 @@ export const PaymentAndShippingStaticContent = () => {
                   </ul>
                 </div>
 
-                <div className="bg-muted/60 p-5 rounded-xl text-sm">
+                <div className="bg-background-secondary/60 p-5 rounded-xl text-sm">
                   Все онлайн-платежи проходят через защищённый протокол. Данные
                   карты не сохраняются на сайте.
                 </div>

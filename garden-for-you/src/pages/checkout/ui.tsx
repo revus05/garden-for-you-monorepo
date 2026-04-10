@@ -50,7 +50,7 @@ export const CheckoutPage = () => {
                     ? "bg-primary text-primary-foreground"
                     : index === currentIndex
                       ? "bg-primary/15 text-primary ring-1 ring-primary"
-                      : "bg-muted text-muted-foreground",
+                      : "bg-background-secondary text-secondary-foreground",
                 )}
               >
                 {index < currentIndex ? <Check className="h-4 w-4" /> : step.icon}

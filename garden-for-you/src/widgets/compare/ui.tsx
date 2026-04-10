@@ -73,7 +73,7 @@ export const CompareWidget = () => {
   if (products.length === 0) {
     return (
       <div className="wrapper py-16 flex flex-col items-center gap-6 text-center">
-        <div className="size-24 rounded-full bg-muted flex items-center justify-center">
+        <div className="size-24 rounded-full bg-background-secondary flex items-center justify-center">
           <Scale className="size-10 text-muted-foreground" />
         </div>
         <div className="flex flex-col gap-2">
@@ -140,7 +140,7 @@ export const CompareWidget = () => {
                     </Button>
 
                     <Link href={`${paths.productPage}/${product.handle}`}>
-                      <div className="size-28 rounded-lg border border-border overflow-hidden bg-muted flex items-center justify-center hover:border-primary transition-colors">
+                      <div className="size-28 rounded-lg border border-border overflow-hidden bg-background-secondary flex items-center justify-center hover:border-primary transition-colors">
                         {product.thumbnail ? (
                           <Image
                             src={product.thumbnail}
@@ -200,7 +200,7 @@ export const CompareWidget = () => {
                 return (
                   <tr
                     key={spec.key}
-                    className={idx % 2 === 0 ? "bg-background" : "bg-muted/30"}
+                    className={idx % 2 === 0 ? "bg-background" : "bg-background-secondary/30"}
                   >
                     <td className="sticky left-0 z-10 p-4 text-sm font-medium text-muted-foreground border-r border-border bg-inherit">
                       <div className="flex items-center gap-2">
@@ -248,13 +248,13 @@ export const CompareWidget = () => {
             <button
               type="button"
               onClick={() => handleRemove(product.id)}
-              className="absolute top-0 right-0 z-10 size-5 rounded-full flex items-center justify-center bg-muted text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+              className="absolute top-0 right-0 z-10 size-5 rounded-full flex items-center justify-center bg-background-secondary text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
               aria-label="Удалить из сравнения"
             >
               <X className="size-3" />
             </button>
             <Link href={`${paths.productPage}/${product.handle}`}>
-              <div className="size-20 rounded-lg border border-border overflow-hidden bg-muted flex items-center justify-center hover:border-primary transition-colors">
+              <div className="size-20 rounded-lg border border-border overflow-hidden bg-background-secondary flex items-center justify-center hover:border-primary transition-colors">
                 {product.thumbnail ? (
                   <Image
                     src={product.thumbnail}
@@ -295,7 +295,7 @@ export const CompareWidget = () => {
               <div
                 key={spec.key}
                 className={`rounded-xl border border-border p-4 flex flex-col gap-3 ${
-                  idx % 2 === 0 ? "bg-background" : "bg-muted/30"
+                  idx % 2 === 0 ? "bg-background" : "bg-background-secondary/30"
                 }`}
               >
                 <div className="flex items-center gap-2">

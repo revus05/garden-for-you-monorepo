@@ -58,7 +58,7 @@ export const CartTotal = () => {
           ))}
         </div>
         <Separator />
-        <div className="flex flex-col gap-2 rounded-xl bg-muted/40">
+        <div className="flex flex-col gap-2 rounded-xl bg-background-secondary/40">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Товары</span>
             <span className="font-medium">{formatPrice(itemsTotal)}</span>

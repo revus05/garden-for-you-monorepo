@@ -117,7 +117,7 @@ export const MobileMenu = () => {
                   <Link
                     href={paths.profile}
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center gap-4 rounded-lg transition-colors hover:bg-muted"
+                    className="flex items-center gap-4 rounded-lg transition-colors hover:bg-background-secondary"
                   >
                     <UserInitialsSmall
                       name={

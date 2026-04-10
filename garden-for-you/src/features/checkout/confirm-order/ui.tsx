@@ -32,7 +32,7 @@ export function ConfirmOrderForm({ shippingOption, onOrderPlaced }: Props) {
 
   return (
     <div className="mt-2 flex flex-col gap-6">
-      <div className="rounded-xl border border-border/60 bg-muted/30 p-4">
+      <div className="rounded-xl border border-border/60 bg-background-secondary/30 p-4">
         <p className="mb-3 text-sm font-medium text-foreground">
           Состав заказа
         </p>
@@ -85,7 +85,7 @@ export function ConfirmOrderForm({ shippingOption, onOrderPlaced }: Props) {
         </div>
       </div>
 
-      <div className="rounded-xl border border-border/60 bg-muted/30 p-4 flex flex-col gap-2">
+      <div className="rounded-xl border border-border/60 bg-background-secondary/30 p-4 flex flex-col gap-2">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           {shippingOption.type_code === "delivery" ? (
             <Truck className="h-4 w-4 shrink-0 stroke-primary" />

@@ -64,7 +64,7 @@ export function OrderReceipt({ receipt }: Props) {
       <div
         id="order-receipt-printable"
         ref={receiptRef}
-        className="rounded-xl border border-border/60 bg-muted/30 p-5 flex flex-col gap-4"
+        className="rounded-xl border border-border/60 bg-background-secondary/30 p-5 flex flex-col gap-4"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4">

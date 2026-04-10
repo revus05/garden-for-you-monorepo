@@ -65,7 +65,7 @@ export function ShippingForm({ onSuccess }: Props) {
                 {[0, 1].map((i) => (
                   <div
                     key={i}
-                    className="h-[72px] animate-pulse rounded-xl border border-border bg-muted/40"
+                    className="h-[72px] animate-pulse rounded-xl border border-border bg-background-secondary/40"
                   />
                 ))}
               </div>
