@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      // Production Medusa backend — update hostname when deploying
+      {
+        protocol: "https",
+        hostname: "**.saddlyavas.by",
+      },
     ],
   },
 };
