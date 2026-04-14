@@ -36,13 +36,12 @@ export const PaymentAndShippingStaticContent = () => {
         <TabsList className="flex flex-col w-full h-auto p-1 rounded-xl sticky top-6">
           <div className="w-full">
             <TabsTrigger
-              value="payment"
+              value="payment-cash"
               className={cn(
-                "justify-start text-left py-3.5 px-5 w-full font-medium relative overflow-hidden disabled:opacity-100",
+                "justify-start text-left py-3.5 px-5 w-full font-medium relative overflow-hidden",
                 tab.includes("payment") &&
-                  "bg-background shadow-sm [&_>_div]:block!",
+                  "bg-background! text-black! border-ring/30! shadow-sm [&_>_div]:block!",
               )}
-              disabled
             >
               <div className="hidden absolute top-0 left-0 h-full w-1 bg-primary rounded-full" />
               Способы оплаты
