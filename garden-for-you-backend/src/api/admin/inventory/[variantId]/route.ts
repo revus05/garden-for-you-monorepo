@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
+import { ensureInventoryItemId } from "../_helpers"
 
 /** Resolves inventory_item_id for a variant using the link table directly. */
 async function getInventoryItemId(query: any, variantId: string): Promise<string | null> {
@@ -65,16 +66,14 @@ export async function PUT(req: MedusaRequest, res: MedusaResponse) {
     return res.status(400).json({ message: "stocked_quantity должен быть целым неотрицательным числом" })
   }
 
-  const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
   const inventoryService: any = req.scope.resolve(Modules.INVENTORY)
   const stockLocationService: any = req.scope.resolve(Modules.STOCK_LOCATION)
 
-  const inventoryItemId = await getInventoryItemId(query, variantId)
+  // Auto-creates the inventory item + variant link if missing.
+  const inventoryItemId = await ensureInventoryItemId(req.scope, variantId)
 
   if (!inventoryItemId) {
-    return res.status(400).json({
-      message: "У этого варианта нет inventory item. Убедитесь, что manage_inventory = true и перезапустите бэкенд.",
-    })
+    return res.status(404).json({ message: "Вариант не найден" })
   }
 
   const [location] = await stockLocationService.listStockLocations({}, { take: 1 })

@@ -28,6 +28,11 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       "product.id",
       "product.title",
       "product.thumbnail",
+      "options.value",
+      "options.option.title",
+      "prices.id",
+      "prices.amount",
+      "prices.currency_code",
     ],
     filters: Object.keys(variantFilters).length > 0 ? variantFilters : undefined,
     pagination: { skip: 0, take: 500 },
@@ -60,17 +65,20 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     })
 
     for (const level of levels) {
+      // stocked_quantity / reserved_quantity may be BigNumber-like — coerce.
+      const stocked = Number(level.stocked_quantity ?? 0) || 0
+      const reserved = Number(level.reserved_quantity ?? 0) || 0
       const existing = levelsMap.get(level.inventory_item_id)
       if (!existing) {
         levelsMap.set(level.inventory_item_id, {
-          stocked_quantity: level.stocked_quantity ?? 0,
-          reserved_quantity: level.reserved_quantity ?? 0,
+          stocked_quantity: stocked,
+          reserved_quantity: reserved,
           location_id: level.location_id,
         })
       } else {
         // Sum across multiple locations
-        existing.stocked_quantity += level.stocked_quantity ?? 0
-        existing.reserved_quantity += level.reserved_quantity ?? 0
+        existing.stocked_quantity += stocked
+        existing.reserved_quantity += reserved
       }
     }
   }
@@ -89,6 +97,15 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       stocked_quantity: level?.stocked_quantity ?? 0,
       reserved_quantity: level?.reserved_quantity ?? 0,
       location_id: level?.location_id ?? null,
+      options: (variant.options ?? []).map((o: any) => ({
+        title: o.option?.title ?? null,
+        value: o.value ?? null,
+      })),
+      prices: (variant.prices ?? []).map((p: any) => ({
+        id: p.id,
+        amount: p.amount,
+        currency_code: p.currency_code,
+      })),
     }
   })
 
