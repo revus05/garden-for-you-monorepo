@@ -142,7 +142,7 @@ export const Catalog = () => {
       <div className="flex gap-4 sm:flex-row flex-col">
         <div className="hidden md:flex md:flex-col">{categoryFilters}</div>
 
-        <div className="w-full">
+        <div className="w-full flex flex-col gap-8">
           {isInitialLoading && <p>Загрузка...</p>}
           {productsQuery.isError && <p>Не удалось загрузить каталог.</p>}
           {!isInitialLoading && !productsQuery.isError && !hasProducts && (
@@ -159,9 +159,9 @@ export const Catalog = () => {
             <Button
               onClick={() => void productsQuery.fetchNextPage()}
               disabled={isLoadingMore}
-              className="mt-8 mx-auto "
+              className="mt-8 mx-auto"
             >
-              {isLoadingMore ? "Загрузка..." : "Загрузить ещё"}
+              {isLoadingMore ? "Загрузка..." : "Показать ещё"}
             </Button>
           )}
         </div>

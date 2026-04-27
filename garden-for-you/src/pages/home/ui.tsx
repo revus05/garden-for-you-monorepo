@@ -6,7 +6,9 @@ const HomePage = () => {
   return (
     <div className="wrapper flex flex-col gap-12">
       <div className="bg-background-secondary w-[70vw] h-80 absolute top-0 left-0 rounded-br-[64px] -z-1" />
-      <HeroSection />
+      <div className="lg:w-6xl w-full mx-auto">
+        <HeroSection />
+      </div>
       <Catalog />
     </div>
   );

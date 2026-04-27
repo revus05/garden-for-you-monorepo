@@ -16,7 +16,7 @@ export const ProductImage: FC<ProductImageProps> = ({ product }) => {
           width={620}
           height={620}
           alt={`${product.title} thumbnail`}
-          className="aspect-square rounded-[13px]"
+          className="aspect-square rounded-[13px] object-cover"
         />
       ) : (
         <Image
