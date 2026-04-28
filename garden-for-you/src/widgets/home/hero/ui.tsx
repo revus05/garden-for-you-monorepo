@@ -38,7 +38,7 @@ export const HeroSection = async () => {
           <span className="text-5xl leading-none">{percent}</span>
           <span className="self-end pb-1">скидка</span>
         </h1>
-        <span className="text-white/80 text-sm max-w-xs">{description}</span>
+        <span className="text-white/80 text-sm max-w-lg">{description}</span>
         <Button
           asChild
           className="w-fit bg-white text-[#354733] hover:bg-white/90"
@@ -58,9 +58,9 @@ export const HeroSection = async () => {
       >
         <Image
           src={heroImage.src}
-          width={300}
+          width={500}
           height={400}
-          className="object-contain select-none max-h-64 w-auto"
+          className="object-contain select-none h-full w-auto"
           alt="hero image"
         />
       </div>
