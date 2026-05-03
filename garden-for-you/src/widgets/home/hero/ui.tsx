@@ -21,7 +21,7 @@ export const HeroSection = async () => {
   const leafPattern = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg transform='translate(30,35) rotate(-25)'%3E%3Cpath d='M0,-22 C11,-22 20,-11 20,0 C20,15 11,23 0,26 C-11,23 -20,15 -20,0 C-20,-11 -11,-22 0,-22Z' fill='white'/%3E%3Cline x1='0' y1='-22' x2='0' y2='26' stroke='%23354733' stroke-width='1.5'/%3E%3Cline x1='-8' y1='4' x2='0' y2='-4' stroke='%23354733' stroke-width='1'/%3E%3Cline x1='8' y1='4' x2='0' y2='-4' stroke='%23354733' stroke-width='1'/%3E%3C/g%3E%3Cg transform='translate(105,95) rotate(35)'%3E%3Cpath d='M0,-17 C9,-17 15,-8 15,0 C15,11 9,18 0,20 C-9,18 -15,11 -15,0 C-15,-8 -9,-17 0,-17Z' fill='white'/%3E%3Cline x1='0' y1='-17' x2='0' y2='20' stroke='%23354733' stroke-width='1.2'/%3E%3Cline x1='-6' y1='3' x2='0' y2='-3' stroke='%23354733' stroke-width='0.8'/%3E%3Cline x1='6' y1='3' x2='0' y2='-3' stroke='%23354733' stroke-width='0.8'/%3E%3C/g%3E%3Cg transform='translate(90,28) rotate(65)'%3E%3Cpath d='M0,-12 C6,-12 11,-5 11,0 C11,8 6,13 0,14 C-6,13 -11,8 -11,0 C-11,-5 -6,-12 0,-12Z' fill='white'/%3E%3Cline x1='0' y1='-12' x2='0' y2='14' stroke='%23354733' stroke-width='1'/%3E%3C/g%3E%3Cg transform='translate(18,105) rotate(-55)'%3E%3Cpath d='M0,-14 C7,-14 13,-6 13,0 C13,9 7,15 0,17 C-7,15 -13,9 -13,0 C-13,-6 -7,-14 0,-14Z' fill='white'/%3E%3Cline x1='0' y1='-14' x2='0' y2='17' stroke='%23354733' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E")`;
 
   return (
-    <section className="relative w-full max-w-6xl mx-auto rounded-2xl overflow-hidden bg-linear-to-br from-[#253d22] via-[#354733] to-[#4a6b3e] flex items-stretch min-h-64">
+    <section className="relative w-full max-w-6xl mx-auto rounded-2xl overflow-hidden bg-linear-to-br from-[#253d22] via-[#354733] to-[#4a6b3e] flex items-stretch min-h-64 h-fit">
       <div
         className="absolute inset-0 opacity-[0.09] pointer-events-none"
         style={{
@@ -51,16 +51,15 @@ export const HeroSection = async () => {
         </Button>
       </div>
       <div
-        className="relative hidden md:flex items-center justify-end z-10"
+        className="relative hidden md:flex items-center justify-end z-10 w-[300px]"
         style={{
           maskImage: "linear-gradient(to right, transparent, black 35%)",
         }}
       >
         <Image
           src={heroImage.src}
-          width={500}
-          height={400}
-          className="object-contain select-none h-full w-auto"
+          fill
+          className="object-cover select-none h-full w-fit"
           alt="hero image"
         />
       </div>
