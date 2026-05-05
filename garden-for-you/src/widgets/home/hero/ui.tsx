@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { getSiteConfig } from "@/entities/site-config/server/get-site-config";
-import heroImage from "@/images/banner-grid.jpg";
+import heroImage from "@/images/banner-grid.png";
 import { paths } from "@/shared/constants/navigation";
 import { Badge, Button } from "@/shared/ui";
 
@@ -51,7 +51,7 @@ export const HeroSection = async () => {
         </Button>
       </div>
       <div
-        className="relative hidden md:flex items-center justify-end z-10 w-[300px]"
+        className="relative hidden md:flex items-center justify-end z-10 w-[500px] aspect-1.5"
         style={{
           maskImage: "linear-gradient(to right, transparent, black 35%)",
         }}
