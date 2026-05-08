@@ -29,7 +29,7 @@ export const Header = () => {
       .join("");
 
     return (
-      <div className="flex size-37.5 items-center justify-center rounded-full bg-primary/10 text-4xl font-semibold text-primary">
+      <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
         {initials}
       </div>
     );
@@ -115,9 +115,9 @@ export const Header = () => {
                     {avatarUrl ? (
                       <Image
                         src={avatarUrl}
-                        width={24}
-                        height={24}
-                        className="rounded-full border object-cover size-6 shrink-0"
+                        width={32}
+                        height={32}
+                        className="rounded-full border object-cover size-8 shrink-0"
                         alt="Фото профиля"
                       />
                     ) : (

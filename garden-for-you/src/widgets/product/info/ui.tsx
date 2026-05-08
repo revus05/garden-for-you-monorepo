@@ -131,6 +131,10 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
     }
   };
 
+  const filteredOptions =
+    product.options?.filter((option) => option.title !== "Default option") ||
+    [];
+
   return (
     <div className="flex flex-col gap-4">
       {!isSelectedInStock && <Badge variant="destructive">Нет в наличии</Badge>}
@@ -193,9 +197,9 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
         </Tooltip>
       </div>
 
-      {product.options && product.options.length > 0 && (
+      {filteredOptions.length > 0 && (
         <div className="flex flex-col gap-4">
-          {product.options?.map((option) => (
+          {filteredOptions.map((option) => (
             <div key={option.id}>
               <h4>{option.title}</h4>
 
@@ -217,7 +221,6 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
                   ))}
                 </TabsList>
               </Tabs>
-              <Tabs></Tabs>
             </div>
           ))}
         </div>
@@ -228,13 +231,13 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
       {specs.length > 0 && (
         <div className="flex flex-col gap-2">
           <h2 className="font-bold text-lg">Характеристики</h2>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm max-w-100">
             {specs.map((spec) => (
               <div key={spec.id} className="contents">
                 <dt className="text-muted-foreground">
                   {spec.definition.name}
                 </dt>
-                <dd className="font-medium">
+                <dd className="font-medium text-right">
                   {spec.value}
                   {spec.definition.unit ? ` ${spec.definition.unit}` : ""}
                 </dd>

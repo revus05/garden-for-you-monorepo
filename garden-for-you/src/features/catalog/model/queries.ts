@@ -9,7 +9,7 @@ import {
   fetchCatalogProductsPage,
 } from "@/entities/product";
 
-const catalogQueryKeys = {
+export const catalogQueryKeys = {
   all: ["catalog"] as const,
   categories: () => [...catalogQueryKeys.all, "categories"] as const,
   products: (filters: CatalogFilters) =>

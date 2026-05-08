@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getSiteConfig } from "@/entities/site-config/server";
 import leafPlant from "@/images/leaf-plant.png";
+import telegram from "@/images/telegram.svg";
 import { withHomeLayout } from "@/widgets/layouts/home";
 
 const ContactsPage = async () => {
@@ -16,19 +17,19 @@ const ContactsPage = async () => {
   return (
     <div className="wrapper py-12 flex flex-col gap-8">
       <div className="relative text-center flex flex-col gap-2">
-        <h1 className="text-4xl font-bold tracking-tight">Контакты</h1>
         <div className="relative z-1 w-fit mx-auto">
-          <p className="text-muted-foreground text-lg">
-            Свяжитесь с нами или приходите в магазин «Сад Для Вас»
-          </p>
+          <h1 className="text-4xl font-bold tracking-tight">Контакты</h1>
           <Image
             src={leafPlant.src}
             width={150}
             height={100}
             alt="hero image"
-            className="-rotate-90 absolute -right-5 -bottom-3 -z-10 select-none w-24"
+            className="absolute -right-24 -bottom-6 -z-10 select-none w-24"
           />
         </div>
+        <p className="text-muted-foreground text-lg">
+          Свяжитесь с нами или приходите в магазин «Сад Для Вас»
+        </p>
       </div>
 
       <div className="grid md:grid-cols-[3fr_8fr] grid-cols-1 gap-4">
@@ -59,13 +60,18 @@ const ContactsPage = async () => {
           <div className="h-px bg-muted-foreground/50 mx-16" />
           <div className="flex flex-col gap-2 items-center self-center max-w-md">
             <Phone className="size-8 stroke-primary" />
-            <div className="flex gap-2 items-center">
-              <span className="text-center">
+            <div className="flex lg:flex-row flex-col lg:gap-2 gap-0.5 items-center">
+              <span className="text-center flex items-center gap-2">
                 Александр:{" "}
+              </span>
+              <div className="flex items-center gap-2">
                 <Link href="tel:+375291066556" className="hover:underline">
                   +375 (29) 106-65-56
                 </Link>
-              </span>
+                <Link href="https://t.me/alex_key1" className="hover:underline">
+                  <Image src={telegram} width={32} height={32} alt="telegram" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>

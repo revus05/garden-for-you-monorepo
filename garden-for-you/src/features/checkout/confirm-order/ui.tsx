@@ -1,12 +1,12 @@
 "use client";
 
+import { MapPin, ShieldCheck, Truck } from "lucide-react";
 import { useEffect } from "react";
-import { ShieldCheck, Truck, MapPin } from "lucide-react";
+import type { ShippingOption } from "@/features/checkout/shipping-form";
 import { formatPrice, useAppSelector } from "@/shared/lib";
 import { Button, Separator } from "@/shared/ui";
 import { useConfirmOrder } from "./model";
 import { OrderReceipt } from "./order-receipt";
-import type { ShippingOption } from "@/features/checkout/shipping-form";
 
 type Props = {
   shippingOption: ShippingOption;
@@ -15,7 +15,8 @@ type Props = {
 
 export function ConfirmOrderForm({ shippingOption, onOrderPlaced }: Props) {
   const cart = useAppSelector((state) => state.cartSlice.cart);
-  const { placeOrder, isLoading, receiptData } = useConfirmOrder(shippingOption);
+  const { placeOrder, isLoading, receiptData } =
+    useConfirmOrder(shippingOption);
   const deliveryPrice = shippingOption.amount;
   const itemsTotal = cart?.total ?? 0;
   const grandTotal = itemsTotal + deliveryPrice;
@@ -48,7 +49,9 @@ export function ConfirmOrderForm({ shippingOption, onOrderPlaced }: Props) {
                   <span className="block text-xs text-muted-foreground/80">
                     {(item.variant as any).options
                       .map((o: any) =>
-                        o.option?.title ? `${o.option.title}: ${o.value}` : o.value,
+                        o.option?.title
+                          ? `${o.option.title}: ${o.value}`
+                          : o.value,
                       )
                       .join(", ")}
                   </span>

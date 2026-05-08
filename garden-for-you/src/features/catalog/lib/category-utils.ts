@@ -1,12 +1,18 @@
 import type { StoreProductCategory } from "@medusajs/types";
 
+function collectDescendantIds(category: StoreProductCategory): string[] {
+  const ids = [category.id];
+  for (const child of category.category_children ?? []) {
+    ids.push(...collectDescendantIds(child));
+  }
+  return ids;
+}
+
 export function getFilteredCategories(
   activeTab: "seedlings" | "fertilizer",
   selectedIds: string[],
   categories: StoreProductCategory[],
 ): string[] {
-  const idSet = new Set<string>();
-
   if (selectedIds.length > 0) {
     return selectedIds;
   }
@@ -19,9 +25,21 @@ export function getFilteredCategories(
     return [];
   }
 
-  parentCategory.category_children.forEach((category) => {
-    idSet.add(category.id);
-  });
+  return parentCategory.category_children
+    .flatMap(collectDescendantIds)
+    .sort();
+}
 
-  return Array.from(idSet);
+export function findCategoryInTree(
+  categories: StoreProductCategory[],
+  id: string,
+): StoreProductCategory | undefined {
+  for (const cat of categories) {
+    if (cat.id === id) return cat;
+    if (cat.category_children) {
+      const found = findCategoryInTree(cat.category_children, id);
+      if (found) return found;
+    }
+  }
+  return undefined;
 }

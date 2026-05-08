@@ -1,12 +1,17 @@
 "use client";
 
-import { useDeferredValue, useState } from "react";
+import { X } from "lucide-react";
+import Image from "next/image";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import type { ProductCategoryOrder } from "@/entities/product";
 import {
+  findCategoryInTree,
   getFilteredCategories,
   useCatalogCategoriesQuery,
   useCatalogProductsInfiniteQuery,
 } from "@/features/catalog";
+import noImage from "@/images/no-items.svg";
 import {
   Badge,
   Button,
@@ -16,37 +21,107 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
+  Skeleton,
 } from "@/shared/ui";
 import { CatalogCategory } from "@/widgets/home/catalog/ui/category";
 import { CatalogProduct } from "@/widgets/home/catalog/ui/product";
+import { CatalogProductSkeleton } from "@/widgets/home/catalog/ui/product-skeleton";
 import { CatalogSearch } from "@/widgets/home/catalog/ui/search";
 import { CatalogSorting } from "@/widgets/home/catalog/ui/sorting";
 import { CatalogTabs } from "@/widgets/home/catalog/ui/tabs";
 
-export const Catalog = () => {
-  const [activeTab, setActiveTab] = useState<"seedlings" | "fertilizer">(
-    "seedlings",
-  );
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [orderBy, setOrderBy] = useState<ProductCategoryOrder>("title");
+const ORDER_LABELS: Record<ProductCategoryOrder, string> = {
+  title: "По алфавиту ↓",
+  "-title": "По алфавиту ↑",
+  "-created_at": "Сначала новые",
+  created_at: "Сначала старые",
+};
 
-  const deferredSearchQuery = useDeferredValue(searchQuery.trim());
-  const categoryIds = [...selectedCategoryIds].sort();
+export const Catalog = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Read state from URL
+  const selectedCategoryIds = searchParams?.get("categories")?.split(",").filter(Boolean) ?? [];
+  const urlSearchQuery = searchParams?.get("q") ?? "";
+  const orderBy = (searchParams?.get("orderBy") ?? "title") as ProductCategoryOrder;
+  const activeTab = "seedlings" as const;
+
+  // Local search input with debounce to URL
+  const [searchInput, setSearchInput] = useState(urlSearchQuery);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
+  const updateParams = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams?.toString());
+      for (const [key, value] of Object.entries(updates)) {
+        if (value === null || value === "") {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      }
+      const query = params.toString();
+      router.replace(`${pathname}${query ? `?${query}` : ""}#catalog`, {
+        scroll: false,
+      });
+    },
+    [searchParams, router, pathname],
+  );
+
+  // Debounce search input → URL
+  useEffect(() => {
+    const trimmed = searchInput.trim();
+    if (trimmed === urlSearchQuery) return;
+    const timer = setTimeout(() => {
+      updateParams({ q: trimmed || null });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput, urlSearchQuery, updateParams]);
+
+  // Sync search input when URL changes externally (e.g. badge reset)
+  useEffect(() => {
+    setSearchInput(urlSearchQuery);
+  }, [urlSearchQuery]);
+
+  const sortedCategoryIds = [...selectedCategoryIds].sort();
+
+  const hasActiveFilters =
+    selectedCategoryIds.length > 0 || urlSearchQuery !== "" || orderBy !== "title";
+
+  const resetFilters = () => {
+    setSearchInput("");
+    updateParams({ categories: null, q: null, orderBy: null });
+  };
+
+  const setSelectedCategoryIds = useCallback(
+    (action: string[] | ((prev: string[]) => string[])) => {
+      const newIds = typeof action === "function" ? action(selectedCategoryIds) : action;
+      updateParams({ categories: newIds.length > 0 ? newIds.join(",") : null });
+    },
+    [selectedCategoryIds, updateParams],
+  );
+
+  const setOrderBy = useCallback(
+    (newOrder: ProductCategoryOrder) => {
+      updateParams({ orderBy: newOrder === "title" ? null : newOrder });
+    },
+    [updateParams],
+  );
 
   const categoriesQuery = useCatalogCategoriesQuery();
 
   const filteredCategoryIds = getFilteredCategories(
     activeTab,
-    categoryIds,
+    sortedCategoryIds,
     categoriesQuery.data || [],
   );
 
   const productsQuery = useCatalogProductsInfiniteQuery(
     {
       categoryIds: filteredCategoryIds,
-      searchQuery: deferredSearchQuery,
+      searchQuery: urlSearchQuery,
       orderBy,
     },
     { enabled: categoriesQuery.isSuccess },
@@ -69,22 +144,25 @@ export const Catalog = () => {
       <div className="flex flex-col gap-4">
         <div className="hidden md:block">
           <CatalogSearch
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
+            searchQuery={searchInput}
+            setSearchQuery={setSearchInput}
           />
         </div>
         <div className="flex flex-col gap-2">
-          {activeCategories?.map((category) => (
-            <CatalogCategory
-              key={category.id}
-              category={category}
-              selectedCategoryIds={selectedCategoryIds}
-              setSelectedCategoryIds={setSelectedCategoryIds}
-            />
-          ))}
+          {categoriesQuery.isPending
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-5 w-full" />
+              ))
+            : activeCategories?.map((category) => (
+                <CatalogCategory
+                  key={category.id}
+                  category={category}
+                  selectedCategoryIds={selectedCategoryIds}
+                  setSelectedCategoryIds={setSelectedCategoryIds}
+                />
+              ))}
         </div>
 
-        {categoriesQuery.isPending && <p>Загрузка категорий...</p>}
         {categoriesQuery.isError && <p>Не удалось загрузить категории.</p>}
       </div>
     </div>
@@ -113,7 +191,7 @@ export const Catalog = () => {
                 <div className="hidden">
                   <CatalogTabs
                     activeTab={activeTab}
-                    setActiveTab={setActiveTab}
+                    setActiveTab={() => {}}
                   />
                 </div>
                 <CatalogSorting orderBy={orderBy} setOrderBy={setOrderBy} />
@@ -125,13 +203,13 @@ export const Catalog = () => {
 
         <div className="block md:hidden col-span-2">
           <CatalogSearch
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
+            searchQuery={searchInput}
+            setSearchQuery={setSearchInput}
           />
         </div>
 
         <div className="hidden md:block opacity-0">
-          <CatalogTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+          <CatalogTabs activeTab={activeTab} setActiveTab={() => {}} />
         </div>
 
         <div className="hidden md:block">
@@ -142,17 +220,79 @@ export const Catalog = () => {
       <div className="flex gap-4 sm:flex-row flex-col">
         <div className="hidden md:flex md:flex-col">{categoryFilters}</div>
 
-        <div className="w-full flex flex-col gap-8">
-          {isInitialLoading && <p>Загрузка...</p>}
+        <div className="w-full min-w-0 flex flex-col gap-4">
+          {hasActiveFilters && (
+            <div className="flex flex-wrap gap-2">
+              <Badge
+                variant="secondary"
+                className="cursor-pointer gap-1 h-6"
+                onClick={resetFilters}
+              >
+                Сбросить все
+              </Badge>
+              {urlSearchQuery && (
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer gap-1 h-6 max-w-full shrink min-w-0"
+                  onClick={() => {
+                    setSearchInput("");
+                    updateParams({ q: null });
+                  }}
+                >
+                  <span className="truncate">Поиск: {urlSearchQuery}</span>
+                  <X size={12} className="shrink-0" />
+                </Badge>
+              )}
+              {orderBy !== "title" && (
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer gap-1 h-6"
+                  onClick={() => setOrderBy("title")}
+                >
+                  {ORDER_LABELS[orderBy]}
+                  <X size={12} />
+                </Badge>
+              )}
+              {selectedCategoryIds.map((id) => {
+                const category = findCategoryInTree(activeCategories, id);
+                if (!category) return null;
+                return (
+                  <Badge
+                    key={id}
+                    variant="outline"
+                    className="cursor-pointer gap-1 h-6"
+                    onClick={() =>
+                      setSelectedCategoryIds((prev) =>
+                        prev.filter((cId) => cId !== id),
+                      )
+                    }
+                  >
+                    {category.name}
+                    <X size={12} />
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
+
           {productsQuery.isError && <p>Не удалось загрузить каталог.</p>}
           {!isInitialLoading && !productsQuery.isError && !hasProducts && (
-            <p>Товаров не найдено</p>
+            <div className="flex flex-col gap-4 items-center py-16">
+              <Image src={noImage} height={128} width={128} alt="no-products" />
+              <p className="text-lg font-medium text-secondary-foreground">
+                Товаров не найдено
+              </p>
+            </div>
           )}
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <CatalogProduct key={product.id} product={product} />
-            ))}
+            {isInitialLoading
+              ? Array.from({ length: 8 }).map((_, i) => (
+                  <CatalogProductSkeleton key={i} />
+                ))
+              : products.map((product) => (
+                  <CatalogProduct key={product.id} product={product} />
+                ))}
           </div>
 
           {productsQuery.hasNextPage && (

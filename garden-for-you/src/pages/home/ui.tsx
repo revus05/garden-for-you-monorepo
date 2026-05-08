@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Catalog } from "@/widgets/home/catalog";
 import { HeroSection } from "@/widgets/home/hero";
 import { withHomeLayout } from "@/widgets/layouts/home";
@@ -9,7 +10,9 @@ const HomePage = () => {
       <div className="lg:w-6xl w-full mx-auto">
         <HeroSection />
       </div>
-      <Catalog />
+      <Suspense>
+        <Catalog />
+      </Suspense>
     </div>
   );
 };
