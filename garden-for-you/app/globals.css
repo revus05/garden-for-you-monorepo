@@ -101,6 +101,13 @@
   box-shadow: 0 0 8px 0 var(--primary);
 }
 
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer components {
   .wrapper {
     @apply w-full px-2 mx-auto xl:w-7xl xl:px-0;

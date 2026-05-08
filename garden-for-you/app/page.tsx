@@ -5,9 +5,9 @@ import {
 } from "@tanstack/react-query";
 import {
   fetchCatalogCategories,
-  fetchCatalogProductsPage,
   type ProductCategoryOrder,
 } from "@/entities/product";
+import { fetchCatalogProductsPageServer } from "@/entities/product/server/fetch-catalog-products";
 import { catalogQueryKeys } from "@/features/catalog";
 import HomePage from "@/pages/home";
 
@@ -44,8 +44,7 @@ export default async function Page({
 
   await queryClient.prefetchInfiniteQuery({
     queryKey: catalogQueryKeys.products(filters),
-    queryFn: () =>
-      fetchCatalogProductsPage({ filters, offset: 0 }),
+    queryFn: () => fetchCatalogProductsPageServer({ filters, offset: 0 }),
     initialPageParam: 0,
   });
 

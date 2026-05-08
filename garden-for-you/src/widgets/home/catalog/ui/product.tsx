@@ -114,18 +114,21 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            size="icon"
-            variant={isInComparison ? "default" : "outline"}
-            className="absolute top-2 right-2 size-8 bg-background shadow-sm"
+            size="icon-lg"
+            variant="outline"
+            className={cn(
+              "absolute top-2 right-2 size-10 rounded-lg shadow-sm border backdrop-blur-2xl",
+              isInComparison
+                ? "bg-primary! border-primary! hover:bg-primary/90! hover:border-primary/90!"
+                : "bg-white/90! hover:bg-white!",
+            )}
             onClick={handleComparisonClick}
             disabled={isComparisonFull}
           >
             <Scale
               className={cn(
                 "size-4",
-                isInComparison
-                  ? "stroke-primary-foreground"
-                  : "stroke-secondary-foreground",
+                isInComparison ? "stroke-white" : "stroke-secondary-foreground",
               )}
             />
           </Button>

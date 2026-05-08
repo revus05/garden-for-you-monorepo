@@ -11,6 +11,7 @@ import {
   useCatalogProductsInfiniteQuery,
 } from "@/features/catalog";
 import noImage from "@/images/no-items.svg";
+import { cn } from "@/shared/lib";
 import {
   Badge,
   Button,
@@ -22,7 +23,6 @@ import {
   DrawerTrigger,
   Skeleton,
 } from "@/shared/ui";
-import { cn } from "@/shared/lib";
 import { CatalogCategory } from "@/widgets/home/catalog/ui/category";
 import { CatalogProduct } from "@/widgets/home/catalog/ui/product";
 import { CatalogProductSkeleton } from "@/widgets/home/catalog/ui/product-skeleton";
@@ -43,9 +43,11 @@ export const Catalog = () => {
   const searchParams = useSearchParams();
 
   // Read state from URL
-  const urlCategoryIds = searchParams?.get("categories")?.split(",").filter(Boolean) ?? [];
+  const urlCategoryIds =
+    searchParams?.get("categories")?.split(",").filter(Boolean) ?? [];
   const urlSearchQuery = searchParams?.get("q") ?? "";
-  const orderBy = (searchParams?.get("orderBy") ?? "title") as ProductCategoryOrder;
+  const orderBy = (searchParams?.get("orderBy") ??
+    "title") as ProductCategoryOrder;
   const activeTab = "seedlings" as const;
 
   // Local state for immediate UI updates (checkbox doesn't wait for URL)
@@ -57,7 +59,9 @@ export const Catalog = () => {
   // Sync local categories when URL changes externally (badge reset, back/forward)
   const urlCategoriesKey = searchParams?.get("categories") ?? "";
   useEffect(() => {
-    setLocalCategoryIds(urlCategoriesKey ? urlCategoriesKey.split(",").filter(Boolean) : []);
+    setLocalCategoryIds(
+      urlCategoriesKey ? urlCategoriesKey.split(",").filter(Boolean) : [],
+    );
   }, [urlCategoriesKey]);
 
   const updateParams = useCallback(
@@ -92,7 +96,6 @@ export const Catalog = () => {
   useEffect(() => {
     setSearchInput(urlSearchQuery);
   }, [urlSearchQuery]);
-
 
   const hasActiveFilters =
     localCategoryIds.length > 0 || urlSearchQuery !== "" || orderBy !== "title";
@@ -139,7 +142,10 @@ export const Catalog = () => {
   const totalProductsCount = productsQuery.data?.pages[0]?.count ?? 0;
   const isInitialLoading = productsQuery.isPending;
   const isLoadingMore = productsQuery.isFetchingNextPage;
-  const isRefetching = productsQuery.isFetching && !productsQuery.isFetchingNextPage && !productsQuery.isPending;
+  const isRefetching =
+    productsQuery.isFetching &&
+    !productsQuery.isFetchingNextPage &&
+    !productsQuery.isPending;
   const hasProducts = products.length > 0;
 
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -149,7 +155,11 @@ export const Catalog = () => {
     if (!el) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting && productsQuery.hasNextPage && !productsQuery.isFetchingNextPage) {
+        if (
+          entries[0]?.isIntersecting &&
+          productsQuery.hasNextPage &&
+          !productsQuery.isFetchingNextPage
+        ) {
           void productsQuery.fetchNextPage();
         }
       },
@@ -214,10 +224,7 @@ export const Catalog = () => {
               </DrawerHeader>
               <div className="flex flex-col gap-4 overflow-y-auto px-4 pb-4">
                 <div className="hidden">
-                  <CatalogTabs
-                    activeTab={activeTab}
-                    setActiveTab={() => {}}
-                  />
+                  <CatalogTabs activeTab={activeTab} setActiveTab={() => {}} />
                 </div>
                 <CatalogSorting orderBy={orderBy} setOrderBy={setOrderBy} />
                 {categoryFilters}
@@ -243,7 +250,9 @@ export const Catalog = () => {
       </div>
 
       <div className="flex gap-4 sm:flex-row flex-col">
-        <div className="hidden md:flex md:flex-col">{categoryFilters}</div>
+        <div className="hidden md:flex md:flex-col sticky top-19 max-h-[calc(100vh-76px)] overflow-y-auto scrollbar-hide self-start md:w-64 lg:w-72 shrink-0">
+          {categoryFilters}
+        </div>
 
         <div className="w-full min-w-0 flex flex-col gap-4">
           {hasActiveFilters && (
@@ -310,7 +319,12 @@ export const Catalog = () => {
             </div>
           )}
 
-          <div className={cn("grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 transition-opacity duration-200", isRefetching && "opacity-50 pointer-events-none")}>
+          <div
+            className={cn(
+              "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 transition-opacity duration-200",
+              isRefetching && "opacity-50 pointer-events-none",
+            )}
+          >
             {isInitialLoading
               ? Array.from({ length: 8 }).map((_, i) => (
                   <CatalogProductSkeleton key={i} />

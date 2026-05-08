@@ -7,12 +7,23 @@ import {
 import ProductPageView from "@/pages/product";
 
 export const dynamicParams = true;
+export const revalidate = 3600; // fallback ISR: refresh at most every hour
 
 type ProductPageProps = {
   params: Promise<{
     handle: string;
   }>;
 };
+
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, " ").replace(/\s{2,}/g, " ").trim();
+}
+
+function toAbsoluteUrl(url: string | null | undefined, siteUrl: string): string | null {
+  if (!url) return null;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${siteUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+}
 
 export async function generateMetadata({
   params,
@@ -25,10 +36,17 @@ export async function generateMetadata({
   const { product } = result;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://saddlyavas.by";
   const productUrl = `${siteUrl}/product/${handle}`;
-  const imageUrl = product.thumbnail ?? product.images?.[0]?.url;
+
+  const rawImageUrl = product.thumbnail ?? product.images?.[0]?.url;
+  const imageUrl = toAbsoluteUrl(rawImageUrl, siteUrl);
+
+  const rawDescription = product.description
+    ? stripHtml(product.description)
+    : `Купить ${product.title} с доставкой по Беларуси в интернет-магазине Сад Для Вас`;
   const description =
-    product.description ||
-    `Купить ${product.title} с доставкой по Беларуси в интернет-магазине Сад Для Вас`;
+    rawDescription.length > 160
+      ? rawDescription.slice(0, 157) + "..."
+      : rawDescription;
 
   return {
     title: product.title,
@@ -42,7 +60,7 @@ export async function generateMetadata({
       title: product.title ?? undefined,
       description,
       images: imageUrl
-        ? [{ url: imageUrl, alt: product.title ?? undefined }]
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: product.title ?? undefined }]
         : [],
     },
     twitter: {

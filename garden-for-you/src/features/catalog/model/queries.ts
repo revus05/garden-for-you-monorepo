@@ -38,6 +38,7 @@ export function useCatalogProductsInfiniteQuery(
       }),
     getNextPageParam: (lastPage) => lastPage.nextOffset,
     placeholderData: keepPreviousData,
+    staleTime: 60 * 1000,
     enabled: options?.enabled ?? true,
   });
 }
