@@ -3,6 +3,7 @@
 import { ArrowRight, ShoppingCart, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { removeCartItem, updateCartItemQuantity } from "@/features/cart";
 import plantPlaceholder from "@/images/plant-placholder.svg";
 import { paths } from "@/shared/constants/navigation";
@@ -25,6 +26,14 @@ import {
 export const CartList = () => {
   const cart = useAppSelector((state) => state.cartSlice.cart);
   const dispatch = useAppDispatch();
+  const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
+
+  const handleQuantityChange = async (itemId: string, quantity: number) => {
+    if (loadingItemId) return;
+    setLoadingItemId(itemId);
+    await updateCartItemQuantity(dispatch, itemId, quantity);
+    setLoadingItemId(null);
+  };
 
   if (!cart || !cart?.items?.length) {
     return (
@@ -127,14 +136,8 @@ export const CartList = () => {
                 <div className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-background-secondary/40 p-1">
                   <Button
                     size="icon"
-                    disabled={item.quantity === 1}
-                    onClick={() =>
-                      updateCartItemQuantity(
-                        dispatch,
-                        item.id,
-                        item.quantity - 1,
-                      )
-                    }
+                    disabled={item.quantity === 1 || loadingItemId === item.id}
+                    onClick={() => void handleQuantityChange(item.id, item.quantity - 1)}
                   >
                     -
                   </Button>
@@ -143,13 +146,8 @@ export const CartList = () => {
                   </span>
                   <Button
                     size="icon"
-                    onClick={() =>
-                      updateCartItemQuantity(
-                        dispatch,
-                        item.id,
-                        item.quantity + 1,
-                      )
-                    }
+                    disabled={loadingItemId === item.id}
+                    onClick={() => void handleQuantityChange(item.id, item.quantity + 1)}
                   >
                     +
                   </Button>
@@ -236,14 +234,8 @@ export const CartList = () => {
                     <div className="flex w-fit items-center gap-2 rounded-xl border border-border/60 bg-background-secondary/40 p-1">
                       <Button
                         size="icon"
-                        disabled={item.quantity === 1}
-                        onClick={() =>
-                          updateCartItemQuantity(
-                            dispatch,
-                            item.id,
-                            item.quantity - 1,
-                          )
-                        }
+                        disabled={item.quantity === 1 || loadingItemId === item.id}
+                        onClick={() => void handleQuantityChange(item.id, item.quantity - 1)}
                       >
                         -
                       </Button>
@@ -252,13 +244,8 @@ export const CartList = () => {
                       </span>
                       <Button
                         size="icon"
-                        onClick={() =>
-                          updateCartItemQuantity(
-                            dispatch,
-                            item.id,
-                            item.quantity + 1,
-                          )
-                        }
+                        disabled={loadingItemId === item.id}
+                        onClick={() => void handleQuantityChange(item.id, item.quantity + 1)}
                       >
                         +
                       </Button>

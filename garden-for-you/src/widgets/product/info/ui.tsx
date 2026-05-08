@@ -9,7 +9,7 @@ import {
   MAX_COMPARISON_COUNT,
 } from "@/entities/comparison";
 import type { ProductSpec } from "@/entities/product";
-import { addCartItem, removeCartItem } from "@/features/cart";
+import { addCartItem, removeCartItem, updateCartItemQuantity } from "@/features/cart";
 import {
   addToComparisonWithSync,
   removeFromComparisonWithSync,
@@ -49,6 +49,7 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
 
   const [selectedOptions, setSelectedOptions] =
     useState<Record<string, string>>(initialOptions);
+  const [quantityLoading, setQuantityLoading] = useState(false);
 
   const cartItem = cart?.items?.find((item) => item.product?.id === product.id);
   const isInCart = !!cartItem;
@@ -146,22 +147,55 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
         </p>
       )}
       <div className="flex gap-2 flex-wrap">
-        <Button
-          onClick={handleCartButtonClick}
-          className="w-fit"
-          size="lg"
-          variant={isInCart ? "outline" : "default"}
-          disabled={!isSelectedInStock}
-        >
-          {isInCart ? "Удалить из корзины" : "Добавить в корзину"}
-          <ShoppingCart
-            className={cn(
-              isInCart
-                ? "stroke-secondary-foreground"
-                : "stroke-primary-foreground",
-            )}
-          />
-        </Button>
+        {isInCart && cartItem ? (
+          <>
+            <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-background-secondary/40 p-1">
+              <Button
+                size="icon"
+                disabled={cartItem.quantity === 1 || quantityLoading}
+                onClick={() => {
+                  setQuantityLoading(true);
+                  void updateCartItemQuantity(dispatch, cartItem.id, cartItem.quantity - 1).finally(() => setQuantityLoading(false));
+                }}
+              >
+                -
+              </Button>
+              <span className="w-8 text-center font-medium">
+                {cartItem.quantity}
+              </span>
+              <Button
+                size="icon"
+                disabled={quantityLoading}
+                onClick={() => {
+                  setQuantityLoading(true);
+                  void updateCartItemQuantity(dispatch, cartItem.id, cartItem.quantity + 1).finally(() => setQuantityLoading(false));
+                }}
+              >
+                +
+              </Button>
+            </div>
+            <Button
+              onClick={handleCartButtonClick}
+              className="w-fit"
+              size="lg"
+              variant="outline"
+            >
+              Удалить из корзины
+              <ShoppingCart className="stroke-secondary-foreground" />
+            </Button>
+          </>
+        ) : (
+          <Button
+            onClick={handleCartButtonClick}
+            className="w-fit"
+            size="lg"
+            variant="default"
+            disabled={!isSelectedInStock}
+          >
+            Добавить в корзину
+            <ShoppingCart className="stroke-primary-foreground" />
+          </Button>
+        )}
 
         <Tooltip>
           <TooltipTrigger asChild>

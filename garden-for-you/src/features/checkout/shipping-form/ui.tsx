@@ -76,33 +76,44 @@ export function ShippingForm({ onSuccess }: Props) {
             )}
 
             {!optionsLoading && shippingOptions.length > 0 && (
-              <div className="grid grid-cols-2 gap-3">
-                {shippingOptions.map((option) => {
-                  const isSelected = shippingOptionId === option.id;
-                  return (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => selectOption(option)}
-                      className={cn(
-                        "flex flex-col items-start gap-1.5 rounded-xl border p-4 text-left transition-colors",
-                        isSelected
-                          ? "border-primary bg-primary/5 ring-1 ring-primary"
-                          : "border-border hover:border-primary/50",
-                      )}
-                    >
-                      <div className="flex items-center gap-2">
-                        {getOptionIcon(option)}
-                        <span className="text-sm font-semibold">
-                          {option.name}
+              <div className="flex flex-col gap-3">
+                <div className="grid grid-cols-2 gap-3">
+                  {shippingOptions.map((option) => {
+                    const isSelected = shippingOptionId === option.id;
+                    const isDelivery = option.type_code === "delivery";
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        disabled={isDelivery}
+                        onClick={() => !isDelivery && selectOption(option)}
+                        className={cn(
+                          "flex flex-col items-start gap-1.5 rounded-xl border p-4 text-left transition-colors",
+                          isDelivery
+                            ? "cursor-not-allowed border-border opacity-50"
+                            : isSelected
+                              ? "border-primary bg-primary/5 ring-1 ring-primary"
+                              : "border-border hover:border-primary/50",
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          {getOptionIcon(option)}
+                          <span className="text-sm font-semibold">
+                            {option.name}
+                          </span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {isDelivery ? "Недоступно" : formatOptionPrice(option.amount)}
                         </span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">
-                        {formatOptionPrice(option.amount)}
-                      </span>
-                    </button>
-                  );
-                })}
+                      </button>
+                    );
+                  })}
+                </div>
+                {shippingOptions.some((o) => o.type_code === "delivery") && (
+                  <p className="text-xs text-muted-foreground">
+                    Доставка на данный момент недоступна. Вы можете забрать заказ самовывозом.
+                  </p>
+                )}
               </div>
             )}
 
