@@ -17,6 +17,7 @@ export const SearchPopover = () => {
 
   const productsQuery = useCatalogProductsInfiniteQuery({
     categoryIds: [],
+    parentHandle: "",
     searchQuery: deferredQuery,
     orderBy: "title",
   });

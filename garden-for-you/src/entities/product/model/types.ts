@@ -29,6 +29,7 @@ export type ProductCategoryOrder =
 
 export type CatalogFilters = {
   categoryIds: string[];
+  parentHandle?: string;
   searchQuery: string;
   orderBy: ProductCategoryOrder;
 };

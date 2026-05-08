@@ -1,9 +1,17 @@
 import type { StoreProduct } from "@medusajs/types";
-import { ShoppingCart } from "lucide-react";
+import { Scale, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { FC } from "react";
+import {
+  type ComparisonProduct,
+  MAX_COMPARISON_COUNT,
+} from "@/entities/comparison";
 import { addCartItem, removeCartItem } from "@/features/cart";
+import {
+  addToComparisonWithSync,
+  removeFromComparisonWithSync,
+} from "@/features/comparison";
 import plantPlaceholder from "@/images/plant-placholder.svg";
 import { paths } from "@/shared/constants/navigation";
 import { cn, useAppDispatch, useAppSelector } from "@/shared/lib";
@@ -23,6 +31,9 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
   const dispatch = useAppDispatch();
 
   const cart = useAppSelector((state) => state.cartSlice.cart);
+  const comparisonProducts = useAppSelector(
+    (state) => state.comparisonSlice.products,
+  );
 
   if (!product.variants) return null;
 
@@ -39,6 +50,10 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
   });
 
   const isInCart = !!cartItem;
+  const isInComparison = comparisonProducts.some((p) => p.id === product.id);
+  const isComparisonFull =
+    comparisonProducts.length >= MAX_COMPARISON_COUNT && !isInComparison;
+  const currentComparisonIds = comparisonProducts.map((p) => p.id);
 
   const handleCartButtonClick = () => {
     if (!product.variants) return;
@@ -47,6 +62,32 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
       void removeCartItem(dispatch, cartItem?.id);
     } else {
       void handleAddToCartClick(product.variants[0].id);
+    }
+  };
+
+  const handleComparisonClick = () => {
+    if (isInComparison) {
+      void removeFromComparisonWithSync(
+        dispatch,
+        product.id,
+        currentComparisonIds.filter((id) => id !== product.id),
+      );
+    } else if (!isComparisonFull) {
+      const variant = product.variants?.[0];
+      const compProduct: ComparisonProduct = {
+        id: product.id,
+        handle: product.handle ?? "",
+        title: product.title ?? "",
+        thumbnail: product.thumbnail ?? null,
+        price: variant?.calculated_price?.calculated_amount ?? null,
+        currency:
+          variant?.calculated_price?.currency_code?.toUpperCase() ?? null,
+        specs: [],
+      };
+      void addToComparisonWithSync(dispatch, compProduct, [
+        ...currentComparisonIds,
+        product.id,
+      ]);
     }
   };
 
@@ -66,9 +107,39 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
           <Badge variant="destructive">Нет в наличии</Badge>
         </div>
       )}
-      {isInCart && (
+      {isInCart && isAvailable && (
         <Badge className="absolute top-2 left-2 shadow-md">В корзине</Badge>
       )}
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            variant={isInComparison ? "default" : "outline"}
+            className="absolute top-2 right-2 size-8 bg-background shadow-sm"
+            onClick={handleComparisonClick}
+            disabled={isComparisonFull}
+          >
+            <Scale
+              className={cn(
+                "size-4",
+                isInComparison
+                  ? "stroke-primary-foreground"
+                  : "stroke-secondary-foreground",
+              )}
+            />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>
+            {isInComparison
+              ? "Убрать из сравнения"
+              : isComparisonFull
+                ? `Максимум ${MAX_COMPARISON_COUNT} товара`
+                : "Добавить к сравнению"}
+          </p>
+        </TooltipContent>
+      </Tooltip>
 
       <Link
         href={`${paths.productPage}/${product.handle}`}

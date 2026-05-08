@@ -1,7 +1,4 @@
-export {
-  findCategoryInTree,
-  getFilteredCategories,
-} from "./lib/category-utils";
+export { findCategoryInTree } from "./lib/category-utils";
 export {
   catalogQueryKeys,
   useCatalogCategoriesQuery,

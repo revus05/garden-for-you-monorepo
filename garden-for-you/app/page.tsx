@@ -8,10 +8,7 @@ import {
   fetchCatalogProductsPage,
   type ProductCategoryOrder,
 } from "@/entities/product";
-import {
-  catalogQueryKeys,
-  getFilteredCategories,
-} from "@/features/catalog";
+import { catalogQueryKeys } from "@/features/catalog";
 import HomePage from "@/pages/home";
 
 export default async function Page({
@@ -22,7 +19,7 @@ export default async function Page({
   const params = await searchParams;
   const queryClient = new QueryClient();
 
-  const categories = await queryClient.fetchQuery({
+  await queryClient.prefetchQuery({
     queryKey: catalogQueryKeys.categories(),
     queryFn: fetchCatalogCategories,
   });
@@ -32,20 +29,18 @@ export default async function Page({
   const selectedCategoryIds = rawCategories
     ? rawCategories.split(",").filter(Boolean)
     : [];
-  const sortedCategoryIds = [...selectedCategoryIds].sort();
   const searchQuery =
     typeof params.q === "string" ? params.q : "";
   const orderBy = (
     typeof params.orderBy === "string" ? params.orderBy : "title"
   ) as ProductCategoryOrder;
 
-  const filteredCategoryIds = getFilteredCategories(
-    "seedlings",
-    sortedCategoryIds,
-    categories,
-  );
-
-  const filters = { categoryIds: filteredCategoryIds, searchQuery, orderBy };
+  const filters = {
+    categoryIds: selectedCategoryIds,
+    parentHandle: "seedlings" as const,
+    searchQuery,
+    orderBy,
+  };
 
   await queryClient.prefetchInfiniteQuery({
     queryKey: catalogQueryKeys.products(filters),

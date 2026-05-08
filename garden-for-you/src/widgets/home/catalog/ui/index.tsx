@@ -3,11 +3,10 @@
 import { X } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ProductCategoryOrder } from "@/entities/product";
 import {
   findCategoryInTree,
-  getFilteredCategories,
   useCatalogCategoriesQuery,
   useCatalogProductsInfiniteQuery,
 } from "@/features/catalog";
@@ -23,6 +22,7 @@ import {
   DrawerTrigger,
   Skeleton,
 } from "@/shared/ui";
+import { cn } from "@/shared/lib";
 import { CatalogCategory } from "@/widgets/home/catalog/ui/category";
 import { CatalogProduct } from "@/widgets/home/catalog/ui/product";
 import { CatalogProductSkeleton } from "@/widgets/home/catalog/ui/product-skeleton";
@@ -43,14 +43,22 @@ export const Catalog = () => {
   const searchParams = useSearchParams();
 
   // Read state from URL
-  const selectedCategoryIds = searchParams?.get("categories")?.split(",").filter(Boolean) ?? [];
+  const urlCategoryIds = searchParams?.get("categories")?.split(",").filter(Boolean) ?? [];
   const urlSearchQuery = searchParams?.get("q") ?? "";
   const orderBy = (searchParams?.get("orderBy") ?? "title") as ProductCategoryOrder;
   const activeTab = "seedlings" as const;
 
+  // Local state for immediate UI updates (checkbox doesn't wait for URL)
+  const [localCategoryIds, setLocalCategoryIds] = useState(urlCategoryIds);
   // Local search input with debounce to URL
   const [searchInput, setSearchInput] = useState(urlSearchQuery);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
+  // Sync local categories when URL changes externally (badge reset, back/forward)
+  const urlCategoriesKey = searchParams?.get("categories") ?? "";
+  useEffect(() => {
+    setLocalCategoryIds(urlCategoriesKey ? urlCategoriesKey.split(",").filter(Boolean) : []);
+  }, [urlCategoriesKey]);
 
   const updateParams = useCallback(
     (updates: Record<string, string | null>) => {
@@ -85,22 +93,29 @@ export const Catalog = () => {
     setSearchInput(urlSearchQuery);
   }, [urlSearchQuery]);
 
-  const sortedCategoryIds = [...selectedCategoryIds].sort();
 
   const hasActiveFilters =
-    selectedCategoryIds.length > 0 || urlSearchQuery !== "" || orderBy !== "title";
+    localCategoryIds.length > 0 || urlSearchQuery !== "" || orderBy !== "title";
 
   const resetFilters = () => {
     setSearchInput("");
+    setLocalCategoryIds([]);
     updateParams({ categories: null, q: null, orderBy: null });
   };
 
+  const localCategoryIdsRef = useRef(localCategoryIds);
+  localCategoryIdsRef.current = localCategoryIds;
+
   const setSelectedCategoryIds = useCallback(
     (action: string[] | ((prev: string[]) => string[])) => {
-      const newIds = typeof action === "function" ? action(selectedCategoryIds) : action;
+      const newIds =
+        typeof action === "function"
+          ? action(localCategoryIdsRef.current)
+          : action;
+      setLocalCategoryIds(newIds);
       updateParams({ categories: newIds.length > 0 ? newIds.join(",") : null });
     },
-    [selectedCategoryIds, updateParams],
+    [updateParams],
   );
 
   const setOrderBy = useCallback(
@@ -112,27 +127,37 @@ export const Catalog = () => {
 
   const categoriesQuery = useCatalogCategoriesQuery();
 
-  const filteredCategoryIds = getFilteredCategories(
-    activeTab,
-    sortedCategoryIds,
-    categoriesQuery.data || [],
-  );
-
-  const productsQuery = useCatalogProductsInfiniteQuery(
-    {
-      categoryIds: filteredCategoryIds,
-      searchQuery: urlSearchQuery,
-      orderBy,
-    },
-    { enabled: categoriesQuery.isSuccess },
-  );
+  const productsQuery = useCatalogProductsInfiniteQuery({
+    categoryIds: localCategoryIds,
+    parentHandle: activeTab,
+    searchQuery: urlSearchQuery,
+    orderBy,
+  });
 
   const products =
     productsQuery.data?.pages.flatMap((page) => page.products) ?? [];
   const totalProductsCount = productsQuery.data?.pages[0]?.count ?? 0;
-  const isInitialLoading = categoriesQuery.isPending || productsQuery.isPending;
+  const isInitialLoading = productsQuery.isPending;
   const isLoadingMore = productsQuery.isFetchingNextPage;
+  const isRefetching = productsQuery.isFetching && !productsQuery.isFetchingNextPage && !productsQuery.isPending;
   const hasProducts = products.length > 0;
+
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && productsQuery.hasNextPage && !productsQuery.isFetchingNextPage) {
+          void productsQuery.fetchNextPage();
+        }
+      },
+      { rootMargin: "1200px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [productsQuery]);
 
   const activeCategories = (
     categoriesQuery.data?.find((category) => category.handle === activeTab)
@@ -157,7 +182,7 @@ export const Catalog = () => {
                 <CatalogCategory
                   key={category.id}
                   category={category}
-                  selectedCategoryIds={selectedCategoryIds}
+                  selectedCategoryIds={localCategoryIds}
                   setSelectedCategoryIds={setSelectedCategoryIds}
                 />
               ))}
@@ -253,7 +278,7 @@ export const Catalog = () => {
                   <X size={12} />
                 </Badge>
               )}
-              {selectedCategoryIds.map((id) => {
+              {localCategoryIds.map((id) => {
                 const category = findCategoryInTree(activeCategories, id);
                 if (!category) return null;
                 return (
@@ -285,7 +310,7 @@ export const Catalog = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className={cn("grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 transition-opacity duration-200", isRefetching && "opacity-50 pointer-events-none")}>
             {isInitialLoading
               ? Array.from({ length: 8 }).map((_, i) => (
                   <CatalogProductSkeleton key={i} />
@@ -295,14 +320,11 @@ export const Catalog = () => {
                 ))}
           </div>
 
-          {productsQuery.hasNextPage && (
-            <Button
-              onClick={() => void productsQuery.fetchNextPage()}
-              disabled={isLoadingMore}
-              className="mt-8 mx-auto"
-            >
-              {isLoadingMore ? "Загрузка..." : "Показать ещё"}
-            </Button>
+          <div ref={sentinelRef} aria-hidden="true" className="h-1" />
+          {isLoadingMore && (
+            <div className="flex justify-center py-4">
+              <div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            </div>
           )}
         </div>
       </div>

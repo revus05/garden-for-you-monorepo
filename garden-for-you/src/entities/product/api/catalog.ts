@@ -11,6 +11,28 @@ const NEXT_PUBLIC_REGION_ID = requireEnv(
   process.env.NEXT_PUBLIC_REGION_ID,
 );
 
+function buildCatalogParams(filters: CatalogFilters, offset: number): URLSearchParams {
+  const params = new URLSearchParams();
+  params.set("limit", String(CATALOG_PRODUCTS_PAGE_SIZE));
+  params.set("offset", String(offset));
+  params.set("region_id", NEXT_PUBLIC_REGION_ID);
+  params.set("order", filters.orderBy);
+
+  for (const id of filters.categoryIds) {
+    params.append("category_id[]", id);
+  }
+
+  if (!filters.categoryIds.length && filters.parentHandle) {
+    params.set("parent_handle", filters.parentHandle);
+  }
+
+  if (filters.searchQuery) {
+    params.set("q", filters.searchQuery);
+  }
+
+  return params;
+}
+
 export async function fetchCatalogProductsPage({
   filters,
   offset,
@@ -18,26 +40,31 @@ export async function fetchCatalogProductsPage({
   filters: CatalogFilters;
   offset: number;
 }): Promise<CatalogProductsPage> {
-  const { products, count } = await sdk.store.product.list({
-    limit: CATALOG_PRODUCTS_PAGE_SIZE,
-    offset,
-    region_id: NEXT_PUBLIC_REGION_ID,
-    category_id: filters.categoryIds,
-    q: filters.searchQuery || undefined,
-    order: filters.orderBy,
-    fields:
-      "id,handle,title,thumbnail,+variants.id,+variants.inventory_quantity,+variants.manage_inventory,+variants.allow_backorder,+variants.calculated_price.calculated_amount,+variants.calculated_price.currency_code",
-  });
+  const params = buildCatalogParams(filters, offset);
 
-  const nextOffset =
-    count > offset + CATALOG_PRODUCTS_PAGE_SIZE
-      ? offset + CATALOG_PRODUCTS_PAGE_SIZE
-      : undefined;
+  // Route through Next.js API to avoid CORS and do server-side category expansion
+  const isServer = typeof window === "undefined";
+  const baseUrl = isServer
+    ? (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000")
+    : "";
+  const url = `${baseUrl}/api/catalog/products?${params.toString()}`;
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Catalog fetch failed: ${response.status}`);
+  }
+
+  const data = (await response.json()) as {
+    products: CatalogProductsPage["products"];
+    count: number;
+    next_offset?: number;
+  };
 
   return {
-    products,
-    count,
-    nextOffset,
+    products: data.products,
+    count: data.count,
+    nextOffset: data.next_offset,
   };
 }
 
