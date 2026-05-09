@@ -14,7 +14,7 @@ RUN npm ci --prefer-offline --no-audit --no-fund
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-RUN apk add --no-cache libc6-compat python3 make g++
+RUN apk add --no-cache libc6-compat
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -46,4 +46,4 @@ COPY --from=deps /app/node_modules ./node_modules
 
 EXPOSE 9000
 
-CMD ["sh", "-c", "npx medusa db:migrate && npm run start"]
+CMD ["sh", "-c", "node scripts/migrate-if-needed.mjs && npm run start"]

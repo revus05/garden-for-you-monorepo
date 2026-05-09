@@ -285,7 +285,7 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
                 <dt className="text-muted-foreground">
                   {spec.definition.name}
                 </dt>
-                <dd className="font-medium text-right">
+                <dd className="font-medium text-justify">
                   {spec.value}
                   {spec.definition.unit ? ` ${spec.definition.unit}` : ""}
                 </dd>
