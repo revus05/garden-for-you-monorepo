@@ -45,13 +45,15 @@ export const CatalogCategory: FC<CatalogCategoryProps> = ({
             id={`product-category-${category.id}`}
             name="product-category"
             checked={selectedCategoryIds.includes(category.id)}
-            onCheckedChange={(state) =>
-              handleCheckedChange(category.id, state)
-            }
+            onCheckedChange={(state) => handleCheckedChange(category.id, state)}
           />
           <Label
             htmlFor={`product-category-${category.id}`}
-            className="block truncate w-full leading-5"
+            className={cn(
+              "block truncate w-full leading-5",
+              depth === 0 &&
+                "uppercase font-bold tracking-wide text-secondary-foreground",
+            )}
           >
             {category.name}
           </Label>

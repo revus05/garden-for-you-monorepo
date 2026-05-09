@@ -98,7 +98,7 @@ export function ResetPasswordForm() {
                         type={showRepeatPassword ? "text" : "password"}
                         autoComplete="current-password"
                         aria-invalid={!!errors.repeatPassword}
-                        placeholder="Введите пароль"
+                        placeholder="Повторите пароль"
                         className="text-primary"
                         {...register("repeatPassword")}
                       />
