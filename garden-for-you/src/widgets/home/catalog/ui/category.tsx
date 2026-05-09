@@ -84,7 +84,7 @@ export const CatalogCategory: FC<CatalogCategoryProps> = ({
         >
           <div className="overflow-hidden">
             <div className="flex flex-col gap-2 pt-2">
-              {category.category_children!.map((child) => (
+              {[...category.category_children!].sort((a, b) => a.name.localeCompare(b.name)).map((child) => (
                 <CatalogCategory
                   key={child.id}
                   category={child}
