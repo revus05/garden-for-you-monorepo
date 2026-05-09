@@ -4,6 +4,7 @@ import logo from "@/images/logo-light.png";
 import plantsPattern from "@/images/plants-pattern.png";
 import telegram from "@/images/telegram.svg";
 import { paths } from "@/shared/constants/navigation";
+import { TelegramModal } from "@/shared/ui";
 import { NavItems } from "./nav-items";
 
 export const Footer = () => {
@@ -63,9 +64,11 @@ export const Footer = () => {
                 +375 (29) 106-65-56
               </Link>
             </span>
-            <Link href="https://t.me/alex_key1" className="hover:underline">
-              <Image src={telegram} width={32} height={32} alt="telegram" />
-            </Link>
+            <TelegramModal telegramUrl="https://t.me/alex_key1">
+              <button type="button" className="hover:opacity-80 transition-opacity cursor-pointer">
+                <Image src={telegram} width={32} height={32} alt="telegram" />
+              </button>
+            </TelegramModal>
           </div>
         </div>
       </div>

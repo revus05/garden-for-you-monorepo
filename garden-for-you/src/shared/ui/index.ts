@@ -85,6 +85,7 @@ export {
   TableRow,
 } from "./table";
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
+export { TelegramModal } from "./telegram-modal";
 export { Textarea } from "./textarea";
 export {
   Tooltip,

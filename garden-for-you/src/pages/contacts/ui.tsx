@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getSiteConfig } from "@/entities/site-config/server";
 import leafPlant from "@/images/leaf-plant.png";
 import telegram from "@/images/telegram.svg";
+import { TelegramModal } from "@/shared/ui";
 import { withHomeLayout } from "@/widgets/layouts/home";
 
 const ContactsPage = async () => {
@@ -68,9 +69,11 @@ const ContactsPage = async () => {
                 <Link href="tel:+375291066556" className="hover:underline">
                   +375 (29) 106-65-56
                 </Link>
-                <Link href="https://t.me/alex_key1" className="hover:underline">
-                  <Image src={telegram} width={32} height={32} alt="telegram" />
-                </Link>
+                <TelegramModal telegramUrl="https://t.me/alex_key1">
+                  <button type="button" className="hover:opacity-80 transition-opacity cursor-pointer">
+                    <Image src={telegram} width={32} height={32} alt="telegram" />
+                  </button>
+                </TelegramModal>
               </div>
             </div>
           </div>

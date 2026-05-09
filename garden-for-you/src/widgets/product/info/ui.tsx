@@ -9,7 +9,11 @@ import {
   MAX_COMPARISON_COUNT,
 } from "@/entities/comparison";
 import type { ProductSpec } from "@/entities/product";
-import { addCartItem, removeCartItem, updateCartItemQuantity } from "@/features/cart";
+import {
+  addCartItem,
+  removeCartItem,
+  updateCartItemQuantity,
+} from "@/features/cart";
 import {
   addToComparisonWithSync,
   removeFromComparisonWithSync,
@@ -155,7 +159,11 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
                 disabled={cartItem.quantity === 1 || quantityLoading}
                 onClick={() => {
                   setQuantityLoading(true);
-                  void updateCartItemQuantity(dispatch, cartItem.id, cartItem.quantity - 1).finally(() => setQuantityLoading(false));
+                  void updateCartItemQuantity(
+                    dispatch,
+                    cartItem.id,
+                    cartItem.quantity - 1,
+                  ).finally(() => setQuantityLoading(false));
                 }}
               >
                 -
@@ -168,7 +176,11 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
                 disabled={quantityLoading}
                 onClick={() => {
                   setQuantityLoading(true);
-                  void updateCartItemQuantity(dispatch, cartItem.id, cartItem.quantity + 1).finally(() => setQuantityLoading(false));
+                  void updateCartItemQuantity(
+                    dispatch,
+                    cartItem.id,
+                    cartItem.quantity + 1,
+                  ).finally(() => setQuantityLoading(false));
                 }}
               >
                 +
@@ -260,12 +272,14 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
         </div>
       )}
 
-      <span className="whitespace-pre-line">{product.description}</span>
+      <span className="whitespace-pre-line text-justify">
+        {product.description}
+      </span>
 
       {specs.length > 0 && (
         <div className="flex flex-col gap-2">
           <h2 className="font-bold text-lg">Характеристики</h2>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm max-w-100">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
             {specs.map((spec) => (
               <div key={spec.id} className="contents">
                 <dt className="text-muted-foreground">
