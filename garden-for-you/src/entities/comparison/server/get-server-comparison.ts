@@ -5,7 +5,7 @@ import { requireEnv } from "@/shared/lib";
 import { createServerSdk } from "@/shared/lib/server-sdk";
 import { COMPARISON_COOKIE } from "@/shared/config/comparison";
 import type { ComparisonProduct } from "../model";
-import type { ProductSpec } from "@/entities/product";
+import type { ProductSpec, StoreProductVariantWithPrices } from "@/entities/product";
 
 const NEXT_PUBLIC_REGION_ID = requireEnv(
   "NEXT_PUBLIC_REGION_ID",
@@ -68,7 +68,7 @@ export async function getServerComparison(): Promise<ComparisonProduct[]> {
       if (!product) return null;
 
       const specs = await fetchProductSpecs(product.id);
-      const variant = product.variants?.[0];
+      const variant = product.variants?.[0] as StoreProductVariantWithPrices | undefined;
 
       return {
         id: product.id,

@@ -1,4 +1,4 @@
-import type { StoreProduct } from "@medusajs/types";
+import type { ProductWithPrices } from "@/entities/product";
 import { Scale, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,7 +24,7 @@ import {
 } from "@/shared/ui";
 
 type CatalogProductProps = {
-  product: StoreProduct;
+  product: ProductWithPrices;
 };
 
 export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {

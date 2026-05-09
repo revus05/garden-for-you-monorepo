@@ -1,5 +1,18 @@
 import type { HttpTypes } from "@medusajs/types";
 
+export type VariantPrice = {
+  amount: number;
+  currency_code: string;
+};
+
+export type StoreProductVariantWithPrices = HttpTypes.StoreProductVariant & {
+  prices?: VariantPrice[];
+};
+
+export type ProductWithPrices = Omit<HttpTypes.StoreProduct, "variants"> & {
+  variants: StoreProductVariantWithPrices[] | null;
+};
+
 export type Product = HttpTypes.StoreProduct;
 export type ProductCategory = HttpTypes.StoreProductCategory;
 
@@ -35,7 +48,7 @@ export type CatalogFilters = {
 };
 
 export type CatalogProductsPage = {
-  products: Product[];
+  products: ProductWithPrices[];
   count: number;
   nextOffset?: number;
 };

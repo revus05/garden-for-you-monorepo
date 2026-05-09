@@ -11,4 +11,7 @@ export type {
   ProductCategoryOrder,
   ProductSpec,
   SpecDefinition,
+  ProductWithPrices,
+  StoreProductVariantWithPrices,
+  VariantPrice,
 } from "./model/types";
