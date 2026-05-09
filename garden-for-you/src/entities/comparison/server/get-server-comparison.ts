@@ -62,7 +62,7 @@ export async function getServerComparison(): Promise<ComparisonProduct[]> {
         id,
         region_id: NEXT_PUBLIC_REGION_ID,
         limit: 1,
-        fields: "+variants.inventory_quantity",
+        fields: "+variants.inventory_quantity,+variants.prices.amount,+variants.prices.currency_code",
       });
       const product = products[0];
       if (!product) return null;
@@ -75,9 +75,9 @@ export async function getServerComparison(): Promise<ComparisonProduct[]> {
         handle: product.handle ?? "",
         title: product.title ?? "",
         thumbnail: product.thumbnail ?? null,
-        price: variant?.calculated_price?.calculated_amount ?? null,
+        price: variant?.prices?.[0]?.amount ?? null,
         currency:
-          variant?.calculated_price?.currency_code?.toUpperCase() ?? null,
+          variant?.prices?.[0]?.currency_code?.toUpperCase() ?? null,
         specs,
       } satisfies ComparisonProduct;
     }),

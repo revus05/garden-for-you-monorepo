@@ -108,16 +108,10 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       "variants.inventory_quantity",
       "variants.manage_inventory",
       "variants.allow_backorder",
-      "variants.calculated_price.calculated_amount",
-      "variants.calculated_price.currency_code",
+      "variants.prices.amount",
+      "variants.prices.currency_code",
     ],
     pagination: { take: limit, skip: offset, order: orderObj },
-  }
-
-  if (regionId) {
-    graphOptions.context = {
-      variants: { calculated_price: { context: { region_id: regionId } } },
-    }
   }
 
   const productStartTime = Date.now()

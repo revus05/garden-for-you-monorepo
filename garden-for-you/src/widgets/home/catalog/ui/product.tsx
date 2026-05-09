@@ -79,9 +79,9 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
         handle: product.handle ?? "",
         title: product.title ?? "",
         thumbnail: product.thumbnail ?? null,
-        price: variant?.calculated_price?.calculated_amount ?? null,
+        price: variant?.prices?.[0]?.amount ?? null,
         currency:
-          variant?.calculated_price?.currency_code?.toUpperCase() ?? null,
+          variant?.prices?.[0]?.currency_code?.toUpperCase() ?? null,
         specs: [],
       };
       void addToComparisonWithSync(dispatch, compProduct, [
@@ -92,9 +92,10 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
   };
 
   const startPrice = Math.min(
-    ...product.variants.map(
-      (variant) => variant.calculated_price?.calculated_amount || 999,
-    ),
+    ...product.variants.map((variant) => {
+      const price = variant.prices?.[0]?.amount || 999;
+      return price;
+    }),
   );
 
   return (
@@ -178,7 +179,7 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
             <p className="text-lg font-bold">
               <span className="text-foreground/50 text-base">От</span>{" "}
               {startPrice.toFixed(2)}{" "}
-              {product.variants[0].calculated_price?.currency_code?.toUpperCase()}
+              {product.variants[0].prices?.[0]?.currency_code?.toUpperCase()}
             </p>
           )}
           <Tooltip>

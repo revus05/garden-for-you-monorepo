@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import telegram from "@/images/telegram.svg";
 import { Button } from "./button";
 import {
@@ -18,17 +19,27 @@ interface TelegramModalProps {
 }
 
 export const TelegramModal = ({ telegramUrl, children }: TelegramModalProps) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(telegramUrl)}`;
+
+  const trigger = children ?? (
+    <button type="button" className="hover:opacity-80 transition-opacity cursor-pointer">
+      <Image src={telegram} width={32} height={32} alt="telegram" />
+    </button>
+  );
+
+  if (!mounted) {
+    return <>{trigger}</>;
+  }
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        {children ?? (
-          <button type="button" className="hover:opacity-80 transition-opacity cursor-pointer">
-            <Image src={telegram} width={32} height={32} alt="telegram" />
-          </button>
-        )}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-xs text-center">
         <DialogHeader>
           <DialogTitle className="text-center">Telegram</DialogTitle>

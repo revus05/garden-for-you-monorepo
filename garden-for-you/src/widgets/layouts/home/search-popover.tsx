@@ -118,12 +118,12 @@ export const SearchPopover = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{product.title}</p>
-                  {product.variants?.[0]?.calculated_price && (
+                  {product.variants?.[0]?.prices?.[0] && (
                     <p className="text-sm text-muted-foreground">
-                      {product.variants[0].calculated_price.calculated_amount?.toFixed(
+                      {product.variants[0].prices[0].amount?.toFixed(
                         2,
                       )}{" "}
-                      {product.variants[0].calculated_price.currency_code?.toUpperCase()}
+                      {product.variants[0].prices[0].currency_code?.toUpperCase()}
                     </p>
                   )}
                 </div>
