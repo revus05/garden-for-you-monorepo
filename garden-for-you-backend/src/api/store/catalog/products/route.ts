@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { Logger } from "@medusajs/framework/types"
 
 type CategoryNode = {
   id: string
@@ -32,6 +33,7 @@ const VALID_ORDERS = new Set(["-created_at", "created_at", "-title", "title"])
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const startTime = Date.now()
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+  const logger = req.scope.resolve(ContainerRegistrationKeys.LOGGER) as Logger
   const q = req.query as Record<string, unknown>
 
   const categoryIds = parseArrayParam(q.category_id)
@@ -75,7 +77,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       resolvedCategoryIds.push(...collectDescendantIds(parent.category_children ?? []))
     }
   }
-  console.log(`[PERF] Category resolution: ${Date.now() - categoryStartTime}ms`)
+  logger.info(`[PERF] Category resolution: ${Date.now() - categoryStartTime}ms`)
 
   // Build product filters
   const productFilter: Record<string, unknown> = { status: "published" }
@@ -120,12 +122,12 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
   const productStartTime = Date.now()
   const { data: products, metadata } = await query.graph(graphOptions)
-  console.log(`[PERF] Product query: ${Date.now() - productStartTime}ms`)
+  logger.info(`[PERF] Product query: ${Date.now() - productStartTime}ms`)
 
   const count = (metadata as { count?: number } | undefined)?.count ?? 0
   const nextOffset = count > offset + limit ? offset + limit : undefined
 
-  console.log(`[PERF] Total time: ${Date.now() - startTime}ms`)
+  logger.info(`[PERF] Total time: ${Date.now() - startTime}ms`)
 
   res.status(200).json({ products, count, next_offset: nextOffset })
 }
