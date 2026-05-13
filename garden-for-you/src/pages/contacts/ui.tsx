@@ -70,8 +70,62 @@ const ContactsPage = async () => {
                   +375 (29) 106-65-56
                 </Link>
                 <TelegramModal telegramUrl="https://t.me/alex_key1">
-                  <button type="button" className="hover:opacity-80 transition-opacity cursor-pointer">
-                    <Image src={telegram} width={32} height={32} alt="telegram" />
+                  <button
+                    type="button"
+                    className="hover:opacity-80 transition-opacity cursor-pointer"
+                  >
+                    <Image
+                      src={telegram}
+                      width={32}
+                      height={32}
+                      alt="telegram"
+                    />
+                  </button>
+                </TelegramModal>
+              </div>
+            </div>
+            <div className="flex lg:flex-row flex-col lg:gap-2 gap-0.5 items-center">
+              <span className="text-center flex items-center gap-2">
+                Сергей:{" "}
+              </span>
+              <div className="flex items-center gap-2">
+                <Link href="tel:+375447721633" className="hover:underline">
+                  +375 (44) 772-16-33
+                </Link>
+                <TelegramModal telegramUrl="https://t.me/SBerd91">
+                  <button
+                    type="button"
+                    className="hover:opacity-80 transition-opacity cursor-pointer"
+                  >
+                    <Image
+                      src={telegram}
+                      width={32}
+                      height={32}
+                      alt="telegram"
+                    />
+                  </button>
+                </TelegramModal>
+              </div>
+            </div>
+            <div className="flex lg:flex-row flex-col lg:gap-2 gap-0.5 items-center">
+              <span className="text-center flex items-center gap-2">
+                Анатолий:{" "}
+              </span>
+              <div className="flex items-center gap-2">
+                <Link href="tel:+375297711088" className="hover:underline">
+                  +375 (29) 771-10-88
+                </Link>
+                <TelegramModal telegramUrl="https://t.me/anatolijber1">
+                  <button
+                    type="button"
+                    className="hover:opacity-80 transition-opacity cursor-pointer"
+                  >
+                    <Image
+                      src={telegram}
+                      width={32}
+                      height={32}
+                      alt="telegram"
+                    />
                   </button>
                 </TelegramModal>
               </div>
@@ -82,7 +136,7 @@ const ContactsPage = async () => {
         <div className="min-h-125">
           <iframe
             title="Яндекс карта"
-            src="https://yandex.ru/map-widget/v1/?um=constructor%3Ae5089923a4e2685886697236ae92f5e0eb12726f30c58d73cb59846fe2a82f8e&amp;source=constructor"
+            src="https://yandex.ru/map-widget/v1/?um=constructor%3Aba6b1c13e3e2452a04495d797c70a5fb166f910d96bcdf7eab3b00209dc24a66&amp;source=constructor"
             className="w-full h-full rounded-xl"
           />
         </div>

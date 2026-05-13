@@ -52,9 +52,9 @@ export const Footer = () => {
         <div className="flex flex-col gap-2">
           <iframe
             title="Яндекс карта"
-            src="https://yandex.ru/map-widget/v1/?um=constructor%3Ae5089923a4e2685886697236ae92f5e0eb12726f30c58d73cb59846fe2a82f8e&amp;source=constructor"
+            src="https://yandex.ru/map-widget/v1/?um=constructor%3Aba6b1c13e3e2452a04495d797c70a5fb166f910d96bcdf7eab3b00209dc24a66&amp;source=constructor"
             width="500"
-            height="300"
+            height="400"
             className="w-full"
           />
           <div className="flex gap-2 items-center">
@@ -65,7 +65,42 @@ export const Footer = () => {
               </Link>
             </span>
             <TelegramModal telegramUrl="https://t.me/alex_key1">
-              <button type="button" className="hover:opacity-80 transition-opacity cursor-pointer">
+              <button
+                type="button"
+                className="hover:opacity-80 transition-opacity cursor-pointer"
+              >
+                <Image src={telegram} width={32} height={32} alt="telegram" />
+              </button>
+            </TelegramModal>
+          </div>
+          <div className="flex gap-2 items-center">
+            <span>
+              Сергей:{" "}
+              <Link href="tel:+375447721633" className="hover:underline">
+                +375 (44) 772-16-33
+              </Link>
+            </span>
+            <TelegramModal telegramUrl="https://t.me/SBerd91">
+              <button
+                type="button"
+                className="hover:opacity-80 transition-opacity cursor-pointer"
+              >
+                <Image src={telegram} width={32} height={32} alt="telegram" />
+              </button>
+            </TelegramModal>
+          </div>
+          <div className="flex gap-2 items-center">
+            <span>
+              Анатолий:{" "}
+              <Link href="tel:+375297711088" className="hover:underline">
+                +375 (29) 771-10-88
+              </Link>
+            </span>
+            <TelegramModal telegramUrl="https://t.me/anatolijber1">
+              <button
+                type="button"
+                className="hover:opacity-80 transition-opacity cursor-pointer"
+              >
                 <Image src={telegram} width={32} height={32} alt="telegram" />
               </button>
             </TelegramModal>
