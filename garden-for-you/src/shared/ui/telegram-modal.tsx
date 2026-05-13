@@ -18,7 +18,10 @@ interface TelegramModalProps {
   children?: React.ReactNode;
 }
 
-export const TelegramModal = ({ telegramUrl, children }: TelegramModalProps) => {
+export const TelegramModal = ({
+  telegramUrl,
+  children,
+}: TelegramModalProps) => {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -28,7 +31,10 @@ export const TelegramModal = ({ telegramUrl, children }: TelegramModalProps) => 
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(telegramUrl)}`;
 
   const trigger = children ?? (
-    <button type="button" className="hover:opacity-80 transition-opacity cursor-pointer">
+    <button
+      type="button"
+      className="hover:opacity-80 transition-opacity cursor-pointer"
+    >
       <Image src={telegram} width={32} height={32} alt="telegram" />
     </button>
   );
@@ -41,7 +47,7 @@ export const TelegramModal = ({ telegramUrl, children }: TelegramModalProps) => 
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-w-xs text-center">
-        <DialogHeader>
+        <DialogHeader className="pr-0">
           <DialogTitle className="text-center">Telegram</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center gap-4">
