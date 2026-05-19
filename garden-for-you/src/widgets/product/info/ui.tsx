@@ -3,7 +3,7 @@
 import type { StoreProduct } from "@medusajs/types";
 import { Scale, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import { type FC, useState } from "react";
+import { type FC, Fragment, useState } from "react";
 import {
   type ComparisonProduct,
   MAX_COMPARISON_COUNT,
@@ -279,19 +279,29 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
       {specs.length > 0 && (
         <div className="flex flex-col gap-2">
           <h2 className="font-bold text-lg">Характеристики</h2>
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-            {specs.map((spec) => (
-              <div key={spec.id} className="contents">
-                <dt className="text-muted-foreground">
+          <div className="grid grid-cols-[max-content_1fr] text-sm rounded-xl overflow-hidden border">
+            {specs.map((spec, i) => (
+              <Fragment key={spec.id}>
+                <div
+                  className={cn(
+                    "bg-muted/50 px-4 py-2.5 text-muted-foreground whitespace-nowrap",
+                    i > 0 && "border-t border-border/50",
+                  )}
+                >
                   {spec.definition.name}
-                </dt>
-                <dd className="font-medium text-justify">
+                </div>
+                <div
+                  className={cn(
+                    "px-4 py-2.5 font-medium",
+                    i > 0 && "border-t border-border/50",
+                  )}
+                >
                   {spec.value}
                   {spec.definition.unit ? ` ${spec.definition.unit}` : ""}
-                </dd>
-              </div>
+                </div>
+              </Fragment>
             ))}
-          </dl>
+          </div>
         </div>
       )}
     </div>

@@ -23,7 +23,7 @@ export const PaymentAndShippingStaticContent = () => {
           Оплата и доставка
         </h1>
         <p className="text-muted-foreground text-lg">
-          Условия оплаты и доставки товаров в магазине «Сад для вас»
+          Условия оплаты и доставки товаров в питомнике «Сад для вас»
         </p>
       </div>
 
@@ -184,7 +184,7 @@ export const PaymentAndShippingStaticContent = () => {
                   <ul className="flex flex-col gap-4">
                     <li className="flex gap-3">
                       <span className="text-green-600 font-medium">•</span> В
-                      кассу розничного магазина.
+                      кассу розничного питомника.
                     </li>
                   </ul>
                 </div>

@@ -170,7 +170,7 @@ export function ReviewsPageClient({ initialData }: ReviewsPageClientProps) {
                 {review.store_reply ? (
                   <div className="mt-4 rounded-3xl border border-primary/20 bg-background/80 p-4">
                     <p className="text-sm font-bold text-primary">
-                      Ответ магазина
+                      Ответ питомника
                     </p>
                     <p className="mt-2 whitespace-pre-line text-sm leading-6 text-foreground/90">
                       {review.store_reply}
@@ -195,7 +195,7 @@ export function ReviewsPageClient({ initialData }: ReviewsPageClientProps) {
 
         {!sortLoading && reviews.length === 0 ? (
           <div className="rounded-[24px] bg-background-secondary p-5 text-sm text-muted-foreground shadow-md">
-            Пока отзывов о магазине нет. Нажмите «Оставить отзыв», чтобы
+            Пока отзывов о питомнике нет. Нажмите «Оставить отзыв», чтобы
             написать первым.
           </div>
         ) : null}

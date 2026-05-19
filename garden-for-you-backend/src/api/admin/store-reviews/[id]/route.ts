@@ -36,7 +36,7 @@ export async function PATCH(
 
   if (storeReply !== null && storeReply.length > 4000) {
     res.status(400).json({
-      message: "Ответ магазина не должен быть длиннее 4000 символов.",
+      message: "Ответ питомника не должен быть длиннее 4000 символов.",
     })
     return
   }

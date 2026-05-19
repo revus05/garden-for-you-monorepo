@@ -4,7 +4,7 @@ export { default } from "@/pages/offer-agreement";
 export const metadata: Metadata = {
   title: "Договор-оферта",
   description:
-    "Публичная оферта интернет-магазина Сад Для Вас. Условия договора купли-продажи товаров.",
+    "Публичная оферта питомника Сад Для Вас. Условия договора купли-продажи товаров.",
   robots: {
     index: true,
     follow: false,

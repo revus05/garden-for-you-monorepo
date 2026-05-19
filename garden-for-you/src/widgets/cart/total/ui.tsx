@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { paths } from "@/shared/constants/navigation";
 import { formatPrice, useAppSelector } from "@/shared/lib";
 import {
   Button,
@@ -15,17 +13,12 @@ import {
 
 export const CartTotal = () => {
   const cart = useAppSelector((state) => state.cartSlice.cart);
-  const user = useAppSelector((state) => state.userSlice.user);
 
   if (!cart || !cart?.items?.length) {
     return null;
   }
 
   const itemsTotal = cart.total ?? 0;
-
-  const checkoutHref = user
-    ? paths.checkout
-    : `${paths.signIn}?path=${paths.checkout}`;
 
   return (
     <Card className="w-full md:w-96 bg-card/95 lg:sticky lg:top-24">
@@ -84,8 +77,8 @@ export const CartTotal = () => {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full" size="lg" asChild>
-          <Link href={checkoutHref}>Перейти к оформлению</Link>
+        <Button className="w-full" size="lg" disabled>
+          Оформление заказов временно недоступно
         </Button>
       </CardFooter>
     </Card>

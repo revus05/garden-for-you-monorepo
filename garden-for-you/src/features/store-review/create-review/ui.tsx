@@ -114,7 +114,7 @@ export function CreateStoreReviewForm({
               <input type="hidden" {...register("phone")} />
 
               <Field data-invalid={!!errors.rating}>
-                <FieldLabel>Оцените наш магазин</FieldLabel>
+                <FieldLabel>Оцените наш питомник</FieldLabel>
                 <FieldContent className="flex justify-center">
                   <Controller
                     control={control}

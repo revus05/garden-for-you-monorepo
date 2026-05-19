@@ -42,7 +42,7 @@ export async function generateMetadata({
 
   const rawDescription = product.description
     ? stripHtml(product.description)
-    : `Купить ${product.title} с доставкой по Беларуси в интернет-магазине Сад Для Вас`;
+    : `Купить ${product.title} с доставкой по Беларуси в питомнике Сад Для Вас`;
   const description =
     rawDescription.length > 160
       ? rawDescription.slice(0, 157) + "..."

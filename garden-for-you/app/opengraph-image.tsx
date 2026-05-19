@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Сад Для Вас — интернет-магазин растений и товаров для сада";
+export const alt = "Сад Для Вас — питомник растений и товаров для сада";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -97,7 +97,7 @@ export default function OgImage() {
             display: "flex",
           }}
         >
-          Интернет-магазин растений и товаров для сада в Беларуси
+          Питомник растений и товаров для сада в Беларуси
         </div>
 
         {/* Domain */}

@@ -29,7 +29,7 @@ const ContactsPage = async () => {
           />
         </div>
         <p className="text-muted-foreground text-lg">
-          Свяжитесь с нами или приходите в магазин «Сад Для Вас»
+          Свяжитесь с нами или приходите в питомник «Сад Для Вас»
         </p>
       </div>
 

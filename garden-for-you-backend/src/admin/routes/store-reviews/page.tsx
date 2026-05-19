@@ -6,7 +6,7 @@ import { useMemo, useState } from "react"
 import { sdk } from "../../lib/sdk"
 
 export const config = defineRouteConfig({
-  label: "Отзывы о магазине",
+  label: "Отзывы о питомнике",
   icon: ChatBubbleLeftRight,
   rank: 42,
 })
@@ -115,7 +115,7 @@ const StoreReviewsPage = () => {
   return (
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
-        <Heading level="h1">Отзывы о магазине</Heading>
+        <Heading level="h1">Отзывы о питомнике</Heading>
         <Text size="small" className="text-ui-fg-muted">
           {sorted.length} отзывов
         </Text>
@@ -173,7 +173,7 @@ const StoreReviewsPage = () => {
 
                 <div className="mt-4 space-y-2">
                   <Text size="small" weight="plus">
-                    Ответ магазина
+                    Ответ питомника
                   </Text>
                   <Textarea
                     rows={4}
