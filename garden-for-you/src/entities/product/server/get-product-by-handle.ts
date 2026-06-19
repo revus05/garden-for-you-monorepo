@@ -1,19 +1,11 @@
 import "server-only";
-import { requireEnv } from "@/shared/lib";
+import { CACHE_TAGS, productHandleTag } from "@/shared/cache";
+import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
 import type { Product, ProductSpec } from "../model/types";
 
-const NEXT_PUBLIC_REGION_ID = requireEnv(
-  "NEXT_PUBLIC_REGION_ID",
-  process.env.NEXT_PUBLIC_REGION_ID,
-);
-
-const MEDUSA_BACKEND_URL =
-  process.env.MEDUSA_BACKEND_URL || process.env.NEXT_PUBLIC_MEDUSA_URL || "";
-
-const MEDUSA_PUBLISHABLE_KEY = requireEnv(
-  "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
-  process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
-);
+const NEXT_PUBLIC_REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
+const MEDUSA_BACKEND_URL = resolveMedusaBaseUrl();
+const MEDUSA_PUBLISHABLE_KEY = publicEnv.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
 
 const STORE_HEADERS = {
   "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY,
@@ -28,7 +20,7 @@ async function fetchProductSpecs(
       `${MEDUSA_BACKEND_URL}/store/products/${productId}/specs`,
       {
         headers: STORE_HEADERS,
-        next: { tags: ["products", `product-handle-${handle}`] },
+        next: { tags: [CACHE_TAGS.products, productHandleTag(handle)] },
       },
     );
 
@@ -60,7 +52,7 @@ export async function getProductByHandle(
     `${MEDUSA_BACKEND_URL}/store/products?${params}`,
     {
       headers: STORE_HEADERS,
-      next: { tags: ["products", `product-handle-${handle}`] },
+      next: { tags: [CACHE_TAGS.products, productHandleTag(handle)] },
     },
   );
 

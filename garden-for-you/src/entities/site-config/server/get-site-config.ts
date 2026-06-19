@@ -1,13 +1,8 @@
 import "server-only";
-import { requireEnv } from "@/shared/lib";
+import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
 
-const MEDUSA_BACKEND_URL =
-    process.env.MEDUSA_BACKEND_URL ||
-    requireEnv("NEXT_PUBLIC_MEDUSA_URL", process.env.NEXT_PUBLIC_MEDUSA_URL);
-const MEDUSA_PUBLISHABLE_KEY = requireEnv(
-    "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
-    process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
-);
+const MEDUSA_BACKEND_URL = resolveMedusaBaseUrl();
+const MEDUSA_PUBLISHABLE_KEY = publicEnv.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
 
 export async function getSiteConfig(): Promise<Record<string, string>> {
     const url = `${MEDUSA_BACKEND_URL}/store/site-config`;

@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { getAllProductHandles } from "@/entities/product/server";
+import { publicEnv } from "@/shared/config/env";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://saddlyavas.by";
+const siteUrl = publicEnv.NEXT_PUBLIC_SITE_URL;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const handles = await getAllProductHandles();

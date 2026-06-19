@@ -6,6 +6,7 @@ import { Providers } from "@/app/providers";
 import { getServerCart } from "@/entities/cart/server/get-server-cart";
 import { getServerComparison } from "@/entities/comparison/server/get-server-comparison";
 import { getServerUser } from "@/entities/user/server/get-server-user";
+import { publicEnv } from "@/shared/config/env";
 
 const notoSans = Noto_Sans({ subsets: ["cyrillic"], variable: "--font-sans" });
 const notoSerif = Noto_Serif({
@@ -17,7 +18,7 @@ const ebGaramond = EB_Garamond({
   variable: "--font-serif",
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://saddlyavas.by";
+const siteUrl = publicEnv.NEXT_PUBLIC_SITE_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

@@ -1,9 +1,11 @@
 import { revalidateTag } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
+import { isKnownTag } from "@/shared/cache";
+import { serverEnv } from "@/shared/config/env";
 
 export async function GET(req: NextRequest) {
   const secret = req.headers.get("x-revalidate-secret");
-  if (secret !== process.env.REVALIDATE_SECRET) {
+  if (secret !== serverEnv.REVALIDATE_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -13,9 +15,12 @@ export async function GET(req: NextRequest) {
   }
 
   const tags = tagsParam.split(",").filter(Boolean);
-  for (const tag of tags) {
+  const validTags = tags.filter(isKnownTag);
+  const ignored = tags.filter((tag) => !isKnownTag(tag));
+
+  for (const tag of validTags) {
     revalidateTag(tag, {});
   }
 
-  return NextResponse.json({ revalidated: true, tags });
+  return NextResponse.json({ revalidated: true, tags: validTags, ignored });
 }

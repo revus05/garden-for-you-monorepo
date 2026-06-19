@@ -40,6 +40,36 @@ if (process.env.RESEND_API_KEY && process.env.RESEND_FROM) {
   })
 }
 
+const hasCloudinary =
+  process.env.CLOUDINARY_API_KEY &&
+  process.env.CLOUDINARY_API_SECRET &&
+  process.env.CLOUDINARY_CLOUD_NAME
+
+const fileProviders = hasCloudinary
+  ? [
+      {
+        resolve: "./src/providers/file-cloudinary",
+        id: "cloudinary",
+        options: {
+          apiKey: process.env.CLOUDINARY_API_KEY,
+          apiSecret: process.env.CLOUDINARY_API_SECRET,
+          cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+          folderName: process.env.CLOUDINARY_FOLDER_NAME || "medusa",
+          secure: true,
+        },
+      },
+    ]
+  : [
+      {
+        resolve: "@medusajs/file-local",
+        id: "local",
+        options: {
+          upload_dir: "static",
+          backend_url: `${process.env.MEDUSA_BACKEND_URL || ""}/static`,
+        },
+      },
+    ]
+
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
@@ -81,19 +111,7 @@ module.exports = defineConfig({
     {
       resolve: "@medusajs/medusa/file",
       options: {
-        providers: [
-          {
-            resolve: "./src/providers/file-cloudinary",
-            id: "cloudinary",
-            options: {
-              apiKey: process.env.CLOUDINARY_API_KEY,
-              apiSecret: process.env.CLOUDINARY_API_SECRET,
-              cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-              folderName: process.env.CLOUDINARY_FOLDER_NAME || "medusa",
-              secure: true,
-            },
-          },
-        ],
+        providers: fileProviders,
       },
     },
   ],

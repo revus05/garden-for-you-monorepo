@@ -1,24 +1,15 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import { requireEnv } from "@/shared/lib";
+import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
 import { createServerSdk } from "@/shared/lib/server-sdk";
 import { COMPARISON_COOKIE } from "@/shared/config/comparison";
 import type { ComparisonProduct } from "../model";
 import type { ProductSpec, StoreProductVariantWithPrices } from "@/entities/product";
 
-const NEXT_PUBLIC_REGION_ID = requireEnv(
-  "NEXT_PUBLIC_REGION_ID",
-  process.env.NEXT_PUBLIC_REGION_ID,
-);
-
-const MEDUSA_BACKEND_URL =
-  process.env.MEDUSA_BACKEND_URL || process.env.NEXT_PUBLIC_MEDUSA_URL || "";
-
-const MEDUSA_PUBLISHABLE_KEY = requireEnv(
-  "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
-  process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
-);
+const NEXT_PUBLIC_REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
+const MEDUSA_BACKEND_URL = resolveMedusaBaseUrl();
+const MEDUSA_PUBLISHABLE_KEY = publicEnv.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
 
 async function fetchProductSpecs(productId: string): Promise<ProductSpec[]> {
   try {

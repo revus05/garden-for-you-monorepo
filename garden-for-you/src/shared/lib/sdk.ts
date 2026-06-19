@@ -1,27 +1,11 @@
 import Medusa from "@medusajs/js-sdk";
 import { AUTH_TOKEN_COOKIE } from "@/shared/config/auth";
-import { requireEnv } from "./require-env";
-
-const NEXT_PUBLIC_MEDUSA_URL = requireEnv(
-  "NEXT_PUBLIC_MEDUSA_URL",
-  process.env.NEXT_PUBLIC_MEDUSA_URL,
-);
-const MEDUSA_BACKEND_URL = process.env.MEDUSA_BACKEND_URL;
-const MEDUSA_PUBLISHABLE_KEY = requireEnv(
-  "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
-  process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
-);
-
-function resolveMedusaUrl(): string {
-  return typeof window === "undefined"
-    ? MEDUSA_BACKEND_URL || NEXT_PUBLIC_MEDUSA_URL
-    : NEXT_PUBLIC_MEDUSA_URL;
-}
+import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
 
 export function createSdk({ token }: { token?: string } = {}) {
   return new Medusa({
-    baseUrl: resolveMedusaUrl(),
-    publishableKey: MEDUSA_PUBLISHABLE_KEY,
+    baseUrl: resolveMedusaBaseUrl(),
+    publishableKey: publicEnv.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
     debug: process.env.NODE_ENV === "development",
     globalHeaders: token ? { Authorization: `Bearer ${token}` } : undefined,
     auth: {

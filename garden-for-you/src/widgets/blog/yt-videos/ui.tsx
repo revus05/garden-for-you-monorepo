@@ -1,15 +1,12 @@
 import Image from "next/image";
 import leafPlant from "@/images/leaf-plant.png";
-import { requireEnv } from "@/shared/lib";
+import { publicEnv } from "@/shared/config/env";
 
 type Videos = { url: string }[];
 
 export const BlogYouTubeVideos = async () => {
   const response = await fetch(
-    `${requireEnv(
-      "NEXT_PUBLIC_CONTENT_TABLE_URL",
-      process.env.NEXT_PUBLIC_CONTENT_TABLE_URL,
-    )}/Видео для Блога`,
+    `${publicEnv.NEXT_PUBLIC_CONTENT_TABLE_URL}/Видео для Блога`,
   );
 
   const data = (await response.json()) as Videos;

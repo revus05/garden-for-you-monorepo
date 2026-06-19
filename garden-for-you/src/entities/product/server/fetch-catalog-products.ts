@@ -1,6 +1,7 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
-import { requireEnv, createSdk } from "@/shared/lib";
+import { createSdk } from "@/shared/lib";
+import { publicEnv } from "@/shared/config/env";
 import type { StoreProductCategory } from "@medusajs/types";
 import { CATALOG_PRODUCTS_PAGE_SIZE } from "../model";
 import type { CatalogFilters, CatalogProductsPage } from "../model/types";
@@ -44,10 +45,7 @@ export const getCachedCategoryTree = unstable_cache(
   { revalidate: 300 },
 );
 
-const REGION_ID = requireEnv(
-  "NEXT_PUBLIC_REGION_ID",
-  process.env.NEXT_PUBLIC_REGION_ID,
-);
+const REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
 
 // Direct server-side fetch — no loopback HTTP, calls Medusa directly
 export async function fetchCatalogProductsPageServer({

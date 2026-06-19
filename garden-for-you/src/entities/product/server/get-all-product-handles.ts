@@ -1,18 +1,10 @@
 import "server-only";
-import { requireEnv } from "@/shared/lib";
+import { CACHE_TAGS } from "@/shared/cache";
+import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
 
-const NEXT_PUBLIC_REGION_ID = requireEnv(
-  "NEXT_PUBLIC_REGION_ID",
-  process.env.NEXT_PUBLIC_REGION_ID,
-);
-
-const MEDUSA_BACKEND_URL =
-  process.env.MEDUSA_BACKEND_URL || process.env.NEXT_PUBLIC_MEDUSA_URL || "";
-
-const MEDUSA_PUBLISHABLE_KEY = requireEnv(
-  "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
-  process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY,
-);
+const NEXT_PUBLIC_REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
+const MEDUSA_BACKEND_URL = resolveMedusaBaseUrl();
+const MEDUSA_PUBLISHABLE_KEY = publicEnv.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
 
 export async function getAllProductHandles(): Promise<string[]> {
   const handles: string[] = [];
@@ -31,7 +23,7 @@ export async function getAllProductHandles(): Promise<string[]> {
       `${MEDUSA_BACKEND_URL}/store/products?${params}`,
       {
         headers: { "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY },
-        next: { tags: ["products"] },
+        next: { tags: [CACHE_TAGS.products] },
       },
     );
 

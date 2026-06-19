@@ -5,6 +5,7 @@ import {
   getProductByHandle,
 } from "@/entities/product/server";
 import ProductPageView from "@/pages/product";
+import { publicEnv } from "@/shared/config/env";
 
 export const dynamicParams = true;
 export const revalidate = 3600; // fallback ISR: refresh at most every hour
@@ -34,7 +35,7 @@ export async function generateMetadata({
   if (!result) return { title: "Товар не найден" };
 
   const { product } = result;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://saddlyavas.by";
+  const siteUrl = publicEnv.NEXT_PUBLIC_SITE_URL;
   const productUrl = `${siteUrl}/product/${handle}`;
 
   const rawImageUrl = product.thumbnail ?? product.images?.[0]?.url;

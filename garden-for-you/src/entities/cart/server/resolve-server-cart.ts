@@ -2,14 +2,11 @@ import "server-only";
 import { cookies } from "next/headers";
 import { AUTH_TOKEN_COOKIE } from "@/shared/config/auth";
 import { CART_ID_COOKIE } from "@/shared/config/cart";
-import { requireEnv } from "@/shared/lib";
+import { publicEnv } from "@/shared/config/env";
 import { createServerSdk } from "@/shared/lib/server-sdk";
 import type { Cart } from "../model/types";
 
-const REGION_ID = requireEnv(
-  "NEXT_PUBLIC_REGION_ID",
-  process.env.NEXT_PUBLIC_REGION_ID,
-);
+const REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
 
 export async function resolveServerCart(options?: {
   createIfMissing?: boolean;

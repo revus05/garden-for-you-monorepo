@@ -1,4 +1,5 @@
-import { requireEnv, sdk } from "@/shared/lib";
+import { sdk } from "@/shared/lib";
+import { publicEnv } from "@/shared/config/env";
 import { CATALOG_PRODUCTS_PAGE_SIZE } from "../model";
 import type {
   CatalogFilters,
@@ -6,10 +7,7 @@ import type {
   ProductCategory,
 } from "../model/types";
 
-const NEXT_PUBLIC_REGION_ID = requireEnv(
-  "NEXT_PUBLIC_REGION_ID",
-  process.env.NEXT_PUBLIC_REGION_ID,
-);
+const NEXT_PUBLIC_REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
 
 function buildCatalogParams(filters: CatalogFilters, offset: number): URLSearchParams {
   const params = new URLSearchParams();
@@ -44,9 +42,7 @@ export async function fetchCatalogProductsPage({
 
   // Route through Next.js API to avoid CORS and do server-side category expansion
   const isServer = typeof window === "undefined";
-  const baseUrl = isServer
-    ? (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000")
-    : "";
+  const baseUrl = isServer ? publicEnv.NEXT_PUBLIC_SITE_URL : "";
   const url = `${baseUrl}/api/catalog/products?${params.toString()}`;
 
   const response = await fetch(url);
