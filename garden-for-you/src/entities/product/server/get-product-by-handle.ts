@@ -1,28 +1,19 @@
 import "server-only";
+import { medusaFetch } from "@/shared/api/medusa-fetch";
 import { CACHE_TAGS, productHandleTag } from "@/shared/cache";
-import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
+import { publicEnv } from "@/shared/config/env";
 import type { Product, ProductSpec } from "../model/types";
 
 const NEXT_PUBLIC_REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
-const MEDUSA_BACKEND_URL = resolveMedusaBaseUrl();
-const MEDUSA_PUBLISHABLE_KEY = publicEnv.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
-
-const STORE_HEADERS = {
-  "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY,
-};
 
 async function fetchProductSpecs(
   productId: string,
   handle: string,
 ): Promise<ProductSpec[]> {
   try {
-    const res = await fetch(
-      `${MEDUSA_BACKEND_URL}/store/products/${productId}/specs`,
-      {
-        headers: STORE_HEADERS,
-        next: { tags: [CACHE_TAGS.products, productHandleTag(handle)] },
-      },
-    );
+    const res = await medusaFetch(`/store/products/${productId}/specs`, {
+      next: { tags: [CACHE_TAGS.products, productHandleTag(handle)] },
+    });
 
     if (!res.ok) return [];
 
@@ -48,13 +39,10 @@ export async function getProductByHandle(
     fields: "+variants.inventory_quantity,+variants.manage_inventory,+variants.allow_backorder,*variants.options",
   });
 
-  const res = await fetch(
-    `${MEDUSA_BACKEND_URL}/store/products?${params}`,
-    {
-      headers: STORE_HEADERS,
-      next: { tags: [CACHE_TAGS.products, productHandleTag(handle)] },
-    },
-  );
+  const res = await medusaFetch("/store/products", {
+    searchParams: params,
+    next: { tags: [CACHE_TAGS.products, productHandleTag(handle)] },
+  });
 
   if (!res.ok) return null;
 

@@ -1,6 +1,7 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import { createSdk } from "@/shared/lib";
+import { CACHE_TAGS } from "@/shared/cache";
 import { publicEnv } from "@/shared/config/env";
 import type { StoreProductCategory } from "@medusajs/types";
 import { CATALOG_PRODUCTS_PAGE_SIZE } from "../model";
@@ -47,6 +48,40 @@ export const getCachedCategoryTree = unstable_cache(
 
 const REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
 
+type CachedProductsArgs = {
+  categoryIds: string[];
+  searchQuery?: string;
+  orderBy: string;
+  limit: number;
+  offset: number;
+};
+
+// Cached SDK product.list — keyed on its args, invalidated by the `products` tag.
+const getCachedProductsPage = unstable_cache(
+  async ({
+    categoryIds,
+    searchQuery,
+    orderBy,
+    limit,
+    offset,
+  }: CachedProductsArgs) => {
+    const sdk = createSdk();
+    const { products, count } = await sdk.store.product.list({
+      limit,
+      offset,
+      region_id: REGION_ID,
+      ...(categoryIds.length > 0 ? { category_id: categoryIds } : {}),
+      ...(searchQuery ? { q: searchQuery } : {}),
+      order: orderBy,
+      fields:
+        "id,handle,title,thumbnail,+variants.id,+variants.inventory_quantity,+variants.manage_inventory,+variants.allow_backorder,+variants.prices.amount,+variants.prices.currency_code",
+    });
+    return { products, count };
+  },
+  ["catalog-products"],
+  { revalidate: 60, tags: [CACHE_TAGS.products] },
+);
+
 // Direct server-side fetch — no loopback HTTP, calls Medusa directly
 export async function fetchCatalogProductsPageServer({
   filters,
@@ -81,18 +116,12 @@ export async function fetchCatalogProductsPageServer({
     }
   }
 
-  const sdk = createSdk();
-  const { products, count } = await sdk.store.product.list({
+  const { products, count } = await getCachedProductsPage({
+    categoryIds: resolvedCategoryIds,
+    searchQuery: filters.searchQuery,
+    orderBy: filters.orderBy,
     limit,
     offset,
-    region_id: REGION_ID,
-    ...(resolvedCategoryIds.length > 0
-      ? { category_id: resolvedCategoryIds }
-      : {}),
-    ...(filters.searchQuery ? { q: filters.searchQuery } : {}),
-    order: filters.orderBy,
-    fields:
-      "id,handle,title,thumbnail,+variants.id,+variants.inventory_quantity,+variants.manage_inventory,+variants.allow_backorder,+variants.prices.amount,+variants.prices.currency_code",
   });
 
   const nextOffset = count > offset + limit ? offset + limit : undefined;

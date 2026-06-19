@@ -1,17 +1,8 @@
 import "server-only";
-import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
-
-const MEDUSA_BACKEND_URL = resolveMedusaBaseUrl();
-const MEDUSA_PUBLISHABLE_KEY = publicEnv.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
+import { medusaFetch } from "@/shared/api/medusa-fetch";
 
 export async function getSiteConfig(): Promise<Record<string, string>> {
-    const url = `${MEDUSA_BACKEND_URL}/store/site-config`;
-
-    const response = await fetch(url, {
-        headers: {
-            accept: "application/json",
-            "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY,
-        },
+    const response = await medusaFetch("/store/site-config", {
         next: { revalidate: 60 },
     });
 

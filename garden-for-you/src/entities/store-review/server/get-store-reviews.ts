@@ -1,10 +1,7 @@
 import "server-only";
-import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
+import { medusaFetch } from "@/shared/api/medusa-fetch";
 import { STORE_REVIEWS_PAGE_SIZE } from "../model/constants";
 import type { StoreReviewSort, StoreReviewsListResponse } from "../model/types";
-
-const MEDUSA_BACKEND_URL = resolveMedusaBaseUrl();
-const MEDUSA_PUBLISHABLE_KEY = publicEnv.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
 
 export type GetStoreReviewsParams = {
   limit?: number;
@@ -26,15 +23,9 @@ export async function getStoreReviews(
     searchParams.set("sort", params.sort);
   }
 
-  const qs = searchParams.toString();
-  const url = `${MEDUSA_BACKEND_URL}/store/store-reviews${qs ? `?${qs}` : ""}`;
-
-  const response = await fetch(url, {
+  const response = await medusaFetch("/store/store-reviews", {
     method: "GET",
-    headers: {
-      accept: "application/json",
-      "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY,
-    },
+    searchParams,
     cache: "no-store",
   });
 

@@ -1,10 +1,9 @@
 import "server-only";
+import { medusaFetch } from "@/shared/api/medusa-fetch";
 import { CACHE_TAGS } from "@/shared/cache";
-import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
+import { publicEnv } from "@/shared/config/env";
 
 const NEXT_PUBLIC_REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
-const MEDUSA_BACKEND_URL = resolveMedusaBaseUrl();
-const MEDUSA_PUBLISHABLE_KEY = publicEnv.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
 
 export async function getAllProductHandles(): Promise<string[]> {
   const handles: string[] = [];
@@ -19,13 +18,10 @@ export async function getAllProductHandles(): Promise<string[]> {
       fields: "handle",
     });
 
-    const res = await fetch(
-      `${MEDUSA_BACKEND_URL}/store/products?${params}`,
-      {
-        headers: { "x-publishable-api-key": MEDUSA_PUBLISHABLE_KEY },
-        next: { tags: [CACHE_TAGS.products] },
-      },
-    );
+    const res = await medusaFetch("/store/products", {
+      searchParams: params,
+      next: { tags: [CACHE_TAGS.products] },
+    });
 
     if (!res.ok) break;
 
