@@ -19,11 +19,6 @@ export default async function Page({
   const params = await searchParams;
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: catalogQueryKeys.categories(),
-    queryFn: fetchCatalogCategories,
-  });
-
   const rawCategories =
     typeof params.categories === "string" ? params.categories : "";
   const selectedCategoryIds = rawCategories
@@ -42,11 +37,17 @@ export default async function Page({
     orderBy,
   };
 
-  await queryClient.prefetchInfiniteQuery({
-    queryKey: catalogQueryKeys.products(filters),
-    queryFn: () => fetchCatalogProductsPageServer({ filters, offset: 0 }),
-    initialPageParam: 0,
-  });
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: catalogQueryKeys.categories(),
+      queryFn: fetchCatalogCategories,
+    }),
+    queryClient.prefetchInfiniteQuery({
+      queryKey: catalogQueryKeys.products(filters),
+      queryFn: () => fetchCatalogProductsPageServer({ filters, offset: 0 }),
+      initialPageParam: 0,
+    }),
+  ]);
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

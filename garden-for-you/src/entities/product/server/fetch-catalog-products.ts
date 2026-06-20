@@ -43,7 +43,7 @@ export const getCachedCategoryTree = unstable_cache(
     return product_categories as CategoryNode[];
   },
   ["catalog-categories"],
-  { revalidate: 300 },
+  { revalidate: 300, tags: [CACHE_TAGS.categories] },
 );
 
 const REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;

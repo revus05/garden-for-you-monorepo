@@ -46,6 +46,15 @@ services:
     build:
       context: ./garden-for-you
       dockerfile: Dockerfile
+      # NEXT_PUBLIC_* are inlined into the bundle at build time (the runtime
+      # env_file cannot set them), so they must be passed as build args.
+      # These are public, client-visible values — safe to keep here.
+      args:
+        NEXT_PUBLIC_MEDUSA_URL: http://localhost:9000
+        NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_9303fd5637479314ce699b4c8d737a9f5399f0eaa6233450a7bc06194356d61f
+        NEXT_PUBLIC_REGION_ID: reg_01KM2M4TDY3QZCFRWGXS8Z7ZRJ
+        NEXT_PUBLIC_SITE_URL: https://saddlyavas.by
+        NEXT_PUBLIC_CONTENT_TABLE_URL: https://opensheet.elk.sh/1hJ-RtQcunzHH27qO-LTnZoPpFjiFL5yfTIXKUyMCYmc/
     container_name: garden-storefront
     env_file:
       - ./garden-for-you/.env.docker

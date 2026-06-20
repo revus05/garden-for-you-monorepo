@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { STORE_REVIEW_MODULE } from "../../../../modules/store-review"
 import type StoreReviewModuleService from "../../../../modules/store-review/service"
+import { REVALIDATE_TAGS, revalidateStorefront } from "../../../../lib/revalidate"
 
 type PatchBody = {
   store_reply?: string | null
@@ -58,6 +59,8 @@ export async function PATCH(
     return
   }
 
+  void revalidateStorefront([REVALIDATE_TAGS.reviews])
+
   res.status(200).json({
     review: {
       id: updated.id,
@@ -91,6 +94,8 @@ export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
     res.status(404).json({ message: "Отзыв не найден." })
     return
   }
+
+  void revalidateStorefront([REVALIDATE_TAGS.reviews])
 
   res.status(204).send()
 }

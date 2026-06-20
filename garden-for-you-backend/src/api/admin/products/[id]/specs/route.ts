@@ -1,6 +1,28 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { Modules } from "@medusajs/framework/utils"
 import { PRODUCT_SPEC_MODULE } from "../../../../../modules/product-spec"
 import type ProductSpecModuleService from "../../../../../modules/product-spec/service"
+import {
+  REVALIDATE_TAGS,
+  productHandleTag,
+  revalidateStorefront,
+} from "../../../../../lib/revalidate"
+
+async function revalidateProduct(req: MedusaRequest, product_id: string) {
+  const tags: string[] = [REVALIDATE_TAGS.products]
+  try {
+    const productModule = req.scope.resolve(Modules.PRODUCT)
+    const product = await productModule.retrieveProduct(product_id, {
+      select: ["handle"],
+    })
+    if (product?.handle) {
+      tags.push(productHandleTag(product.handle))
+    }
+  } catch {
+    // product not found — global "products" tag is enough
+  }
+  void revalidateStorefront(tags)
+}
 
 // GET /admin/products/:id/specs — получить все характеристики товара
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
@@ -61,6 +83,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     { product_id },
     { relations: ["definition"], order: { definition: { sort_order: "ASC" } } }
   )
+
+  await revalidateProduct(req, product_id)
 
   res.status(200).json({ specs: all })
 }

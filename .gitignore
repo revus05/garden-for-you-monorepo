@@ -9,8 +9,10 @@
 /garden-for-you/node_modules
 /garden-for-you/.next
 /garden-for-you/.env*
+!/garden-for-you/.env*.example
 /garden-for-you/next-env.d.ts
 
 # Backend
-/garden-for-you-backend/.env
+/garden-for-you-backend/.env*
+!/garden-for-you-backend/.env*.example
 /garden-for-you-backend/node_modules

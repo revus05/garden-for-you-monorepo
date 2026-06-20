@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
-import { resolveServerCart } from "@/entities/cart/server/resolve-server-cart";
-import { setCartIdCookie } from "@/shared/lib/cart-cookie.server";
+import {
+  getCartIdCookie,
+  setCartIdCookie,
+} from "@/shared/lib/cart-cookie.server";
 import { createServerSdk } from "@/shared/lib/server-sdk";
 
 type UpdateCartItemBody = {
@@ -25,9 +27,9 @@ export async function PATCH(
   }
 
   try {
-    const cart = await resolveServerCart({ createIfMissing: false });
+    const cartId = await getCartIdCookie();
 
-    if (!cart) {
+    if (!cartId) {
       return NextResponse.json(
         { message: "Корзина не найдена." },
         { status: 404 },
@@ -36,7 +38,7 @@ export async function PATCH(
 
     const sdk = await createServerSdk();
     const { cart: updatedCart } = await sdk.store.cart.updateLineItem(
-      cart.id,
+      cartId,
       lineItemId,
       { quantity },
     );
@@ -78,9 +80,9 @@ export async function DELETE(
   }
 
   try {
-    const cart = await resolveServerCart({ createIfMissing: false });
+    const cartId = await getCartIdCookie();
 
-    if (!cart) {
+    if (!cartId) {
       return NextResponse.json(
         { message: "Корзина не найдена." },
         { status: 404 },
@@ -88,7 +90,7 @@ export async function DELETE(
     }
 
     const sdk = await createServerSdk();
-    const { parent } = await sdk.store.cart.deleteLineItem(cart.id, lineItemId);
+    const { parent } = await sdk.store.cart.deleteLineItem(cartId, lineItemId);
     const response = NextResponse.json(
       { cart: parent ?? null },
       { status: 200 },

@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { SITE_CONFIG_MODULE } from "../../../modules/site-config"
 import SiteConfigModuleService from "../../../modules/site-config/service"
+import { REVALIDATE_TAGS, revalidateStorefront } from "../../../lib/revalidate"
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const siteConfigService: SiteConfigModuleService = req.scope.resolve(SITE_CONFIG_MODULE)
@@ -31,6 +32,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             }
         }
 
+        void revalidateStorefront([REVALIDATE_TAGS.siteConfig])
         return res.json({ success: true })
     }
 
@@ -46,5 +48,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         await siteConfigService.createConfigs({ key, value })
     }
 
+    void revalidateStorefront([REVALIDATE_TAGS.siteConfig])
     res.json({ success: true })
 }

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cookies } from "next/headers";
 import type { NextResponse } from "next/server";
 import { CART_ID_COOKIE } from "@/shared/config/cart";
 
@@ -7,6 +8,11 @@ const CART_ID_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
 function isSecureCookie() {
   return process.env.NODE_ENV === "production";
+}
+
+export async function getCartIdCookie(): Promise<string | undefined> {
+  const cookieStore = await cookies();
+  return cookieStore.get(CART_ID_COOKIE)?.value;
 }
 
 export function setCartIdCookie(response: NextResponse, cartId: string) {

@@ -6,6 +6,7 @@ import type { ICustomerModuleService } from "@medusajs/types"
 import { Modules } from "@medusajs/framework/utils"
 import { STORE_REVIEW_MODULE } from "../../../modules/store-review"
 import type StoreReviewModuleService from "../../../modules/store-review/service"
+import { REVALIDATE_TAGS, revalidateStorefront } from "../../../lib/revalidate"
 
 type CreateStoreReviewBody = {
   author_name?: string
@@ -204,6 +205,8 @@ export async function POST(
       message,
     },
   ])
+
+  void revalidateStorefront([REVALIDATE_TAGS.reviews])
 
   res.status(201).json({
     review: {

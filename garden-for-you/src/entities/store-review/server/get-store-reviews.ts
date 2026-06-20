@@ -1,5 +1,6 @@
 import "server-only";
 import { medusaFetch } from "@/shared/api/medusa-fetch";
+import { CACHE_TAGS } from "@/shared/cache";
 import { STORE_REVIEWS_PAGE_SIZE } from "../model/constants";
 import type { StoreReviewSort, StoreReviewsListResponse } from "../model/types";
 
@@ -26,7 +27,7 @@ export async function getStoreReviews(
   const response = await medusaFetch("/store/store-reviews", {
     method: "GET",
     searchParams,
-    cache: "no-store",
+    next: { tags: [CACHE_TAGS.reviews], revalidate: 300 },
   });
 
   if (!response.ok) {

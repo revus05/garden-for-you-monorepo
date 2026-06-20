@@ -2,6 +2,7 @@ import type { Dispatch } from "@reduxjs/toolkit";
 import {
   syncCartRequest,
   updateCart,
+  updateCartItemQuantityReducer,
   updateCartItemQuantityRequest,
 } from "@/entities/cart";
 
@@ -16,6 +17,9 @@ export async function updateCartItemQuantity(
   if (inFlightItems.has(lineItemId)) return;
 
   inFlightItems.add(lineItemId);
+  // Optimistic update: reflect the new quantity immediately, reconcile with the
+  // server response (or roll back via resync) once the request settles.
+  dispatch(updateCartItemQuantityReducer({ id: lineItemId, newQuantity: quantity }));
   try {
     const updatedCart = await updateCartItemQuantityRequest(lineItemId, quantity);
     dispatch(updateCart(updatedCart));
