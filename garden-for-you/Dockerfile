@@ -1,10 +1,10 @@
-FROM node:20-alpine AS deps
+FROM oven/bun:1.2-alpine AS deps
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install --legacy-peer-deps
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
-FROM node:20-alpine AS build
+FROM oven/bun:1.2-alpine AS build
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
@@ -24,9 +24,9 @@ ENV NEXT_PUBLIC_REGION_ID=$NEXT_PUBLIC_REGION_ID
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_CONTENT_TABLE_URL=$NEXT_PUBLIC_CONTENT_TABLE_URL
 
-RUN npm run build
+RUN bun run build
 
-FROM node:20-alpine AS runner
+FROM oven/bun:1.2-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
@@ -40,4 +40,4 @@ COPY --from=build /app/next.config.ts ./next.config.ts
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["bun", "run", "start"]

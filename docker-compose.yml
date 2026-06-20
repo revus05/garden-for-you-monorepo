@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: garden-postgres
     environment:
       POSTGRES_DB: medusa
@@ -14,17 +14,6 @@ services:
       timeout: 5s
       retries: 10
 
-  redis:
-    image: redis:7-alpine
-    container_name: garden-redis
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
-
   backend:
     build:
       context: ./garden-for-you-backend
@@ -34,8 +23,6 @@ services:
       - ./garden-for-you-backend/.env.docker
     depends_on:
       postgres:
-        condition: service_healthy
-      redis:
         condition: service_healthy
     ports:
       - "9000:9000"
@@ -66,5 +53,4 @@ services:
 
 volumes:
   postgres_data:
-  redis_data:
   backend_uploads:
