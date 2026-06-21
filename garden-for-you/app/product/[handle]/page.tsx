@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  getAllProductHandles,
-  getProductByHandle,
-} from "@/entities/product/server";
+import { getProductByHandle } from "@/entities/product/server";
 import ProductPageView from "@/pages/product";
 import { publicEnv } from "@/shared/config/env";
 
-export const dynamicParams = true;
-export const revalidate = 3600; // fallback ISR: refresh at most every hour
+// The root layout reads cookies() (cart/user/comparison), which forces dynamic
+// rendering for every route. Page-level ISR is therefore impossible here, so
+// render on-demand. Product data fetches stay cached via cache tags, so the
+// backend is not hit on every request.
+export const dynamic = "force-dynamic";
 
 type ProductPageProps = {
   params: Promise<{
@@ -71,11 +71,6 @@ export async function generateMetadata({
       images: imageUrl ? [imageUrl] : [],
     },
   };
-}
-
-export async function generateStaticParams() {
-  const handles = await getAllProductHandles();
-  return handles.map((handle) => ({ handle }));
 }
 
 const ProductPage = async ({ params }: ProductPageProps) => {

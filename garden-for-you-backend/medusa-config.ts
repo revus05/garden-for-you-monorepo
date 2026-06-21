@@ -73,6 +73,13 @@ const fileProviders = hasCloudinary
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+    // Medusa enables Postgres SSL by default in production. The bundled
+    // postgres image has no SSL, so keep it off unless DATABASE_SSL=true
+    // (set that for a managed/cloud DB that requires SSL).
+    databaseDriverOptions:
+      process.env.DATABASE_SSL === "true"
+        ? { connection: { ssl: { rejectUnauthorized: false } } }
+        : { connection: { ssl: false } },
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
