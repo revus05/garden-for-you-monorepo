@@ -24,6 +24,12 @@ ENV NEXT_PUBLIC_REGION_ID=$NEXT_PUBLIC_REGION_ID
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_CONTENT_TABLE_URL=$NEXT_PUBLIC_CONTENT_TABLE_URL
 
+# REVALIDATE_SECRET is validated at build time (page-data collection evaluates
+# server env), but the real value is read at runtime from env_file. A
+# build-only placeholder is enough to satisfy validation here.
+ARG REVALIDATE_SECRET=build-placeholder
+ENV REVALIDATE_SECRET=$REVALIDATE_SECRET
+
 RUN bun run build
 
 FROM oven/bun:1.2-alpine AS runner

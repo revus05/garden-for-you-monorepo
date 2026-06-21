@@ -1,0 +1,50 @@
+# Server-side stack — pulls pre-built images from Docker Hub (no build).
+# On the server:
+#   docker compose -f docker-compose.deploy.yml pull
+#   docker compose -f docker-compose.deploy.yml up -d
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: garden-postgres
+    environment:
+      POSTGRES_DB: medusa
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d medusa"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    image: revus05/garden-backend:latest
+    container_name: garden-backend
+    env_file:
+      - ./garden-for-you-backend/.env.docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:9000:9000"
+    volumes:
+      - backend_uploads:/app/.medusa/server/static
+    restart: unless-stopped
+
+  storefront:
+    image: revus05/garden-storefront:latest
+    container_name: garden-storefront
+    env_file:
+      - ./garden-for-you/.env.docker
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - "127.0.0.1:3000:3000"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  backend_uploads:

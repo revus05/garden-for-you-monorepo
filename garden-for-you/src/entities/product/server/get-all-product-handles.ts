@@ -18,10 +18,17 @@ export async function getAllProductHandles(): Promise<string[]> {
       fields: "handle",
     });
 
-    const res = await medusaFetch("/store/products", {
-      searchParams: params,
-      next: { tags: [CACHE_TAGS.products] },
-    });
+    let res: Response;
+    try {
+      res = await medusaFetch("/store/products", {
+        searchParams: params,
+        next: { tags: [CACHE_TAGS.products] },
+      });
+    } catch {
+      // Backend unreachable (e.g. during docker build) — bail out so build
+      // succeeds; pages are generated on-demand via ISR.
+      break;
+    }
 
     if (!res.ok) break;
 
