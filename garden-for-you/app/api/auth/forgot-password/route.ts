@@ -15,7 +15,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const origin = new URL(request.url).origin;
+    const origin =
+      process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
 
     await sdk.auth.resetPassword("customer", "emailpass", {
       identifier: parsed.data.email,

@@ -5,11 +5,22 @@ import { publicEnv } from "@/shared/config/env";
 type Videos = { url: string }[];
 
 export const BlogYouTubeVideos = async () => {
-  const response = await fetch(
-    `${publicEnv.NEXT_PUBLIC_CONTENT_TABLE_URL}/Видео для Блога`,
-  );
+  let data: Videos = [];
 
-  const data = (await response.json()) as Videos;
+  try {
+    const response = await fetch(
+      `${publicEnv.NEXT_PUBLIC_CONTENT_TABLE_URL}/${encodeURIComponent("Видео для Блога")}`,
+    );
+
+    if (response.ok) {
+      const parsed = (await response.json()) as Videos;
+      if (Array.isArray(parsed)) {
+        data = parsed;
+      }
+    }
+  } catch (error) {
+    console.error("[BlogYouTubeVideos] Failed to load videos:", error);
+  }
 
   if (data.length === 0) {
     return null;

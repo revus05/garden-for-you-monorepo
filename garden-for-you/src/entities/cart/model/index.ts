@@ -1,6 +1,22 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Cart } from "./types";
 
+// Medusa does not guarantee a stable line item order across responses, so keep
+// items sorted by creation time: existing items keep their position when their
+// quantity changes and newly added items always appear at the end.
+const sortCartItems = (cart: Cart | null): Cart | null => {
+  if (!cart?.items) return cart;
+
+  return {
+    ...cart,
+    items: [...cart.items].sort(
+      (a, b) =>
+        new Date(a.created_at ?? 0).getTime() -
+        new Date(b.created_at ?? 0).getTime(),
+    ),
+  };
+};
+
 type InitialState = {
   cart: Cart | null;
   isInitialized: boolean;
@@ -16,7 +32,7 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     updateCart: (state, action: PayloadAction<Cart | null>) => {
-      state.cart = action.payload;
+      state.cart = sortCartItems(action.payload);
       state.isInitialized = true;
     },
     resetCart: (state) => {
