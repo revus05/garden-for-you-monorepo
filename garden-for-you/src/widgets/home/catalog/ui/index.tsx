@@ -222,16 +222,23 @@ export const Catalog = () => {
                   Выберите категорию, сортировку и параметры поиска.
                 </DrawerDescription>
               </DrawerHeader>
-              <div className="flex flex-col gap-4 overflow-y-auto px-4 pb-4">
+              <div
+                className={cn(
+                  "flex flex-col gap-4 overflow-y-auto px-4 pb-4",
+                  hasActiveFilters && "pb-20",
+                )}
+              >
                 <div className="hidden">
                   <CatalogTabs activeTab={activeTab} setActiveTab={() => {}} />
                 </div>
                 <CatalogSorting orderBy={orderBy} setOrderBy={setOrderBy} />
                 {categoryFilters}
-                {hasActiveFilters && (
+              </div>
+              {hasActiveFilters && (
+                <div className="absolute inset-x-0 bottom-0 px-4 pb-4 pt-2 bg-gradient-to-t from-background via-background to-transparent">
                   <Button
                     variant="outline"
-                    className="w-full"
+                    className="w-full bg-background shadow-md"
                     onClick={() => {
                       resetFilters();
                       setIsFiltersOpen(false);
@@ -240,8 +247,8 @@ export const Catalog = () => {
                     <X size={16} />
                     Сбросить фильтры
                   </Button>
-                )}
-              </div>
+                </div>
+              )}
             </DrawerContent>
           </Drawer>
         </div>
