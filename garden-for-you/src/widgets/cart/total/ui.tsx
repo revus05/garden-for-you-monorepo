@@ -76,7 +76,18 @@ export const CartTotal = () => {
           </div>
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col gap-3">
+        <p className="w-full text-left text-sm text-muted-foreground">
+          Заказать можно по телефону
+          <br />
+          <a
+            href="tel:+375291066556"
+            className="font-semibold text-foreground hover:underline"
+          >
+            +375 (29) 106-65-56
+          </a>{" "}
+          Александр
+        </p>
         <Button className="w-full" size="lg" disabled>
           Оформление заказов временно недоступно
         </Button>

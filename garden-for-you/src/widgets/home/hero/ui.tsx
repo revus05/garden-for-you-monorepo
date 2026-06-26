@@ -4,15 +4,15 @@ import Link from "next/link";
 import { getSiteConfig } from "@/entities/site-config/server/get-site-config";
 import heroImage from "@/images/banner-grid.png";
 import { paths } from "@/shared/constants/navigation";
-import { Badge, Button } from "@/shared/ui";
+import { Button } from "@/shared/ui";
 
 export const HeroSection = async () => {
   const config = await getSiteConfig();
-  const percent = config["sale.percent"];
+  const title = config["sale.title"];
   const description = config["sale.description"];
   const productHandle = config["sale.product_handle"];
 
-  if (!percent && !description) return null;
+  if (!title && !description) return null;
 
   const href = productHandle ? `${paths.productPage}/${productHandle}` : null;
 
@@ -28,14 +28,8 @@ export const HeroSection = async () => {
           backgroundRepeat: "repeat",
         }}
       />
-      <div className="flex-1 flex flex-col justify-center gap-4 px-8 py-8 md:px-12 relative z-10">
-        <Badge className="w-fit bg-white/20 text-white border-0">
-          🔥 Акция
-        </Badge>
-        <h1 className="font-black text-3xl text-white flex items-start flex-wrap gap-2">
-          <span className="text-5xl leading-none">{percent}</span>
-          <span className="self-end pb-1">скидка</span>
-        </h1>
+      <div className="flex-1 flex flex-col justify-center gap-4 px-8 py-8 pr-0 md:px-12 relative z-10">
+        <h1 className="font-black text-4xl text-white">{title}</h1>
         <span className="text-white/80 text-sm max-w-lg">{description}</span>
         {href && (
           <Button
@@ -51,7 +45,7 @@ export const HeroSection = async () => {
         )}
       </div>
       <div
-        className="relative hidden md:flex items-center justify-end z-10 w-[500px] aspect-1.5"
+        className="relative hidden md:flex items-center justify-end z-10 w-100 aspect-1.5"
         style={{
           maskImage: "linear-gradient(to right, transparent, black 35%)",
         }}

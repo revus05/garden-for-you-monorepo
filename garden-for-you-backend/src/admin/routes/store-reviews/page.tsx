@@ -1,6 +1,15 @@
 import { ChatBubbleLeftRight } from "@medusajs/icons"
 import { defineRouteConfig } from "@medusajs/admin-sdk"
-import { Button, Container, Heading, Text, Textarea, toast } from "@medusajs/ui"
+import {
+  Button,
+  Container,
+  Heading,
+  Input,
+  Select,
+  Text,
+  Textarea,
+  toast,
+} from "@medusajs/ui"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useMemo, useState } from "react"
 import { sdk } from "../../lib/sdk"
@@ -41,9 +50,26 @@ function formatDate(value: string) {
   }).format(date)
 }
 
+type NewReviewForm = {
+  author_name: string
+  phone: string
+  rating: string
+  message: string
+  store_reply: string
+}
+
+const emptyNewReview: NewReviewForm = {
+  author_name: "",
+  phone: "",
+  rating: "5",
+  message: "",
+  store_reply: "",
+}
+
 const StoreReviewsPage = () => {
   const queryClient = useQueryClient()
   const [drafts, setDrafts] = useState<Record<string, string>>({})
+  const [newReview, setNewReview] = useState<NewReviewForm>(emptyNewReview)
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin", "store-reviews"],
@@ -70,6 +96,29 @@ const StoreReviewsPage = () => {
     },
     onError: () => {
       toast.error("Не удалось сохранить ответ")
+    },
+  })
+
+  const createMutation = useMutation({
+    mutationFn: async (form: NewReviewForm) => {
+      await sdk.client.fetch("/admin/store-reviews", {
+        method: "POST",
+        body: {
+          author_name: form.author_name,
+          phone: form.phone,
+          rating: Number(form.rating),
+          message: form.message,
+          store_reply: form.store_reply,
+        },
+      })
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["admin", "store-reviews"] })
+      setNewReview(emptyNewReview)
+      toast.success("Отзыв добавлен")
+    },
+    onError: () => {
+      toast.error("Не удалось добавить отзыв")
     },
   })
 
@@ -119,6 +168,105 @@ const StoreReviewsPage = () => {
         <Text size="small" className="text-ui-fg-muted">
           {sorted.length} отзывов
         </Text>
+      </div>
+
+      <div className="flex flex-col gap-4 border-b border-ui-border-base px-6 py-6">
+        <Heading level="h2">Добавить отзыв</Heading>
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={(e) => {
+            e.preventDefault()
+            if (newReview.author_name.trim().length === 0) {
+              toast.error("Укажите имя автора")
+              return
+            }
+            if (newReview.message.trim().length === 0) {
+              toast.error("Введите текст отзыва")
+              return
+            }
+            createMutation.mutate(newReview)
+          }}
+        >
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="flex flex-col gap-1">
+              <Text size="small" weight="plus">
+                Имя автора
+              </Text>
+              <Input
+                value={newReview.author_name}
+                placeholder="Имя"
+                onChange={(e) =>
+                  setNewReview((prev) => ({ ...prev, author_name: e.target.value }))
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Text size="small" weight="plus">
+                Телефон
+              </Text>
+              <Input
+                value={newReview.phone}
+                placeholder="Необязательно"
+                onChange={(e) =>
+                  setNewReview((prev) => ({ ...prev, phone: e.target.value }))
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Text size="small" weight="plus">
+                Оценка
+              </Text>
+              <Select
+                value={newReview.rating}
+                onValueChange={(value) =>
+                  setNewReview((prev) => ({ ...prev, rating: value }))
+                }
+              >
+                <Select.Trigger>
+                  <Select.Value />
+                </Select.Trigger>
+                <Select.Content>
+                  {[5, 4, 3, 2, 1].map((n) => (
+                    <Select.Item key={n} value={String(n)}>
+                      {n} / 5
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select>
+            </div>
+          </div>
+          <div className="flex flex-col gap-1">
+            <Text size="small" weight="plus">
+              Текст отзыва
+            </Text>
+            <Textarea
+              rows={3}
+              value={newReview.message}
+              placeholder="Текст отзыва…"
+              onChange={(e) =>
+                setNewReview((prev) => ({ ...prev, message: e.target.value }))
+              }
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Text size="small" weight="plus">
+              Ответ питомника (необязательно)
+            </Text>
+            <Textarea
+              rows={2}
+              value={newReview.store_reply}
+              placeholder="Текст ответа покупателям…"
+              onChange={(e) =>
+                setNewReview((prev) => ({ ...prev, store_reply: e.target.value }))
+              }
+            />
+          </div>
+          <div>
+            <Button type="submit" isLoading={createMutation.isPending}>
+              Добавить отзыв
+            </Button>
+          </div>
+        </form>
       </div>
 
       <div className="flex flex-col gap-4 px-6 py-6">

@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { publicEnv, resolveMedusaBaseUrl } from "@/shared/config/env";
 import { createServerSdk } from "@/shared/lib/server-sdk";
 import { COMPARISON_COOKIE } from "@/shared/config/comparison";
-import type { ComparisonProduct } from "../model";
+import { MAX_COMPARISON_COUNT, type ComparisonProduct } from "../model";
 import type { ProductSpec, StoreProductVariantWithPrices } from "@/entities/product";
 
 const NEXT_PUBLIC_REGION_ID = publicEnv.NEXT_PUBLIC_REGION_ID;
@@ -35,7 +35,9 @@ async function readCookieIds(): Promise<string[]> {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as unknown;
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter((v): v is string => typeof v === "string").slice(0, 4);
+    return parsed
+      .filter((v): v is string => typeof v === "string")
+      .slice(0, MAX_COMPARISON_COUNT);
   } catch {
     return [];
   }

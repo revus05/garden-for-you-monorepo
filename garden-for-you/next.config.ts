@@ -10,6 +10,21 @@ const nextConfig: NextConfig = {
       static: 300,
     },
   },
+  // Legacy URL redirects from the previous version of the site. The old
+  // catalog lived at `/product_list`, which Google still has indexed and links
+  // to from search results. After the rebuild the catalog moved to the home
+  // page, so without these redirects those links 404 — losing both visitors
+  // and the SEO weight the old URL had accumulated. A 301 (permanent) tells
+  // Google to transfer ranking signals to the new URL and reindex it.
+  async redirects() {
+    return [
+      {
+        source: "/product_list",
+        destination: "/",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

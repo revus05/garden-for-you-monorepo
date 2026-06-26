@@ -35,7 +35,7 @@ const SECTIONS: Section[] = [
     {
         title: "Скидки на главной",
         fields: [
-            { key: "sale.percent", label: "Размер скидки", type: "input", placeholder: "50%" },
+            { key: "sale.title", label: "Заголовок", type: "input", placeholder: "Скидка 50%" },
             { key: "sale.description", label: "Описание скидки", type: "textarea", placeholder: "В день рождения" },
             {
                 key: "sale.product_handle",

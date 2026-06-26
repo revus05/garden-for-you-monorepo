@@ -3,7 +3,10 @@
 import { ArrowRight, Scale, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import type { ComparisonProduct } from "@/entities/comparison";
+import {
+  MAX_COMPARISON_COUNT,
+  type ComparisonProduct,
+} from "@/entities/comparison";
 import {
   clearComparisonWithSync,
   removeFromComparisonWithSync,
@@ -100,7 +103,7 @@ export const CompareWidget = () => {
         <div className="flex items-center gap-3">
           <Scale className="size-6 text-primary shrink-0" />
           <h1 className="text-2xl font-bold">Сравнение товаров</h1>
-          <Badge>{products.length} из 4</Badge>
+          <Badge>{products.length} из {MAX_COMPARISON_COUNT}</Badge>
         </div>
         <Button
           variant="ghost"

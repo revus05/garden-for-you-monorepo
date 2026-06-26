@@ -228,6 +228,19 @@ export const Catalog = () => {
                 </div>
                 <CatalogSorting orderBy={orderBy} setOrderBy={setOrderBy} />
                 {categoryFilters}
+                {hasActiveFilters && (
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => {
+                      resetFilters();
+                      setIsFiltersOpen(false);
+                    }}
+                  >
+                    <X size={16} />
+                    Сбросить фильтры
+                  </Button>
+                )}
               </div>
             </DrawerContent>
           </Drawer>

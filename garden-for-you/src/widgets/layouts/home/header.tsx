@@ -41,7 +41,7 @@ export const Header = () => {
 
   return (
     <header className="relative sm:h-17 h-23">
-      <div className="fixed z-30 w-full bg-background-secondary/80 py-2 sm:py-4 backdrop-blur-2xl">
+      <div className="fixed inset-x-0 top-0 z-30 w-full bg-background-secondary/80 py-2 sm:py-4 backdrop-blur-2xl">
         <div className="wrapper flex sm:flex-row flex-col gap-2 items-center justify-between">
           <Link href={paths.home} className="flex items-center gap-2">
             <Image

@@ -15,7 +15,7 @@ type InitialState = {
   products: ComparisonProduct[];
 };
 
-export const MAX_COMPARISON_COUNT = 4;
+export const MAX_COMPARISON_COUNT = 6;
 
 const initialState: InitialState = {
   products: [],
