@@ -47,7 +47,7 @@ export const PaymentAndShippingStaticContent = () => {
               Способы оплаты
             </TabsTrigger>
             <div className="pl-6">
-              <TabsTrigger
+              {/*<TabsTrigger
                 value="payment-cash"
                 className="justify-start text-left py-3.5 px-5 w-full"
               >
@@ -58,7 +58,7 @@ export const PaymentAndShippingStaticContent = () => {
                 className="justify-start text-left py-3.5 px-5 w-full"
               >
                 Банковской картой онлайн
-              </TabsTrigger>
+              </TabsTrigger>*/}
               <TabsTrigger
                 value="payment-pickup"
                 className="justify-start text-left py-3.5 px-5 w-full"
