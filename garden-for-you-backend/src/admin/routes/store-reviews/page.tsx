@@ -1,18 +1,9 @@
-import { ChatBubbleLeftRight } from "@medusajs/icons"
-import { defineRouteConfig } from "@medusajs/admin-sdk"
-import {
-  Button,
-  Container,
-  Heading,
-  Input,
-  Select,
-  Text,
-  Textarea,
-  toast,
-} from "@medusajs/ui"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useMemo, useState } from "react"
-import { sdk } from "../../lib/sdk"
+import {ChatBubbleLeftRight} from "@medusajs/icons"
+import {defineRouteConfig} from "@medusajs/admin-sdk"
+import {Button, Container, Heading, Input, Select, Text, Textarea, toast,} from "@medusajs/ui"
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query"
+import {useMemo, useState} from "react"
+import {sdk} from "../../lib/sdk"
 
 export const config = defineRouteConfig({
   label: "Отзывы о питомнике",
@@ -56,28 +47,51 @@ type NewReviewForm = {
   rating: string
   message: string
   store_reply: string
+  created_at: string
 }
 
-const emptyNewReview: NewReviewForm = {
-  author_name: "",
-  phone: "",
-  rating: "5",
-  message: "",
-  store_reply: "",
+function toDateInputValue(value: string) {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return ""
+  }
+
+  const offset = date.getTimezoneOffset() * 60 * 1000
+
+  return new Date(date.getTime() - offset).toISOString().slice(0, 10)
+}
+
+function todayInputValue() {
+  const now = new Date()
+  const offset = now.getTimezoneOffset() * 60 * 1000
+
+  return new Date(now.getTime() - offset).toISOString().slice(0, 10)
+}
+
+function makeEmptyNewReview(): NewReviewForm {
+  return {
+    author_name: "",
+    phone: "",
+    rating: "5",
+    message: "",
+    store_reply: "",
+    created_at: todayInputValue(),
+  }
 }
 
 const StoreReviewsPage = () => {
   const queryClient = useQueryClient()
   const [drafts, setDrafts] = useState<Record<string, string>>({})
-  const [newReview, setNewReview] = useState<NewReviewForm>(emptyNewReview)
+  const [dateDrafts, setDateDrafts] = useState<Record<string, string>>({})
+  const [newReview, setNewReview] = useState<NewReviewForm>(makeEmptyNewReview)
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["admin", "store-reviews"],
     queryFn: async () => {
-      const res = await sdk.client.fetch<ListResponse>("/admin/store-reviews", {
+      return await sdk.client.fetch<ListResponse>("/admin/store-reviews", {
         method: "GET",
       })
-      return res
     },
   })
 
@@ -99,6 +113,27 @@ const StoreReviewsPage = () => {
     },
   })
 
+  const dateMutation = useMutation({
+    mutationFn: async ({ id, created_at }: { id: string; created_at: string }) => {
+      await sdk.client.fetch(`/admin/store-reviews/${id}`, {
+        method: "PATCH",
+        body: { created_at },
+      })
+    },
+    onSuccess: async (_data, variables) => {
+      await queryClient.invalidateQueries({ queryKey: ["admin", "store-reviews"] })
+      setDateDrafts((prev) => {
+        const next = { ...prev }
+        delete next[variables.id]
+        return next
+      })
+      toast.success("Дата обновлена")
+    },
+    onError: () => {
+      toast.error("Не удалось изменить дату")
+    },
+  })
+
   const createMutation = useMutation({
     mutationFn: async (form: NewReviewForm) => {
       await sdk.client.fetch("/admin/store-reviews", {
@@ -109,12 +144,13 @@ const StoreReviewsPage = () => {
           rating: Number(form.rating),
           message: form.message,
           store_reply: form.store_reply,
+          created_at: form.created_at,
         },
       })
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["admin", "store-reviews"] })
-      setNewReview(emptyNewReview)
+      setNewReview(makeEmptyNewReview())
       toast.success("Отзыв добавлен")
     },
     onError: () => {
@@ -187,7 +223,7 @@ const StoreReviewsPage = () => {
             createMutation.mutate(newReview)
           }}
         >
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <div className="flex flex-col gap-1">
               <Text size="small" weight="plus">
                 Имя автора
@@ -234,6 +270,18 @@ const StoreReviewsPage = () => {
                 </Select.Content>
               </Select>
             </div>
+            <div className="flex flex-col gap-1">
+              <Text size="small" weight="plus">
+                Дата отзыва
+              </Text>
+              <Input
+                type="date"
+                value={newReview.created_at}
+                onChange={(e) =>
+                  setNewReview((prev) => ({ ...prev, created_at: e.target.value }))
+                }
+              />
+            </div>
           </div>
           <div className="flex flex-col gap-1">
             <Text size="small" weight="plus">
@@ -277,6 +325,8 @@ const StoreReviewsPage = () => {
             const draft =
               drafts[review.id] ??
               (review.store_reply != null ? review.store_reply : "")
+            const dateDraft =
+              dateDrafts[review.id] ?? toDateInputValue(review.created_at)
 
             return (
               <div
@@ -297,6 +347,39 @@ const StoreReviewsPage = () => {
                     <Text size="small" className="mt-1 text-ui-fg-muted">
                       {formatDate(review.created_at)} · Оценка: {review.rating} / 5
                     </Text>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <Input
+                        type="date"
+                        className="w-40"
+                        value={dateDraft}
+                        onChange={(e) =>
+                          setDateDrafts((prev) => ({
+                            ...prev,
+                            [review.id]: e.target.value,
+                          }))
+                        }
+                      />
+                      <Button
+                        size="small"
+                        variant="secondary"
+                        disabled={
+                          dateDraft.length === 0 ||
+                          dateDraft === toDateInputValue(review.created_at)
+                        }
+                        isLoading={
+                          dateMutation.isPending &&
+                          dateMutation.variables?.id === review.id
+                        }
+                        onClick={() =>
+                          dateMutation.mutate({
+                            id: review.id,
+                            created_at: dateDraft,
+                          })
+                        }
+                      >
+                        Изменить дату
+                      </Button>
+                    </div>
                   </div>
                   <Button
                     variant="danger"

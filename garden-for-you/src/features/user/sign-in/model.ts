@@ -25,7 +25,7 @@ export const useSignInForm = () => {
 
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { identifier: "", password: "" },
   });
 
   async function onSubmit(values: SignInValues) {
@@ -41,7 +41,9 @@ export const useSignInForm = () => {
       router.refresh();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Неверный email или пароль.",
+        error instanceof Error
+          ? error.message
+          : "Неверный email/телефон или пароль.",
       );
     }
   }

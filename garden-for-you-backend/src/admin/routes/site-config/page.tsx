@@ -30,6 +30,13 @@ const SECTIONS: Section[] = [
                 placeholder: "Пн–Пт: 9:00 – 20:00\nСб–Вс: 10:00 – 18:00",
                 description: "Каждая строка — отдельная запись",
             },
+            {
+                key: "work_schedule_highlight",
+                label: "Выделенный текст",
+                type: "textarea",
+                placeholder: "Работаем без выходных!",
+                description: "Отображается зелёным цветом под графиком работы",
+            },
         ],
     },
     {

@@ -2,6 +2,7 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { STORE_REVIEW_MODULE } from "../../../modules/store-review"
 import type StoreReviewModuleService from "../../../modules/store-review/service"
 import { REVALIDATE_TAGS, revalidateStorefront } from "../../../lib/revalidate"
+import { parseReviewDate } from "../../../lib/review-date"
 
 type CreateReviewBody = {
   author_name?: string
@@ -9,6 +10,7 @@ type CreateReviewBody = {
   rating?: number | string
   message?: string
   store_reply?: string | null
+  created_at?: string | null
 }
 
 function normalizeText(value: unknown): string {
@@ -82,6 +84,7 @@ export async function POST(
   const rating = normalizeRating(body.rating)
   const phone = normalizePhone(body.phone)
   const storeReply = normalizeText(body.store_reply)
+  const createdAt = parseReviewDate(body.created_at)
 
   if (authorName.length < 1 || authorName.length > 120) {
     res.status(400).json({
@@ -104,6 +107,13 @@ export async function POST(
     return
   }
 
+  if (createdAt === "invalid") {
+    res.status(400).json({
+      message: "Некорректная дата отзыва.",
+    })
+    return
+  }
+
   const storeReviewModuleService = req.scope.resolve<StoreReviewModuleService>(
     STORE_REVIEW_MODULE
   )
@@ -116,6 +126,9 @@ export async function POST(
       rating,
       message,
       store_reply: storeReply.length > 0 ? storeReply : null,
+      // `created_at` has an `onCreate` hook that only kicks in when the value is
+      // nullish, so an explicit date passed here wins.
+      ...(createdAt ? { created_at: createdAt } : {}),
     },
   ])
 

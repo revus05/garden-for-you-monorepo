@@ -23,13 +23,92 @@ import { useSignUpForm } from "./model";
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+  const [code, setCode] = useState("");
 
   const {
     formState: { errors, isSubmitting },
     register,
     handleSubmit,
     onSubmit,
+    step,
+    onVerify,
+    onResend,
+    onBack,
+    isVerifying,
+    isResending,
   } = useSignUpForm();
+
+  if (step === "code") {
+    return (
+      <div className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-10">
+        <h2 className="text-2xl font-black">Подтверждение номера</h2>
+        <p className="text-sm text-muted-foreground">
+          Мы отправили код подтверждения по SMS. Введите его ниже, чтобы
+          завершить регистрацию.
+        </p>
+
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            onVerify(code);
+          }}
+          noValidate
+        >
+          <FieldSet>
+            <FieldGroup>
+              <Field>
+                <FieldLabel className="flex w-full flex-col items-start">
+                  <FieldContent className="w-full">
+                    <InputGroup className="gap-2 sm:px-1.5 px-1 shadow-md">
+                      <InputGroupAddon align="inline-start">
+                        <Lock className="stroke-primary" />
+                      </InputGroupAddon>
+                      <InputGroupInput
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        placeholder="Введите код из SMS"
+                        className="text-primary"
+                        value={code}
+                        onChange={(event) => setCode(event.target.value)}
+                      />
+                    </InputGroup>
+                  </FieldContent>
+                </FieldLabel>
+              </Field>
+
+              <div className="flex flex-col gap-2">
+                <Button
+                  type="submit"
+                  disabled={isVerifying || !code.trim()}
+                  className="mx-auto sm:w-fit sm:px-24 w-full"
+                  size="lg"
+                >
+                  {isVerifying ? "Проверяем..." : "Подтвердить"}
+                </Button>
+                <div className="flex items-center justify-center gap-4 text-sm">
+                  <button
+                    type="button"
+                    onClick={onBack}
+                    className="underline underline-offset-4 text-primary"
+                  >
+                    Назад
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onResend}
+                    disabled={isResending}
+                    className="underline underline-offset-4 text-primary disabled:opacity-50"
+                  >
+                    {isResending ? "Отправляем..." : "Отправить код повторно"}
+                  </button>
+                </div>
+              </div>
+            </FieldGroup>
+          </FieldSet>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-md flex-col gap-6 px-4 py-10">
@@ -207,7 +286,7 @@ export function SignUpForm() {
                 className="mx-auto sm:w-fit sm:px-24 w-full"
                 size="lg"
               >
-                {isSubmitting ? "Создаем..." : "Создать аккаунт"}
+                {isSubmitting ? "Отправляем код..." : "Продолжить"}
               </Button>
               <p className="text-sm text-muted-foreground text-center">
                 Уже есть аккаунт?{" "}

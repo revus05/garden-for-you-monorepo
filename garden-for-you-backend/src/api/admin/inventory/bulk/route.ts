@@ -4,12 +4,20 @@ import { ensureInventoryItemIds } from "../_helpers"
 
 type BulkStockBody = {
   /**
-   * - "all": apply delta to every variant
-   * - "option": apply delta to all variants whose option "title" == "value"
-   * - "variants": apply delta to the variants whose ids are in `variant_ids`
+   * Which variants are targeted:
+   * - "all": every variant
+   * - "option": all variants whose option "title" == "value"
+   * - "variants": the variants whose ids are in `variant_ids`
    */
   mode: "all" | "option" | "variants"
-  delta: number
+  /**
+   * What to do with the stock of those variants:
+   * - "delta" (default): add `delta` to the current quantity
+   * - "set": replace the current quantity with `quantity`
+   */
+  operation?: "delta" | "set"
+  delta?: number
+  quantity?: number
   option_title?: string
   option_value?: string
   variant_ids?: string[]
@@ -18,16 +26,26 @@ type BulkStockBody = {
 /**
  * POST /admin/inventory/bulk
  *
- * Adds `delta` (may be negative) to the current stocked_quantity of the
- * targeted variants at the default stock location. Returns number of
- * variants updated.
+ * Adjusts the stocked_quantity of the targeted variants at the default stock
+ * location — either relatively (`operation: "delta"`, may be negative) or
+ * absolutely (`operation: "set"`). Returns number of variants updated.
  */
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const body = (req.body || {}) as BulkStockBody
-  const { mode, delta } = body
+  const { mode, delta, quantity } = body
+  // Older clients only ever sent a delta, so that stays the default.
+  const operation = body.operation ?? "delta"
 
-  if (!Number.isInteger(delta)) {
+  if (operation !== "delta" && operation !== "set") {
+    return res.status(400).json({ message: "Неверный operation" })
+  }
+  if (operation === "delta" && !Number.isInteger(delta)) {
     return res.status(400).json({ message: "delta должен быть целым числом" })
+  }
+  if (operation === "set" && (!Number.isInteger(quantity) || (quantity as number) < 0)) {
+    return res
+      .status(400)
+      .json({ message: "quantity должен быть целым неотрицательным числом" })
   }
   if (mode !== "all" && mode !== "option" && mode !== "variants") {
     return res.status(400).json({ message: "Неверный mode" })
@@ -113,7 +131,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     // stocked_quantity may arrive as a BigNumber-like object from Medusa v2 —
     // coerce to a plain Number so `+ delta` performs arithmetic, not string concat.
     const currentQty = Number(current?.stocked_quantity ?? 0) || 0
-    const next = Math.max(0, currentQty + delta)
+    const next =
+      operation === "set"
+        ? (quantity as number)
+        : Math.max(0, currentQty + (delta as number))
     if (current) {
       toUpdate.push({ inventory_item_id: itemId, location_id: location.id, stocked_quantity: next })
     } else {

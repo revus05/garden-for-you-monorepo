@@ -14,6 +14,7 @@ const ContactsPage = async () => {
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean);
+  const scheduleHighlight = (configs.work_schedule_highlight ?? "").trim();
 
   return (
     <div className="wrapper py-12 flex flex-col gap-8">
@@ -46,12 +47,17 @@ const ContactsPage = async () => {
           <div className="h-px bg-muted-foreground/50 mx-16" />
           <div className="flex flex-col gap-2 items-center self-center max-w-md">
             <Clock className="size-8 stroke-primary" />
-            <div className="flex gap-2 items-center">
+            <div className="flex flex-col gap-2 items-center">
+              {scheduleHighlight && (
+                <p className="text-primary font-medium text-center whitespace-pre-line underline">
+                  {scheduleHighlight}
+                </p>
+              )}
               {scheduleLines.length > 0 && (
                 <ul className="flex flex-col gap-2 text-[15px]">
                   {scheduleLines.map((line) => (
                     <li key={line} className="flex gap-2">
-                      <span>{line}</span>
+                      <span className="w-full text-center">{line}</span>
                     </li>
                   ))}
                 </ul>

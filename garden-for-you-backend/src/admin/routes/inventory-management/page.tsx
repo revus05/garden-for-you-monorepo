@@ -47,6 +47,7 @@ type ProductGroup = {
 }
 
 type BulkMode = "all" | "option" | "variants"
+type BulkOperation = "delta" | "set"
 
 const INVENTORY_QUERY_KEY = ["admin", "inventory"] as const
 
@@ -57,7 +58,8 @@ const InventoryManagementPage = () => {
 
   // Bulk panel state
   const [bulkMode, setBulkMode] = useState<BulkMode>("all")
-  const [bulkDelta, setBulkDelta] = useState<string>("")
+  const [bulkOperation, setBulkOperation] = useState<BulkOperation>("delta")
+  const [bulkValue, setBulkValue] = useState<string>("")
   const [bulkOptionTitle, setBulkOptionTitle] = useState<string>("")
   const [bulkOptionValue, setBulkOptionValue] = useState<string>("")
 
@@ -97,7 +99,7 @@ const InventoryManagementPage = () => {
     onSuccess: async (res) => {
       await queryClient.invalidateQueries({ queryKey: INVENTORY_QUERY_KEY })
       toast.success(`Обновлено: ${res.updated_count}`)
-      setBulkDelta("")
+      setBulkValue("")
     },
     onError: (e: any) =>
       toast.error(e?.message ?? "Не удалось применить массовое изменение"),
@@ -165,6 +167,25 @@ const InventoryManagementPage = () => {
     }, {})
   }, [filtered])
 
+  // How many variants the bulk panel would touch right now — shown next to the
+  // apply button so the operation is never a shot in the dark.
+  const bulkTargetCount = useMemo(() => {
+    if (bulkMode === "variants") return selectedIds.size
+    if (bulkMode === "all") return variants.length
+    if (!bulkOptionTitle || !bulkOptionValue) return 0
+
+    const title = bulkOptionTitle.trim().toLowerCase()
+    const value = bulkOptionValue.trim().toLowerCase()
+
+    return variants.filter((v) =>
+      v.options.some(
+        (o) =>
+          (o.title ?? "").trim().toLowerCase() === title &&
+          (o.value ?? "").trim().toLowerCase() === value
+      )
+    ).length
+  }, [variants, bulkMode, bulkOptionTitle, bulkOptionValue, selectedIds])
+
   const totalStocked = variants.reduce((s, v) => s + v.stocked_quantity, 0)
   const totalReserved = variants.reduce((s, v) => s + v.reserved_quantity, 0)
   const outOfStock = variants.filter(
@@ -202,35 +223,60 @@ const InventoryManagementPage = () => {
 
   // --- Bulk submit ---
   const handleBulkSubmit = () => {
-    const delta = parseInt(bulkDelta, 10)
-    if (isNaN(delta) || delta === 0) {
+    const parsed = parseInt(bulkValue, 10)
+
+    if (bulkOperation === "set") {
+      if (isNaN(parsed) || parsed < 0) {
+        toast.error("Введите целое число не меньше 0")
+        return
+      }
+    } else if (isNaN(parsed) || parsed === 0) {
       toast.error("Введите ненулевое целое число")
       return
     }
-    if (bulkMode === "option") {
-      if (!bulkOptionTitle || !bulkOptionValue) {
-        toast.error("Выберите опцию и значение")
-        return
-      }
-      bulkMutation.mutate({
-        mode: "option",
-        delta,
-        option_title: bulkOptionTitle,
-        option_value: bulkOptionValue,
-      })
-    } else if (bulkMode === "variants") {
-      if (selectedIds.size === 0) {
-        toast.error("Не выбрано ни одного варианта")
-        return
-      }
-      bulkMutation.mutate({
-        mode: "variants",
-        delta,
-        variant_ids: Array.from(selectedIds),
-      })
-    } else {
-      bulkMutation.mutate({ mode: "all", delta })
+
+    if (bulkMode === "option" && (!bulkOptionTitle || !bulkOptionValue)) {
+      toast.error("Выберите опцию и значение")
+      return
     }
+    if (bulkMode === "variants" && selectedIds.size === 0) {
+      toast.error("Не выбрано ни одного варианта")
+      return
+    }
+    if (bulkTargetCount === 0) {
+      toast.error("Под условие не подходит ни один вариант")
+      return
+    }
+
+    // "Установить" перезаписывает текущие остатки, поэтому подтверждаем — как и
+    // любое действие сразу по всем вариантам.
+    const needsConfirm = bulkOperation === "set" || bulkMode === "all"
+    const action =
+      bulkOperation === "set"
+        ? `установить остаток ${parsed}`
+        : `изменить остаток на ${parsed > 0 ? `+${parsed}` : parsed}`
+
+    if (
+      needsConfirm &&
+      typeof window !== "undefined" &&
+      !window.confirm(
+        `Действие затронет вариантов: ${bulkTargetCount}. Продолжить и ${action}?`
+      )
+    ) {
+      return
+    }
+
+    bulkMutation.mutate({
+      mode: bulkMode,
+      operation: bulkOperation,
+      ...(bulkOperation === "set" ? { quantity: parsed } : { delta: parsed }),
+      ...(bulkMode === "option"
+        ? { option_title: bulkOptionTitle, option_value: bulkOptionValue }
+        : {}),
+      ...(bulkMode === "variants"
+        ? { variant_ids: Array.from(selectedIds) }
+        : {}),
+    })
   }
 
   return (
@@ -278,7 +324,23 @@ const InventoryManagementPage = () => {
       <Container className="p-0">
         <div className="flex flex-wrap items-end gap-3 px-4 py-3">
           <div className="flex flex-col gap-1">
-            <Text size="xsmall" className="text-ui-fg-muted">Режим</Text>
+            <Text size="xsmall" className="text-ui-fg-muted">Действие</Text>
+            <Select
+              value={bulkOperation}
+              onValueChange={(v) => setBulkOperation(v as BulkOperation)}
+            >
+              <Select.Trigger className="h-8 w-56">
+                <Select.Value />
+              </Select.Trigger>
+              <Select.Content>
+                <Select.Item value="delta">Изменить на (+/−)</Select.Item>
+                <Select.Item value="set">Установить количество</Select.Item>
+              </Select.Content>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <Text size="xsmall" className="text-ui-fg-muted">Применить к</Text>
             <Select
               value={bulkMode}
               onValueChange={(v) => setBulkMode(v as BulkMode)}
@@ -342,22 +404,43 @@ const InventoryManagementPage = () => {
 
           <div className="flex flex-col gap-1">
             <Text size="xsmall" className="text-ui-fg-muted">
-              Изменение остатка (можно минус)
+              {bulkOperation === "set"
+                ? "Новое количество"
+                : "Изменение остатка (можно минус)"}
             </Text>
             <Input
               className="h-8 w-32"
               type="number"
-              placeholder="+10 или -5"
-              value={bulkDelta}
-              onChange={(e) => setBulkDelta(e.target.value)}
+              min={bulkOperation === "set" ? 0 : undefined}
+              placeholder={bulkOperation === "set" ? "например, 0" : "+10 или -5"}
+              value={bulkValue}
+              onChange={(e) => setBulkValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleBulkSubmit()
+              }}
               size="small"
             />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <Text size="xsmall" className="text-ui-fg-muted">
+              Затронет вариантов
+            </Text>
+            <div className="flex h-8 items-center">
+              <Badge
+                size="2xsmall"
+                color={bulkTargetCount > 0 ? "grey" : "red"}
+              >
+                {bulkTargetCount}
+              </Badge>
+            </div>
           </div>
 
           <Button
             size="small"
             onClick={handleBulkSubmit}
             isLoading={bulkMutation.isPending}
+            disabled={bulkTargetCount === 0}
           >
             Применить
           </Button>

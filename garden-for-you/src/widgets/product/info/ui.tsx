@@ -1,7 +1,7 @@
 "use client";
 
 import type { StoreProduct } from "@medusajs/types";
-import { Scale, ShoppingCart } from "lucide-react";
+import { PackageX, Scale, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { type FC, Fragment, useState } from "react";
 import {
@@ -21,7 +21,6 @@ import {
 import { paths } from "@/shared/constants/navigation";
 import { cn, useAppDispatch, useAppSelector } from "@/shared/lib";
 import {
-  Badge,
   Button,
   Tabs,
   TabsList,
@@ -123,9 +122,14 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
     ),
   );
 
+  const hasAnyVariantInStock =
+    product.variants?.some(isVariantAvailable) ?? false;
+
+  // Если комбинация опций не соответствует ни одному варианту, ориентируемся на
+  // наличие товара в целом, чтобы не показывать «нет в наличии» по ошибке.
   const isSelectedInStock = selectedVariant
     ? isVariantAvailable(selectedVariant)
-    : false;
+    : hasAnyVariantInStock;
 
   const handleCartButtonClick = () => {
     if (!selectedVariant) return;
@@ -142,13 +146,18 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      {!isSelectedInStock && <Badge variant="destructive">Нет в наличии</Badge>}
       <h1 className="font-black text-3xl">{product.title}</h1>
       {selectedVariant?.calculated_price && (
         <p className="text-lg font-bold">
           {selectedVariant.calculated_price.calculated_amount?.toFixed(2)}{" "}
           {selectedVariant.calculated_price.currency_code?.toUpperCase()}
         </p>
+      )}
+      {!isSelectedInStock && (
+        <div className="flex w-fit items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-sm font-medium text-destructive">
+          <PackageX className="size-4 shrink-0 stroke-destructive" />
+          Нет в наличии
+        </div>
       )}
       <div className="flex gap-2 flex-wrap">
         {isInCart && cartItem ? (
@@ -204,7 +213,7 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
             variant="default"
             disabled={!isSelectedInStock}
           >
-            Добавить в корзину
+            {isSelectedInStock ? "Добавить в корзину" : "Нет в наличии"}
             <ShoppingCart className="stroke-primary-foreground" />
           </Button>
         )}

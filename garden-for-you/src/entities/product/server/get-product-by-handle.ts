@@ -41,7 +41,12 @@ export async function getProductByHandle(
 
   const res = await medusaFetch("/store/products", {
     searchParams: params,
-    next: { tags: [CACHE_TAGS.products, productHandleTag(handle)] },
+    // Stock levels change without a `product.updated` event, so keep a short TTL
+    // as a fallback for when the backend's revalidation ping does not land.
+    next: {
+      tags: [CACHE_TAGS.products, productHandleTag(handle)],
+      revalidate: 300,
+    },
   });
 
   if (!res.ok) return null;

@@ -16,16 +16,14 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await sdk.auth.login("customer", "emailpass", parsed.data);
+    const { token } = await sdk.client.fetch<{ token: string }>(
+      "/store/auth/customer/login",
+      {
+        method: "POST",
+        body: parsed.data,
+      },
+    );
 
-    if (typeof result !== "string") {
-      return NextResponse.json(
-        { message: "Требуются дополнительные шаги авторизации." },
-        { status: 409 },
-      );
-    }
-
-    const token = result;
     const authed = createSdk({ token });
     const { customer } = await authed.store.customer.retrieve();
 
@@ -37,7 +35,7 @@ export async function POST(request: Request) {
     return response;
   } catch {
     return NextResponse.json(
-      { message: "Неверный email или пароль." },
+      { message: "Неверный email/телефон или пароль." },
       { status: 401 },
     );
   }

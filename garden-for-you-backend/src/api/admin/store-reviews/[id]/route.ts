@@ -2,9 +2,11 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { STORE_REVIEW_MODULE } from "../../../../modules/store-review"
 import type StoreReviewModuleService from "../../../../modules/store-review/service"
 import { REVALIDATE_TAGS, revalidateStorefront } from "../../../../lib/revalidate"
+import { parseReviewDate } from "../../../../lib/review-date"
 
 type PatchBody = {
   store_reply?: string | null
+  created_at?: string | null
 }
 
 function normalizeReply(reply: unknown): string | null {
@@ -33,13 +35,39 @@ export async function PATCH(
   }
 
   const body = req.body ?? {}
-  const storeReply = normalizeReply(body.store_reply)
+  // Only the keys actually present in the payload are touched, so saving a date
+  // does not wipe the reply and vice versa.
+  const update: { id: string; store_reply?: string | null; created_at?: Date } = {
+    id,
+  }
 
-  if (storeReply !== null && storeReply.length > 4000) {
-    res.status(400).json({
-      message: "Ответ питомника не должен быть длиннее 4000 символов.",
-    })
-    return
+  if ("store_reply" in body) {
+    const storeReply = normalizeReply(body.store_reply)
+
+    if (storeReply !== null && storeReply.length > 4000) {
+      res.status(400).json({
+        message: "Ответ питомника не должен быть длиннее 4000 символов.",
+      })
+      return
+    }
+
+    update.store_reply = storeReply
+  }
+
+  if ("created_at" in body) {
+    const createdAt = parseReviewDate(body.created_at)
+
+    if (createdAt === "invalid") {
+      res.status(400).json({ message: "Некорректная дата отзыва." })
+      return
+    }
+
+    if (createdAt === null) {
+      res.status(400).json({ message: "Укажите дату отзыва." })
+      return
+    }
+
+    update.created_at = createdAt
   }
 
   const storeReviewModuleService = req.scope.resolve<StoreReviewModuleService>(
@@ -47,10 +75,7 @@ export async function PATCH(
   )
 
   const updatedList = await storeReviewModuleService.updateStoreReviews([
-    {
-      id,
-      store_reply: storeReply,
-    },
+    update,
   ])
   const updated = updatedList[0]
 

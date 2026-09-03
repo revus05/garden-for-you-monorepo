@@ -17,6 +17,33 @@ export async function POST(request: Request) {
 
   const { first_name, last_name, email, phone, password } = parsed.data;
 
+  const verificationToken =
+    body && typeof body === "object" && "verification_token" in body
+      ? String((body as { verification_token?: unknown }).verification_token)
+      : "";
+
+  try {
+    const consumed = await sdk.client.fetch<{ ok: boolean }>(
+      "/store/auth/customer/consume-verification",
+      {
+        method: "POST",
+        body: { phone, token: verificationToken },
+      },
+    );
+
+    if (!consumed.ok) {
+      return NextResponse.json(
+        { message: "Подтвердите номер телефона." },
+        { status: 400 },
+      );
+    }
+  } catch {
+    return NextResponse.json(
+      { message: "Подтвердите номер телефона." },
+      { status: 400 },
+    );
+  }
+
   try {
     const registrationToken = await sdk.auth.register("customer", "emailpass", {
       email,

@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { paths } from "@/shared/constants/navigation";
@@ -37,23 +37,23 @@ export function SignInForm() {
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <FieldSet>
           <FieldGroup>
-            <Field data-invalid={!!errors.email}>
+            <Field data-invalid={!!errors.identifier}>
               <FieldLabel className="flex w-full flex-col items-start">
                 <FieldContent className="w-full">
                   <InputGroup className="gap-2 sm:px-1.5 px-1 shadow-md">
                     <InputGroupAddon align="inline-start">
-                      <Mail className="stroke-primary" />
+                      <User className="stroke-primary" />
                     </InputGroupAddon>
                     <InputGroupInput
-                      type="email"
-                      autoComplete="email"
-                      aria-invalid={!!errors.email}
-                      placeholder="example@gmail.com"
+                      type="text"
+                      autoComplete="username"
+                      aria-invalid={!!errors.identifier}
+                      placeholder="Email или телефон"
                       className="text-primary"
-                      {...register("email")}
+                      {...register("identifier")}
                     />
                   </InputGroup>
-                  <FieldError errors={[errors.email]} />
+                  <FieldError errors={[errors.identifier]} />
                 </FieldContent>
               </FieldLabel>
             </Field>
