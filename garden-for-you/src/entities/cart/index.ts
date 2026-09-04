@@ -13,4 +13,5 @@ export {
   updateCart,
   updateCartItemQuantityReducer,
 } from "./model";
+export { formatVariantOptions } from "./lib/format-variant-options";
 export type { Cart } from "./model/types";

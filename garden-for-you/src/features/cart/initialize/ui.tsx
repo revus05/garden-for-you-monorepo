@@ -4,32 +4,24 @@ import { type ReactNode, useEffect, useRef } from "react";
 import { syncCart } from "@/features/cart";
 import { useAppDispatch, useAppSelector } from "@/shared/lib";
 
+/**
+ * Keeps the cart attached to the signed-in customer.
+ *
+ * There is deliberately no bootstrap sync on mount: the root layout already
+ * resolved the cart from the cookie, and an unconditional `GET /api/cart` would
+ * hit `resolveServerCart({ createIfMissing: true })` and create a Medusa cart
+ * for every anonymous visitor. The cart is now created lazily, on the first
+ * `POST /api/cart/items`.
+ */
 export function CartInitializer({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.cartSlice.cart);
-  const isInitialized = useAppSelector(
-    (state) => state.cartSlice.isInitialized,
-  );
   const user = useAppSelector((state) => state.userSlice.user);
-  const isBootstrapInFlight = useRef(false);
   const lastMergeKeyRef = useRef<string | null>(null);
-  // Флаг для предотвращения race condition: если пользователь уже взаимодействует с корзиной,
-  // не вызываем syncCart, который может перезаписать его изменения
-  const lastUpdateTimeRef = useRef<number>(0);
-  const DEBOUNCE_SYNC_MS = 5000; // Минимум 5 секунд между синхронизациями
 
   useEffect(() => {
-    if (isInitialized || isBootstrapInFlight.current) return;
-
-    isBootstrapInFlight.current = true;
-
-    void syncCart(dispatch).finally(() => {
-      isBootstrapInFlight.current = false;
-      lastUpdateTimeRef.current = Date.now();
-    });
-  }, [dispatch, isInitialized]);
-
-  useEffect(() => {
+    // The cart exists but is not yet linked to the customer (just signed in) —
+    // ask the server to transfer it. Guarded by a key so it runs once per pair.
     if (!user?.id || !cart?.id || cart.customer_id) return;
 
     const mergeKey = `${user.id}:${cart.id}`;
@@ -38,20 +30,9 @@ export function CartInitializer({ children }: { children: ReactNode }) {
 
     lastMergeKeyRef.current = mergeKey;
 
-    // Не синхронизируем слишком часто, чтобы избежать race condition
-    // с пользовательским взаимодействием (изменение количества товаров)
-    const timeSinceLastUpdate = Date.now() - lastUpdateTimeRef.current;
-    if (timeSinceLastUpdate < DEBOUNCE_SYNC_MS) {
-      return;
-    }
-
-    void syncCart(dispatch)
-      .catch(() => {
-        lastMergeKeyRef.current = null;
-      })
-      .finally(() => {
-        lastUpdateTimeRef.current = Date.now();
-      });
+    void syncCart(dispatch).catch(() => {
+      lastMergeKeyRef.current = null;
+    });
   }, [cart?.customer_id, cart?.id, dispatch, user?.id]);
 
   return children;

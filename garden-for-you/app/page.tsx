@@ -3,11 +3,11 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
+import type { ProductCategoryOrder } from "@/entities/product";
 import {
-  fetchCatalogCategories,
-  type ProductCategoryOrder,
-} from "@/entities/product";
-import { fetchCatalogProductsPageServer } from "@/entities/product/server/fetch-catalog-products";
+  fetchCatalogProductsPageServer,
+  getCachedCategoryTree,
+} from "@/entities/product/server";
 import { catalogQueryKeys } from "@/features/catalog";
 import HomePage from "@/pages/home";
 
@@ -24,8 +24,7 @@ export default async function Page({
   const selectedCategoryIds = rawCategories
     ? rawCategories.split(",").filter(Boolean)
     : [];
-  const searchQuery =
-    typeof params.q === "string" ? params.q : "";
+  const searchQuery = typeof params.q === "string" ? params.q : "";
   const orderBy = (
     typeof params.orderBy === "string" ? params.orderBy : "title"
   ) as ProductCategoryOrder;
@@ -40,7 +39,11 @@ export default async function Page({
   await Promise.all([
     queryClient.prefetchQuery({
       queryKey: catalogQueryKeys.categories(),
-      queryFn: fetchCatalogCategories,
+      // Cached server fetcher instead of the raw client SDK call, which hit
+      // Medusa on every render of the home page. Wrapped in an arrow so
+      // react-query's context argument never reaches `unstable_cache`, which
+      // would fold it into the cache key.
+      queryFn: () => getCachedCategoryTree(),
     }),
     queryClient.prefetchInfiniteQuery({
       queryKey: catalogQueryKeys.products(filters),

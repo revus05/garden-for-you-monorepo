@@ -6,6 +6,9 @@ import { withHomeLayout } from "@/widgets/layouts/home";
 const HomePage = () => {
   return (
     <div className="wrapper flex flex-col gap-12">
+      <h1 className="sr-only">
+        Сад Для Вас — питомник растений и товаров для сада
+      </h1>
       <div className="md:block hidden bg-background-secondary w-[70vw] h-80 absolute top-0 left-0 rounded-br-[64px] -z-1" />
       <div className="lg:w-6xl w-full mx-auto">
         <HeroSection />

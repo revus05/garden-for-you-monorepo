@@ -46,7 +46,7 @@ export async function generateMetadata({
     : `Купить ${product.title} с доставкой по Беларуси в питомнике Сад Для Вас`;
   const description =
     rawDescription.length > 160
-      ? rawDescription.slice(0, 157) + "..."
+      ? `${rawDescription.slice(0, 157)}...`
       : rawDescription;
 
   return {

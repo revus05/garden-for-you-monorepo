@@ -19,7 +19,9 @@ export async function GET(req: NextRequest) {
   const ignored = tags.filter((tag) => !isKnownTag(tag));
 
   for (const tag of validTags) {
-    revalidateTag(tag, {});
+    // `expire: 0` — drop the entries right away instead of leaving them to the
+    // default cache-life profile, which would only mark them stale.
+    revalidateTag(tag, { expire: 0 });
   }
 
   return NextResponse.json({ revalidated: true, tags: validTags, ignored });

@@ -3,6 +3,8 @@
 import { ArrowRight, Scale, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 import {
   MAX_COMPARISON_COUNT,
   type ComparisonProduct,
@@ -55,11 +57,36 @@ function hasDifference(
   return new Set(nonNull).size > 1;
 }
 
-export const CompareWidget = () => {
+type CompareWidgetProps = {
+  /**
+   * Server-rendered snapshot of the compared products. The store only keeps the
+   * ids, so removals are applied by filtering this snapshot — no refetch needed.
+   */
+  initialProducts: ComparisonProduct[];
+};
+
+export const CompareWidget = ({ initialProducts }: CompareWidgetProps) => {
   const dispatch = useAppDispatch();
-  const products = useAppSelector((state) => state.comparisonSlice.products);
+  const router = useRouter();
+  const currentIds = useAppSelector((state) => state.comparisonSlice.ids);
+  const products = initialProducts.filter((p) => currentIds.includes(p.id));
   const allSpecs = collectAllSpecs(products);
-  const currentIds = products.map((p) => p.id);
+
+  // A product added on another route is in the cookie (and in the store) but
+  // not in this server snapshot, because Next may reuse a cached RSC payload
+  // for up to `staleTimes.dynamic`. Pull a fresh one — once per id set, so a
+  // product that legitimately no longer resolves cannot loop.
+  const missingIds = currentIds.filter(
+    (id) => !initialProducts.some((product) => product.id === id),
+  );
+  const missingKey = missingIds.join(",");
+  const refreshedKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!missingKey || refreshedKeyRef.current === missingKey) return;
+    refreshedKeyRef.current = missingKey;
+    router.refresh();
+  }, [missingKey, router]);
 
   const handleRemove = (productId: string) => {
     void removeFromComparisonWithSync(

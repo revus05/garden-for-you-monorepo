@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAppDispatch, useAppSelector } from "@/shared/lib";
-import { resetCart } from "@/entities/cart";
+import { formatVariantOptions, resetCart } from "@/entities/cart";
 import { completeOrderRequest } from "./api";
 import type { ShippingOption } from "@/features/checkout/shipping-form";
 
@@ -37,12 +37,7 @@ export const useConfirmOrder = (shippingOption: ShippingOption) => {
 
       const items: OrderReceiptItem[] =
         cart?.items?.map((item) => {
-          const variantOptions =
-            (item.variant as any)?.options
-              ?.map((o: any) =>
-                o.option?.title ? `${o.option.title}: ${o.value}` : o.value,
-              )
-              .join(", ") ?? "";
+          const variantOptions = formatVariantOptions(item);
 
           return {
             id: item.id,

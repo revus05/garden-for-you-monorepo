@@ -12,7 +12,13 @@ async function fetchProductSpecs(
 ): Promise<ProductSpec[]> {
   try {
     const res = await medusaFetch(`/store/products/${productId}/specs`, {
-      next: { tags: [CACHE_TAGS.products, productHandleTag(handle)] },
+      // `revalidate` is required, not just the tags: the product route is
+      // `force-dynamic`, and Next forces revalidate 0 on any fetch inside such
+      // a segment that does not set an explicit cache option.
+      next: {
+        tags: [CACHE_TAGS.products, productHandleTag(handle)],
+        revalidate: 300,
+      },
     });
 
     if (!res.ok) return [];

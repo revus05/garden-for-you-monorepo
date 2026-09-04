@@ -11,31 +11,37 @@ export type ComparisonProduct = {
   specs: ProductSpec[];
 };
 
+/**
+ * Only the product ids live in the global store. They come straight from the
+ * comparison cookie, so populating them costs zero network calls on every
+ * route. The full product payload (title, price, specs) is fetched by the
+ * `/compare` page alone, which is the only place that renders it.
+ */
 type InitialState = {
-  products: ComparisonProduct[];
+  ids: string[];
 };
 
 export const MAX_COMPARISON_COUNT = 6;
 
 const initialState: InitialState = {
-  products: [],
+  ids: [],
 };
 
 const comparisonSlice = createSlice({
   name: "comparisonSlice",
   initialState,
   reducers: {
-    addToComparison: (state, action: PayloadAction<ComparisonProduct>) => {
-      const exists = state.products.some((p) => p.id === action.payload.id);
-      if (!exists && state.products.length < MAX_COMPARISON_COUNT) {
-        state.products.push(action.payload);
+    addToComparison: (state, action: PayloadAction<string>) => {
+      const exists = state.ids.includes(action.payload);
+      if (!exists && state.ids.length < MAX_COMPARISON_COUNT) {
+        state.ids.push(action.payload);
       }
     },
     removeFromComparison: (state, action: PayloadAction<string>) => {
-      state.products = state.products.filter((p) => p.id !== action.payload);
+      state.ids = state.ids.filter((id) => id !== action.payload);
     },
     clearComparison: (state) => {
-      state.products = [];
+      state.ids = [];
     },
   },
 });

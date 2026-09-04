@@ -6,6 +6,7 @@ import telegram from "@/images/telegram.svg";
 import { paths } from "@/shared/constants/navigation";
 import { TelegramModal } from "@/shared/ui";
 import { NavItems } from "./nav-items";
+import { YandexMap } from "./yandex-map";
 
 export const Footer = () => {
   return (
@@ -27,9 +28,9 @@ export const Footer = () => {
               alt="logo"
               className="size-10"
             />
-            <h1 className="font-black font-logo text-2xl whitespace-nowrap">
+            <span className="font-black font-logo text-2xl whitespace-nowrap">
               Сад Для Вас
-            </h1>
+            </span>
           </Link>
           <div className="flex flex-col gap-4">
             <Link href={paths.privacyPolicy} className="underline">
@@ -50,13 +51,7 @@ export const Footer = () => {
           </ul>
         </nav>
         <div className="flex flex-col gap-2">
-          <iframe
-            title="Яндекс карта"
-            src="https://yandex.ru/map-widget/v1/?um=constructor%3Aba6b1c13e3e2452a04495d797c70a5fb166f910d96bcdf7eab3b00209dc24a66&amp;source=constructor"
-            width="500"
-            height="400"
-            className="w-full"
-          />
+          <YandexMap />
           <div className="flex gap-2 items-center">
             <span>
               Александр:{" "}

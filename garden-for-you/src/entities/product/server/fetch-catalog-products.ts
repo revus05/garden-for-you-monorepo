@@ -5,7 +5,12 @@ import { CACHE_TAGS } from "@/shared/cache";
 import { publicEnv } from "@/shared/config/env";
 import type { StoreProductCategory } from "@medusajs/types";
 import { CATALOG_PRODUCTS_PAGE_SIZE } from "../model";
-import type { CatalogFilters, CatalogProductsPage } from "../model/types";
+import { CATALOG_CATEGORY_LIST_PARAMS } from "../model/catalog-params";
+import type {
+  CatalogFilters,
+  CatalogProductsPage,
+  ProductCategory,
+} from "../model/types";
 
 type CategoryNode = Pick<StoreProductCategory, "id"> & {
   category_children?: CategoryNode[];
@@ -31,16 +36,21 @@ function findInTree(cats: CategoryNode[], id: string): CategoryNode | undefined 
   return undefined;
 }
 
-// Shared cached category tree — reused by both API route and SSR prefetch
+/**
+ * Shared cached category tree — reused by the catalog API route, the SSR
+ * prefetch on the home page and server-side category resolution. Uses exactly
+ * the same request params as the client `fetchCatalogCategories`, so the
+ * dehydrated react-query cache matches what a client refetch would return.
+ */
 export const getCachedCategoryTree = unstable_cache(
-  async () => {
+  async (): Promise<ProductCategory[]> => {
     const sdk = createSdk();
-    const { product_categories } = await sdk.store.category.list({
-      limit: 200,
-      include_descendants_tree: true,
-      fields: "id,category_children,handle,name",
-    } as Parameters<typeof sdk.store.category.list>[0]);
-    return product_categories as CategoryNode[];
+    const { product_categories } = await sdk.store.category.list(
+      CATALOG_CATEGORY_LIST_PARAMS as Parameters<
+        typeof sdk.store.category.list
+      >[0],
+    );
+    return product_categories;
   },
   ["catalog-categories"],
   { revalidate: 300, tags: [CACHE_TAGS.categories] },
@@ -95,7 +105,7 @@ export async function fetchCatalogProductsPageServer({
   let resolvedCategoryIds: string[] = [];
 
   if (filters.categoryIds.length > 0 || filters.parentHandle) {
-    const allCategories = await getCachedCategoryTree();
+    const allCategories = (await getCachedCategoryTree()) as CategoryNode[];
 
     if (filters.categoryIds.length > 0) {
       for (const id of filters.categoryIds) {

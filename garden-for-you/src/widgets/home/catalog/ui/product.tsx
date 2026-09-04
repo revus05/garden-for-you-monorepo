@@ -3,10 +3,7 @@ import { Scale, ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { FC } from "react";
-import {
-  type ComparisonProduct,
-  MAX_COMPARISON_COUNT,
-} from "@/entities/comparison";
+import { MAX_COMPARISON_COUNT } from "@/entities/comparison";
 import { addCartItem, removeCartItem } from "@/features/cart";
 import {
   addToComparisonWithSync,
@@ -31,9 +28,7 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
   const dispatch = useAppDispatch();
 
   const cart = useAppSelector((state) => state.cartSlice.cart);
-  const comparisonProducts = useAppSelector(
-    (state) => state.comparisonSlice.products,
-  );
+  const comparisonIds = useAppSelector((state) => state.comparisonSlice.ids);
 
   if (!product.variants) return null;
 
@@ -50,10 +45,9 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
   });
 
   const isInCart = !!cartItem;
-  const isInComparison = comparisonProducts.some((p) => p.id === product.id);
+  const isInComparison = comparisonIds.includes(product.id);
   const isComparisonFull =
-    comparisonProducts.length >= MAX_COMPARISON_COUNT && !isInComparison;
-  const currentComparisonIds = comparisonProducts.map((p) => p.id);
+    comparisonIds.length >= MAX_COMPARISON_COUNT && !isInComparison;
 
   const handleCartButtonClick = () => {
     if (!product.variants) return;
@@ -70,22 +64,11 @@ export const CatalogProduct: FC<CatalogProductProps> = ({ product }) => {
       void removeFromComparisonWithSync(
         dispatch,
         product.id,
-        currentComparisonIds.filter((id) => id !== product.id),
+        comparisonIds.filter((id) => id !== product.id),
       );
     } else if (!isComparisonFull) {
-      const variant = product.variants?.[0];
-      const compProduct: ComparisonProduct = {
-        id: product.id,
-        handle: product.handle ?? "",
-        title: product.title ?? "",
-        thumbnail: product.thumbnail ?? null,
-        price: variant?.prices?.[0]?.amount ?? null,
-        currency:
-          variant?.prices?.[0]?.currency_code?.toUpperCase() ?? null,
-        specs: [],
-      };
-      void addToComparisonWithSync(dispatch, compProduct, [
-        ...currentComparisonIds,
+      void addToComparisonWithSync(dispatch, product.id, [
+        ...comparisonIds,
         product.id,
       ]);
     }

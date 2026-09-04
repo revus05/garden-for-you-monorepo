@@ -5,7 +5,6 @@ import { PackageX, Scale, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { type FC, Fragment, useState } from "react";
 import {
-  type ComparisonProduct,
   MAX_COMPARISON_COUNT,
 } from "@/entities/comparison";
 import type { ProductSpec } from "@/entities/product";
@@ -39,9 +38,7 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
   const dispatch = useAppDispatch();
 
   const cart = useAppSelector((state) => state.cartSlice.cart);
-  const comparisonProducts = useAppSelector(
-    (state) => state.comparisonSlice.products,
-  );
+  const comparisonIds = useAppSelector((state) => state.comparisonSlice.ids);
 
   const initialOptions: Record<string, string> = Object.fromEntries(
     product.options?.map((option) => [
@@ -56,33 +53,20 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
 
   const cartItem = cart?.items?.find((item) => item.product?.id === product.id);
   const isInCart = !!cartItem;
-  const isInComparison = comparisonProducts.some((p) => p.id === product.id);
+  const isInComparison = comparisonIds.includes(product.id);
   const isComparisonFull =
-    comparisonProducts.length >= MAX_COMPARISON_COUNT && !isInComparison;
-
-  const currentIds = comparisonProducts.map((p) => p.id);
+    comparisonIds.length >= MAX_COMPARISON_COUNT && !isInComparison;
 
   const handleComparisonClick = () => {
     if (isInComparison) {
       void removeFromComparisonWithSync(
         dispatch,
         product.id,
-        currentIds.filter((id) => id !== product.id),
+        comparisonIds.filter((id) => id !== product.id),
       );
     } else if (!isComparisonFull) {
-      const variant = product.variants?.[0];
-      const compProduct: ComparisonProduct = {
-        id: product.id,
-        handle: product.handle ?? "",
-        title: product.title ?? "",
-        thumbnail: product.thumbnail ?? null,
-        price: variant?.calculated_price?.calculated_amount ?? null,
-        currency:
-          variant?.calculated_price?.currency_code?.toUpperCase() ?? null,
-        specs,
-      };
-      void addToComparisonWithSync(dispatch, compProduct, [
-        ...currentIds,
+      void addToComparisonWithSync(dispatch, product.id, [
+        ...comparisonIds,
         product.id,
       ]);
     }
@@ -231,13 +215,13 @@ export const ProductInfo: FC<ProductInfoProps> = ({ product, specs }) => {
             >
               <Scale className={cn(isInComparison && "stroke-primary")} />
               {isInComparison ? "В сравнении" : "Сравнить"}
-              {isInComparison && comparisonProducts.length > 0 && (
+              {isInComparison && comparisonIds.length > 0 && (
                 <Link
                   href={paths.compare}
                   onClick={(e) => e.stopPropagation()}
                   className="ml-1 text-xs underline text-muted-foreground hover:text-primary"
                 >
-                  ({comparisonProducts.length})
+                  ({comparisonIds.length})
                 </Link>
               )}
             </Button>

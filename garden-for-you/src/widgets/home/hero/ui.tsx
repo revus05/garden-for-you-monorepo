@@ -29,7 +29,7 @@ export const HeroSection = async () => {
         }}
       />
       <div className="flex-1 flex flex-col justify-center gap-4 px-8 py-8 pr-0 md:px-12 relative z-10">
-        <h1 className="font-black text-4xl text-white">{title}</h1>
+        <h2 className="font-black text-4xl text-white">{title}</h2>
         <span className="text-white/80 text-sm max-w-lg">{description}</span>
         {href && (
           <Button

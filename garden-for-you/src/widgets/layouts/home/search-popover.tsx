@@ -3,7 +3,7 @@
 import { Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useDeferredValue, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCatalogProductsInfiniteQuery } from "@/features/catalog";
 import plantPlaceholder from "@/images/plant-placholder.svg";
 import { paths } from "@/shared/constants/navigation";
@@ -12,15 +12,31 @@ import { Button, Popover, PopoverContent, PopoverTrigger } from "@/shared/ui";
 export const SearchPopover = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const deferredQuery = useDeferredValue(searchQuery.trim());
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const productsQuery = useCatalogProductsInfiniteQuery({
-    categoryIds: [],
-    parentHandle: "",
-    searchQuery: deferredQuery,
-    orderBy: "title",
-  });
+  const trimmedQuery = searchQuery.trim();
+
+  // Debounce keystrokes into the query key. `useDeferredValue` only defers the
+  // render, so without this a request went out on nearly every character.
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(trimmedQuery), 300);
+    return () => clearTimeout(timer);
+  }, [trimmedQuery]);
+
+  // Without `enabled` this hook fired an unfiltered full-catalog request on
+  // every page of the site, since the header is part of the shared layout.
+  const isSearchEnabled = isOpen && debouncedQuery.length > 0;
+
+  const productsQuery = useCatalogProductsInfiniteQuery(
+    {
+      categoryIds: [],
+      parentHandle: "",
+      searchQuery: debouncedQuery,
+      orderBy: "title",
+    },
+    { enabled: isSearchEnabled },
+  );
 
   const products =
     productsQuery.data?.pages.flatMap((page) => page.products) ?? [];
@@ -71,21 +87,21 @@ export const SearchPopover = () => {
         </div>
 
         <div className="overflow-y-auto flex-1 py-2">
-          {!deferredQuery && (
+          {!trimmedQuery && (
             <p className="py-6 text-center text-muted-foreground">
               Введите запрос для поиска товаров
             </p>
           )}
-          {productsQuery.isPending && deferredQuery && (
+          {productsQuery.isPending && trimmedQuery && (
             <p className="py-6 text-center text-muted-foreground">
               Загрузка...
             </p>
           )}
           {!productsQuery.isPending &&
-            deferredQuery &&
+            trimmedQuery &&
             products.length === 0 && (
               <p className="py-6 text-center text-muted-foreground">
-                По запросу «{deferredQuery}» ничего не найдено
+                По запросу «{debouncedQuery}» ничего не найдено
               </p>
             )}
 

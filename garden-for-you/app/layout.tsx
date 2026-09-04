@@ -3,9 +3,9 @@ import { EB_Garamond, Noto_Sans, Noto_Serif } from "next/font/google";
 import "./globals.css";
 import type { ReactNode } from "react";
 import { Providers } from "@/app/providers";
-import { getServerCart } from "@/entities/cart/server/get-server-cart";
-import { getServerComparison } from "@/entities/comparison/server/get-server-comparison";
-import { getServerUser } from "@/entities/user/server/get-server-user";
+import { getServerCart } from "@/entities/cart/server";
+import { readComparisonIds } from "@/entities/comparison/server";
+import { getServerUser } from "@/entities/user/server";
 import { publicEnv } from "@/shared/config/env";
 
 const notoSans = Noto_Sans({ subsets: ["cyrillic"], variable: "--font-sans" });
@@ -78,9 +78,11 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const [preloadedCart, preloadedUser, preloadedComparison] = await Promise.all(
-    [getServerCart(), getServerUser(), getServerComparison()],
-  );
+  // All three are cookie-driven: a visitor without an auth/cart cookie costs
+  // zero backend round-trips here. `readComparisonIds` never hits the network —
+  // the full comparison payload is loaded by the `/compare` page alone.
+  const [preloadedCart, preloadedUser, preloadedComparisonIds] =
+    await Promise.all([getServerCart(), getServerUser(), readComparisonIds()]);
 
   return (
     <html lang="ru">
@@ -90,7 +92,7 @@ export default async function RootLayout({
         <Providers
           preloadedCart={preloadedCart}
           preloadedUser={preloadedUser}
-          preloadedComparison={preloadedComparison}
+          preloadedComparisonIds={preloadedComparisonIds}
         >
           {children}
         </Providers>

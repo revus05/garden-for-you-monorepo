@@ -1,7 +1,8 @@
 "use client";
 
 import { MapPin, ShieldCheck, Truck } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { formatVariantOptions } from "@/entities/cart";
 import type { ShippingOption } from "@/features/checkout/shipping-form";
 import { formatPrice, useAppSelector } from "@/shared/lib";
 import { Button, Separator } from "@/shared/ui";
@@ -21,9 +22,12 @@ export function ConfirmOrderForm({ shippingOption, onOrderPlaced }: Props) {
   const itemsTotal = cart?.total ?? 0;
   const grandTotal = itemsTotal + deliveryPrice;
 
+  const onOrderPlacedRef = useRef(onOrderPlaced);
+  onOrderPlacedRef.current = onOrderPlaced;
+
   useEffect(() => {
     if (receiptData) {
-      onOrderPlaced?.();
+      onOrderPlacedRef.current?.();
     }
   }, [receiptData]);
 
@@ -45,15 +49,9 @@ export function ConfirmOrderForm({ shippingOption, onOrderPlaced }: Props) {
             >
               <span className="max-w-[16rem] text-sm leading-5 text-muted-foreground">
                 {item.product_title}
-                {(item.variant as any)?.options?.length > 0 && (
+                {formatVariantOptions(item) && (
                   <span className="block text-xs text-muted-foreground/80">
-                    {(item.variant as any).options
-                      .map((o: any) =>
-                        o.option?.title
-                          ? `${o.option.title}: ${o.value}`
-                          : o.value,
-                      )
-                      .join(", ")}
+                    {formatVariantOptions(item)}
                   </span>
                 )}
                 <span className="block text-xs uppercase text-muted-foreground/70">

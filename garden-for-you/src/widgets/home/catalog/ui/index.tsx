@@ -30,6 +30,18 @@ import { CatalogSearch } from "@/widgets/home/catalog/ui/search";
 import { CatalogSorting } from "@/widgets/home/catalog/ui/sorting";
 import { CatalogTabs } from "@/widgets/home/catalog/ui/tabs";
 
+const CATEGORY_SKELETON_KEYS = ["c1", "c2", "c3", "c4", "c5"] as const;
+const PRODUCT_SKELETON_KEYS = [
+  "p1",
+  "p2",
+  "p3",
+  "p4",
+  "p5",
+  "p6",
+  "p7",
+  "p8",
+] as const;
+
 const ORDER_LABELS: Record<ProductCategoryOrder, string> = {
   title: "По алфавиту ↓",
   "-title": "По алфавиту ↑",
@@ -149,25 +161,23 @@ export const Catalog = () => {
   const hasProducts = products.length > 0;
 
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const { hasNextPage, isFetchingNextPage, fetchNextPage } = productsQuery;
 
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (
-          entries[0]?.isIntersecting &&
-          productsQuery.hasNextPage &&
-          !productsQuery.isFetchingNextPage
-        ) {
-          void productsQuery.fetchNextPage();
+        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          void fetchNextPage();
         }
       },
       { rootMargin: "1200px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [productsQuery]);
+    // Depending on `productsQuery` re-created the observer on every render.
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const activeCategories = (
     categoriesQuery.data?.find((category) => category.handle === activeTab)
@@ -185,8 +195,8 @@ export const Catalog = () => {
         </div>
         <div className="flex flex-col gap-2">
           {categoriesQuery.isPending
-            ? Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-5 w-full" />
+            ? CATEGORY_SKELETON_KEYS.map((key) => (
+                <Skeleton key={key} className="h-5 w-full" />
               ))
             : activeCategories?.map((category) => (
                 <CatalogCategory
@@ -346,8 +356,8 @@ export const Catalog = () => {
             )}
           >
             {isInitialLoading
-              ? Array.from({ length: 8 }).map((_, i) => (
-                  <CatalogProductSkeleton key={i} />
+              ? PRODUCT_SKELETON_KEYS.map((key) => (
+                  <CatalogProductSkeleton key={key} />
                 ))
               : products.map((product) => (
                   <CatalogProduct key={product.id} product={product} />

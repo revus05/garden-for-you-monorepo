@@ -2,7 +2,6 @@ import type { StoreCustomer } from "@medusajs/types";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import type { Cart } from "@/entities/cart";
 import { cartSlice } from "@/entities/cart";
-import type { ComparisonProduct } from "@/entities/comparison";
 import { comparisonSlice } from "@/entities/comparison";
 import { userSlice } from "@/entities/user";
 
@@ -17,7 +16,7 @@ const mainReducer = combineReducers(rootReducer);
 export const makeStore = (
   preloadedUser: StoreCustomer | null,
   preloadedCart: Cart | null,
-  preloadedComparison: ComparisonProduct[] = [],
+  preloadedComparisonIds: string[] = [],
 ) => {
   return configureStore({
     reducer: mainReducer,
@@ -26,10 +25,12 @@ export const makeStore = (
       userSlice: { user: preloadedUser },
       cartSlice: {
         cart: preloadedCart,
-        isInitialized: preloadedCart !== null,
+        // The server layout already resolved the cart from the cookie; a null
+        // cart means "no cart yet", not "not loaded".
+        isInitialized: true,
       },
       comparisonSlice: {
-        products: preloadedComparison,
+        ids: preloadedComparisonIds,
       },
     },
   });

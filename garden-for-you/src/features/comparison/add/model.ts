@@ -1,12 +1,12 @@
 import type { Dispatch } from "@reduxjs/toolkit";
-import { addToComparison, type ComparisonProduct } from "@/entities/comparison";
+import { addToComparison } from "@/entities/comparison";
 import { saveComparisonIdsRequest } from "@/entities/comparison/api";
 
 export async function addToComparisonWithSync(
   dispatch: Dispatch,
-  product: ComparisonProduct,
+  productId: string,
   nextIds: string[],
 ) {
-  dispatch(addToComparison(product));
+  dispatch(addToComparison(productId));
   await saveComparisonIdsRequest(nextIds);
 }

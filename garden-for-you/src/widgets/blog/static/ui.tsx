@@ -9,9 +9,9 @@ export const BlogStaticContent = () => {
   return (
     <>
       <div className="flex flex-col gap-2">
-        <h2 className="font-bold text-4xl text-center text-background-tertiary">
+        <h1 className="font-bold text-4xl text-center text-background-tertiary">
           Шаги по уходу за <span className="text-primary">растениями</span>
-        </h2>
+        </h1>
         <span className="text-center">
           Следуя этим трем шагам - правильный полив, достаточное количество
           солнечного света и обеспечение необходимыми питательными веществами -

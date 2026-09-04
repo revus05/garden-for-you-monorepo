@@ -4,6 +4,7 @@ import { ArrowRight, ShoppingCart, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { formatVariantOptions } from "@/entities/cart";
 import { removeCartItem, updateCartItemQuantity } from "@/features/cart";
 import plantPlaceholder from "@/images/plant-placholder.svg";
 import { paths } from "@/shared/constants/navigation";
@@ -107,15 +108,9 @@ export const CartList = () => {
                     </Button>
                   </div>
 
-                  {(item.variant as any)?.options?.length > 0 && (
+                  {formatVariantOptions(item) && (
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      {(item.variant as any).options
-                        .map((o: any) =>
-                          o.option?.title
-                            ? `${o.option.title}: ${o.value}`
-                            : o.value,
-                        )
-                        .join(", ")}
+                      {formatVariantOptions(item)}
                     </p>
                   )}
 
@@ -214,15 +209,9 @@ export const CartList = () => {
                       >
                         {item.product_title}
                       </Link>
-                      {(item.variant as any)?.options?.length > 0 && (
+                      {formatVariantOptions(item) && (
                         <span className="text-xs text-muted-foreground">
-                          {(item.variant as any).options
-                            .map((o: any) =>
-                              o.option?.title
-                                ? `${o.option.title}: ${o.value}`
-                                : o.value,
-                            )
-                            .join(", ")}
+                          {formatVariantOptions(item)}
                         </span>
                       )}
                     </div>

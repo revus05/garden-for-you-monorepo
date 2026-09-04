@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
   const categoryIds = searchParams.getAll("category_id[]");
   const parentHandle = searchParams.get("parent_handle") ?? undefined;
-  const offset = Math.max(0, parseInt(searchParams.get("offset") ?? "0") || 0);
+  const offset = Math.max(0, parseInt(searchParams.get("offset") ?? "0", 10) || 0);
   const order = searchParams.get("order") ?? "title";
   const orderBy = (VALID_ORDERS.has(order) ? order : "title") as ProductCategoryOrder;
   const q = searchParams.get("q") ?? "";

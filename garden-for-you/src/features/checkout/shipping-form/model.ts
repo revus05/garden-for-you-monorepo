@@ -39,6 +39,10 @@ export const useShippingForm = (
     },
   });
 
+  // `setValue` is stable in react-hook-form, so this still runs once on mount
+  // while satisfying the exhaustive-deps rule.
+  const { setValue } = form;
+
   useEffect(() => {
     setOptionsLoading(true);
     setOptionsError(null);
@@ -47,8 +51,8 @@ export const useShippingForm = (
         setShippingOptions(options);
         if (options.length > 0) {
           const first = options[0];
-          form.setValue("shippingOptionId", first.id);
-          form.setValue("requiresAddress", first.type_code === "delivery");
+          setValue("shippingOptionId", first.id);
+          setValue("requiresAddress", first.type_code === "delivery");
         }
       })
       .catch((err: unknown) => {
@@ -60,7 +64,7 @@ export const useShippingForm = (
         toast.error(message);
       })
       .finally(() => setOptionsLoading(false));
-  }, []);
+  }, [setValue]);
 
   function selectOption(option: ShippingOption) {
     form.setValue("shippingOptionId", option.id);

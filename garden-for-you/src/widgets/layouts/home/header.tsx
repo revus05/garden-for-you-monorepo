@@ -15,7 +15,7 @@ export const Header = () => {
   const user = useAppSelector((state) => state.userSlice.user);
   const cart = useAppSelector((state) => state.cartSlice.cart);
   const comparisonCount = useAppSelector(
-    (state) => state.comparisonSlice.products.length,
+    (state) => state.comparisonSlice.ids.length,
   );
 
   const avatarUrl = user?.metadata?.avatar_url as string | undefined;
@@ -51,9 +51,9 @@ export const Header = () => {
               alt="logo"
               className="size-8"
             />
-            <h1 className="text-primary font-black font-logo text-2xl whitespace-nowrap">
+            <span className="text-primary font-black font-logo text-2xl whitespace-nowrap">
               Сад Для Вас
-            </h1>
+            </span>
           </Link>
           <nav className="lg:block hidden">
             <ul className="flex gap-8">

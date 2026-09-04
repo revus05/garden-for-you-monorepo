@@ -117,7 +117,7 @@ export function ReviewsPageClient({ initialData }: ReviewsPageClientProps) {
     <div className="mx-auto w-full max-w-185 px-4 py-10">
       <section className="mt-10 space-y-4">
         <div>
-          <h2 className="text-2xl font-black">Отзывы наших клиентов</h2>
+          <h1 className="text-2xl font-black">Отзывы наших клиентов</h1>
         </div>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

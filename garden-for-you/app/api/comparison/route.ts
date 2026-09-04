@@ -6,7 +6,7 @@ import {
 } from "@/shared/lib/comparison-cookie.server";
 
 export async function PUT(request: Request) {
-  const body = (await request.json()) as unknown;
+  const body = (await request.json().catch(() => null)) as unknown;
   const ids =
     body &&
     typeof body === "object" &&

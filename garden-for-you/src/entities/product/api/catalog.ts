@@ -1,6 +1,7 @@
 import { sdk } from "@/shared/lib";
 import { publicEnv } from "@/shared/config/env";
 import { CATALOG_PRODUCTS_PAGE_SIZE } from "../model";
+import { CATALOG_CATEGORY_LIST_PARAMS } from "../model/catalog-params";
 import type {
   CatalogFilters,
   CatalogProductsPage,
@@ -65,11 +66,11 @@ export async function fetchCatalogProductsPage({
 }
 
 export async function fetchCatalogCategories(): Promise<ProductCategory[]> {
-  const { product_categories } = await sdk.store.category.list({
-    limit: 100,
-    include_descendants_tree: true,
-    fields: "id,category_children,handle,name",
-  });
+  const { product_categories } = await sdk.store.category.list(
+    CATALOG_CATEGORY_LIST_PARAMS as Parameters<
+      typeof sdk.store.category.list
+    >[0],
+  );
 
   return product_categories;
 }
