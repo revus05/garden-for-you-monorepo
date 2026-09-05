@@ -97,6 +97,13 @@
     @apply bg-background text-foreground;
     height: 100%;
     overflow-y: auto;
+    /*
+     * body is the scroll container (html is overflow: hidden), so Radix's
+     * scroll lock measures a 0px scrollbar gap and adds no compensation.
+     * Reserving the gutter permanently keeps the layout from shifting when
+     * a modal/popover hides the scrollbar.
+     */
+    scrollbar-gutter: stable;
     -webkit-overflow-scrolling: touch;
   }
   svg {
