@@ -1,0 +1,15 @@
+# Keeps the cron logs from growing without bound.
+# Install: cp logrotate.example /etc/logrotate.d/garden
+
+/var/log/garden-health.log
+/var/log/garden-pg-backup.log
+/var/log/garden-backups.log
+/var/log/garden-prune.log
+{
+    weekly
+    rotate 4
+    compress
+    missingok
+    notifempty
+    copytruncate
+}

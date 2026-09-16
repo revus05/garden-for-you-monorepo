@@ -1,0 +1,6 @@
+# Shell scripts and server config run on Linux. A CRLF line ending turns into a
+# confusing `$'\r': command not found`, so pin these to LF regardless of the
+# committer's core.autocrlf.
+*.sh text eol=lf
+crontab.example text eol=lf
+logrotate.example text eol=lf

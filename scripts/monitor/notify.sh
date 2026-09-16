@@ -30,3 +30,37 @@ notify() {
         -d text="$1" \
         -o /dev/null
 }
+
+STATE_DIR=/var/lib/garden-monitor
+# A standing failure is re-sent this often, so a single missed alert does not
+# turn into days of silent breakage.
+REPEAT_HOURS=6
+
+# report <check-name> <ok|fail> <message>
+# Fires on ok -> fail and fail -> ok transitions only. Without this a check that
+# runs every five minutes would send the same alert 12 times an hour until fixed.
+report() {
+    local name=$1 status=$2 message=$3
+    local state_file="$STATE_DIR/$name"
+
+    mkdir -p "$STATE_DIR"
+
+    if [ "$status" = ok ]; then
+        if [ -f "$state_file" ]; then
+            rm -f "$state_file"
+            notify "✅ Восстановилось: $message"
+        fi
+        return
+    fi
+
+    local now last
+    now=$(date +%s)
+    if [ -f "$state_file" ]; then
+        last=$(cat "$state_file")
+        if [ $(( now - last )) -lt $(( REPEAT_HOURS * 3600 )) ]; then
+            return
+        fi
+    fi
+    echo "$now" > "$state_file"
+    notify "🚨 $message"
+}

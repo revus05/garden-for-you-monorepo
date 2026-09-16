@@ -10,42 +10,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=./notify.sh
 . "$SCRIPT_DIR/notify.sh"
 
-STATE_DIR=/var/lib/garden-monitor
 DISK_THRESHOLD=85
-# A standing failure is re-sent this often, so a single missed alert does not
-# turn into days of silent downtime.
-REPEAT_HOURS=6
 BACKEND_URL=http://127.0.0.1:9000/health
 STOREFRONT_URL=http://127.0.0.1:3000/
-
-mkdir -p "$STATE_DIR"
-
-# report <check-name> <ok|fail> <message>
-# Fires on ok -> fail and fail -> ok transitions only, so a long outage does not
-# produce an alert every five minutes.
-report() {
-    local name=$1 status=$2 message=$3
-    local state_file="$STATE_DIR/$name"
-
-    if [ "$status" = ok ]; then
-        if [ -f "$state_file" ]; then
-            rm -f "$state_file"
-            notify "✅ Восстановилось: $message"
-        fi
-        return
-    fi
-
-    local now last
-    now=$(date +%s)
-    if [ -f "$state_file" ]; then
-        last=$(cat "$state_file")
-        if [ $(( now - last )) -lt $(( REPEAT_HOURS * 3600 )) ]; then
-            return
-        fi
-    fi
-    echo "$now" > "$state_file"
-    notify "🚨 $message"
-}
 
 # --- Disk ---
 # This is what took the site down: a full disk stops Postgres from writing and
