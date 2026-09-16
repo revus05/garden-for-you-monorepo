@@ -2,6 +2,16 @@
 # On the server:
 #   docker compose -f docker-compose.deploy.yml pull
 #   docker compose -f docker-compose.deploy.yml up -d
+
+# Cap container logs. The json-file driver is unbounded by default, and the
+# backend logs every HTTP request — that filled the VPS disk once already and
+# took Postgres down with it ("could not write lock file: No space left").
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   postgres:
     image: postgres:18-alpine
@@ -18,6 +28,7 @@ services:
       timeout: 5s
       retries: 10
     restart: unless-stopped
+    logging: *default-logging
 
   backend:
     image: revus05/garden-backend:latest
@@ -32,6 +43,7 @@ services:
     volumes:
       - backend_uploads:/app/.medusa/server/static
     restart: unless-stopped
+    logging: *default-logging
 
   storefront:
     image: revus05/garden-storefront:latest
@@ -44,6 +56,7 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
     restart: unless-stopped
+    logging: *default-logging
 
 volumes:
   postgres_data:

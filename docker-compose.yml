@@ -1,3 +1,10 @@
+# Cap container logs — the json-file driver is unbounded by default.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   postgres:
     image: postgres:18-alpine
@@ -13,6 +20,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    logging: *default-logging
 
   backend:
     build:
@@ -28,6 +36,7 @@ services:
       - "9000:9000"
     volumes:
       - backend_uploads:/app/.medusa/server/static
+    logging: *default-logging
 
   storefront:
     build:
@@ -50,6 +59,7 @@ services:
         condition: service_started
     ports:
       - "3000:3000"
+    logging: *default-logging
 
 volumes:
   postgres_data:
