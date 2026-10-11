@@ -6,8 +6,13 @@
 #
 #   BOT_TOKEN=123456:AA...
 #   CHAT_ID=805218286
+#   CHAT_THREAD_ID=6           optional, forum topic for alerts
 #   AGE_RECIPIENT=age1...      (pg-backup.sh)
-#   BACKUP_CHAT_ID=-100...     (pg-backup.sh, optional)
+#   BACKUP_CHAT_ID=-100...     (pg-backup.sh, optional, defaults to CHAT_ID)
+#   BACKUP_THREAD_ID=2         (pg-backup.sh, optional, forum topic for backups)
+#
+# For a forum group, a topic link t.me/c/4399289040/6 means
+# CHAT_ID=-1004399289040 and topic id 6.
 #
 # then: chmod 600 /etc/garden-monitor.env
 
@@ -27,8 +32,11 @@ if [ -z "${BOT_TOKEN:-}" ] || [ -z "${CHAT_ID:-}" ]; then
 fi
 
 notify() {
+    local thread=()
+    [ -n "${CHAT_THREAD_ID:-}" ] && thread=(-d message_thread_id="$CHAT_THREAD_ID")
     curl -sS -m 15 -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
         -d chat_id="${CHAT_ID}" \
+        "${thread[@]}" \
         -d text="$1" \
         -o /dev/null
 }

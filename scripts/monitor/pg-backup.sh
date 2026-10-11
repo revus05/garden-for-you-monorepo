@@ -8,6 +8,7 @@
 # Extra keys in /etc/garden-monitor.env (see notify.sh):
 #   AGE_RECIPIENT=age1...       public key; the private one never touches the server
 #   BACKUP_CHAT_ID=-100...      optional, defaults to CHAT_ID
+#   BACKUP_THREAD_ID=2          optional, forum topic for backups
 #
 # Install on the server (every 6 hours) — see crontab.example in this directory.
 
@@ -95,8 +96,14 @@ fi
 
 # Telegram answers HTTP 200 with {"ok":false,...} on some errors, so the body is
 # checked as well as curl's exit code.
+THREAD_ARGS=()
+if [ -n "${BACKUP_THREAD_ID:-}" ]; then
+    THREAD_ARGS=(-F message_thread_id="$BACKUP_THREAD_ID")
+fi
+
 RESPONSE=$(curl -sS -m 120 \
     -F chat_id="$BACKUP_CHAT_ID" \
+    "${THREAD_ARGS[@]}" \
     -F document=@"$ENC_FILE;filename=$FILENAME" \
     -F caption="🗄 Бэкап базы $DB_NAME, $SIZE" \
     "https://api.telegram.org/bot${BOT_TOKEN}/sendDocument" 2>"$ERR_FILE")
