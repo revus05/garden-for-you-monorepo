@@ -1,6 +1,13 @@
 #!/bin/bash
-# Dumps the Medusa database, uploads it to Backblaze B2, prunes old copies and
-# shouts in Telegram if any of that fails.
+# Dumps the Medusa database, encrypts it with age and sends it to a Telegram
+# chat; shouts in Telegram if any of that fails.
+#
+# Backblaze B2 was dropped: the hosting provider resets every connection to
+# api.backblazeb2.com, while Telegram stays reachable.
+#
+# Extra keys in /etc/garden-monitor.env (see notify.sh):
+#   AGE_RECIPIENT=age1...       public key; the private one never touches the server
+#   BACKUP_CHAT_ID=-100...      optional, defaults to CHAT_ID
 #
 # Install on the server (every 6 hours) — see crontab.example in this directory.
 
@@ -17,8 +24,11 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 CONTAINER_NAME=garden-postgres
 DB_USER=postgres
 DB_NAME=medusa
-BUCKET="b2:revus-garden-backups"
-RETENTION_DAYS=14
+BACKUP_CHAT_ID="${BACKUP_CHAT_ID:-$CHAT_ID}"
+# Telegram's sendDocument limit for bots.
+MAX_SIZE_BYTES=$(( 50 * 1024 * 1024 ))
+# check-backups.sh reads this to tell how old the newest backup is.
+LAST_OK_FILE=/var/lib/garden-monitor/last-backup-ok
 LOG_FILE=/var/log/garden-pg-backup.log
 
 # Never let two dumps run at once.
@@ -29,9 +39,11 @@ if ! flock -n 9; then
 fi
 
 TMP_FILE=$(mktemp "/tmp/${DB_NAME}-backup-XXXXXX.sql.gz")
-trap 'rm -f "$TMP_FILE"' EXIT
+ENC_FILE="$TMP_FILE.age"
+ERR_FILE=$(mktemp)
+trap 'rm -f "$TMP_FILE" "$ENC_FILE" "$ERR_FILE"' EXIT
 
-FILENAME="${DB_NAME}_$(date +%Y-%m-%d_%H-%M).sql.gz"
+FILENAME="${DB_NAME}_$(date +%Y-%m-%d_%H-%M).sql.gz.age"
 
 log() { echo "$(date '+%F %T'): $1"; }
 
@@ -62,19 +74,42 @@ if ! gunzip -c "$TMP_FILE" | tail -n 5 | grep -q "PostgreSQL database dump compl
     fail "дамп оборван: нет финальной строки 'PostgreSQL database dump complete'."
 fi
 
-SIZE=$(du -h "$TMP_FILE" | cut -f1)
-
-# copyto, not copy: the local file has a mktemp name and needs renaming on upload.
-if ! rclone copyto "$TMP_FILE" "$BUCKET/$FILENAME" --quiet; then
-    fail "не удалось загрузить бэкап в B2."
+# The dump holds customer names, addresses and password hashes, and bot chats
+# are not end-to-end encrypted, so nothing leaves the server in plain form.
+if [ -z "${AGE_RECIPIENT:-}" ]; then
+    fail "AGE_RECIPIENT не задан в $CONFIG_FILE, без шифрования бэкап не отправляю."
 fi
 
-log "загружено: $FILENAME ($SIZE)"
+if ! age -r "$AGE_RECIPIENT" -o "$ENC_FILE" "$TMP_FILE" 2>"$ERR_FILE"; then
+    fail "не удалось зашифровать дамп (age).
 
-# Pruning only happens after a successful upload, so a long outage can never
-# empty the bucket — no new backup, no delete.
-if ! rclone delete "$BUCKET" --min-age "${RETENTION_DAYS}d" --rmdirs; then
-    log "предупреждение: не удалось удалить бэкапы старше ${RETENTION_DAYS} дней"
+$(tail -n 3 "$ERR_FILE")"
 fi
+
+SIZE_BYTES=$(stat -c %s "$ENC_FILE")
+SIZE=$(du -h "$ENC_FILE" | cut -f1)
+
+if [ "$SIZE_BYTES" -gt "$MAX_SIZE_BYTES" ]; then
+    fail "бэкап $SIZE больше лимита Telegram в 50 МБ, нужно другое хранилище."
+fi
+
+# Telegram answers HTTP 200 with {"ok":false,...} on some errors, so the body is
+# checked as well as curl's exit code.
+RESPONSE=$(curl -sS -m 120 \
+    -F chat_id="$BACKUP_CHAT_ID" \
+    -F document=@"$ENC_FILE;filename=$FILENAME" \
+    -F caption="🗄 Бэкап базы $DB_NAME, $SIZE" \
+    "https://api.telegram.org/bot${BOT_TOKEN}/sendDocument" 2>"$ERR_FILE")
+CURL_RC=$?
+
+if [ "$CURL_RC" -ne 0 ] || ! echo "$RESPONSE" | grep -q '"ok":true'; then
+    fail "не удалось отправить бэкап в Telegram (curl, код $CURL_RC).
+
+$(tail -n 3 "$ERR_FILE")
+$(echo "$RESPONSE" | head -c 300)"
+fi
+
+date +%s > "$LAST_OK_FILE"
+log "отправлено: $FILENAME ($SIZE)"
 
 report pg-backup ok "бэкапы базы"

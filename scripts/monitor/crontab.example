@@ -16,10 +16,10 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # Alerts only when a check changes state, so an outage will not spam you.
 */5 * * * * /opt/repositories/garden-for-you-monorepo/scripts/monitor/health-check.sh >> /var/log/garden-health.log 2>&1
 
-# Database dump to Backblaze B2.
+# Encrypted database dump to a Telegram chat.
 0 */6 * * * /opt/repositories/garden-for-you-monorepo/scripts/monitor/pg-backup.sh >> /var/log/garden-pg-backup.log 2>&1
 
-# Second line of defence: complains if the newest backup in B2 is over 24h old,
+# Second line of defence: complains if the newest backup is over 24h old,
 # which is what you see when the job above never ran at all. Offset to :30 so it
 # does not race the dump.
 30 * * * * /opt/repositories/garden-for-you-monorepo/scripts/monitor/check-backups.sh >> /var/log/garden-backups.log 2>&1

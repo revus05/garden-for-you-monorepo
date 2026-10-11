@@ -6,6 +6,8 @@
 #
 #   BOT_TOKEN=123456:AA...
 #   CHAT_ID=805218286
+#   AGE_RECIPIENT=age1...      (pg-backup.sh)
+#   BACKUP_CHAT_ID=-100...     (pg-backup.sh, optional)
 #
 # then: chmod 600 /etc/garden-monitor.env
 
